@@ -1,0 +1,136 @@
+# Basic C/C++ programming workflow
+
+\centerline{\includegraphics[width=4in]{../images/compile_run.png}}
+
+# Basic C/C++ programming workflow
+
+\vspace{0.25in}
+\centerline{\includegraphics[width=2in]{../images/compile_run_just_edit.png}}
+
+* `nano dna_search.c` (then edit, save, exit)
+* `nano string_match.c` (then edit, save, exit)
+* `nano parse_input.c` (then edit, save, exit)
+
+# Basic C/C++ programming workflow
+
+\vspace{0.25in}
+\centerline{\includegraphics[width=3in]{../images/compile_run_just_compile.png}}
+
+* `gcc dna_search.c string_match.c, parse_input.c -std=c99 -pedantic -Wall -Wextra`
+
+# Inside the compiler
+
+* Step 1: preprocessor
+    * Gathers all the code that belongs together
+    * Processes directives that start with `#`
+        * `#define`, `#include` and others, as we'll see
+* Step 2: compiler
+    * Turns human-readable *source code* into binary *object code*
+    * Yields error if compiler can't do its job
+    * Yields warning when you *probably* made a mistake
+* Step 3: linker
+    * Gathers all *object code* into a single executable file
+    * Yields error if relevant code is missing, if there's a naming conflict, etc
+
+# Inside the compiler
+
+Human-readable version of machine code is called "assembly language"
+
+\tiny
+\centering
+
+```
+_main:                                  ## @main
+					.cfi_startproc
+## BB#0:
+   pushq	%rbp
+Ltmp0:
+	.cfi_def_cfa_offset 16
+Ltmp1:
+	.cfi_offset %rbp, -16
+	movq	    %rsp, %rbp
+Ltmp2:
+	.cfi_def_cfa_register %rbp
+	subq		      $16, %rsp
+	leaq		      L_.str(%rip), %rdi
+	movl		      $0, -4(%rbp)
+	callq		      _puts
+```
+
+# Inside the compiler
+
+It is far easier to write large programs in C/C++ than in assembly language, but assembly language is still needed at times when efficiency is a prime concern
+
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main(void)
+{
+    puts("Hello world!");
+    return 0;
+}
+-->
+
+* Type this in `nano`
+* `Ctrl-O`, `Enter` to save, `Ctrl-X` to quit
+
+# Hello world
+
+* Compile and run:
+
+<!---cppmd-shell
+gcc hello_world.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main(void)
+{
+    puts("Hello world!");
+    return 0;
+}
+-->
+
+* `#include` is a preprocessor directive, similar to `import`
+* `main` is a function, every program has exactly one `main`
+* `int` is its return value
+* `(void)` says that `main` takes no parameters
+
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main(void)
+{
+    puts("Hello world!");
+    return 0;
+}
+-->
+
+* `puts` prints a string to "standard out" (terminal) followed by newline
+* `return 0` means "program completed with no errors"
+* Explanatory comment before function (`// Print ...`) is good practice
+
+# Hello world
+
+* What if we omit `#include <stdio.h>`?:
+
+<!---cppmd-file hello_world_err.c
+// Print "Hello world!" followed by newline and exit
+int main(void)
+{
+    puts("Hello world!\n");
+    return 0;
+}
+-->
