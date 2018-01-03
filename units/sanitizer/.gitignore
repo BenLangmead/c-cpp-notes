@@ -1,0 +1,9 @@
+a.out
+a.out.*
+valgrind_eg1.c
+leaky_buggy_strcpy.c
+incr_ser.c
+*.md
+hello_world.c
+string_copy.c
+*.pdf

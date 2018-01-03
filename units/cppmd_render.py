@@ -57,12 +57,21 @@ import os
 import sys
 import subprocess
 import argparse
+import textwrap
 
 __author__ = "Ben Langmead"
 __email__ = "ben.langmead@gmail.com"
 
 
-def handle_shell_commands(fh, ofh, last_source_file=None, no_echo=False, prefix='$ '):
+def prefixize(st, pref):
+    return pref + ' ' + st.replace('\n', '\n%s ' % pref)
+
+
+def wrap(st):
+    return '\n'.join(textwrap.wrap(st, 70, replace_whitespace=False)) + '\n' 
+
+
+def handle_shell_commands(fh, ofh, last_source_file=None, no_echo=False, no_console=False, prefix='$ '):
     """
     Handle a block of shell commands.  First echo the command with "$ "
     prepended.  Then run the command and paste its output.  If there is stderr
@@ -93,11 +102,16 @@ def handle_shell_commands(fh, ofh, last_source_file=None, no_echo=False, prefix=
             ofh.write(prefix + ln + '\n')
         p = subprocess.Popen(ln, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
+        if not no_console:
+            if len(out.rstrip()) > 0:
+                print(prefixize(out.rstrip(), 'O:'))
+            if len(err.rstrip()) > 0:
+                print(prefixize(err.rstrip(), 'E:'))
         if not no_echo:
             if len(out) > 0:
-                ofh.write(out.rstrip() + '\n')
+                ofh.write(wrap(out.rstrip()))
             if len(err) > 0:
-                ofh.write(err.rstrip() + '\n')
+                ofh.write(wrap(err.rstrip()))
     if not no_echo:
         ofh.write("```\n")
 
@@ -131,11 +145,24 @@ def handle_source_file(fh, ofh, fn, no_echo=False, force=False, append=False):
             cpp_ofh.write(ln)
     if not no_echo:
         for ln in to_echo:
-            ofh.write(ln)
+            ofh.write(wrap(ln))
         ofh.write("```\n")
 
 
-def go(fh, prefix, force, no_pandoc, beamer_theme=None):
+def update_gitignore(fns):
+    ignored = set()
+    if os.path.exists('.gitignore'):
+        with open('.gitignore', 'r') as fh:
+            for ln in fh:
+                ignored.add(ln.rstrip())
+    if not ignored.issuperset(fns):
+        ignored.update(fns)
+        with open('.gitignore', 'w') as fh:
+            for ig in ignored:
+                fh.write(ig + '\n')
+
+
+def go(fh, prefix, force, no_pandoc, beamer_theme=None, skip_gitignore=False):
     """
     Main driver.
 
@@ -147,6 +174,7 @@ def go(fh, prefix, force, no_pandoc, beamer_theme=None):
     :return:
     """
     last_source_file = None
+    fns = set()  # all generated files
     with open(prefix + '.md', 'w') as md_ofh:
         while True:
             ln = fh.readline()
@@ -154,17 +182,29 @@ def go(fh, prefix, force, no_pandoc, beamer_theme=None):
                 break
             if ln.strip().startswith('<!---cppmd-file'):
                 skip = 'skip' in ln.rstrip().split()
-                fn = ln.rstrip().split()[-1]
+                fn = ln.rstrip().split()[-1]  # file to create
                 if not skip and not fn.endswith('.h'):
-                    last_source_file = fn
+                    last_source_file = fn  # remember last .c/.cpp file
+
+                # no-echo mode: for including source code in cppmd that
+                # doesn't actually get rendered in slides
                 no_echo = 'no-echo' in ln.rstrip().split()
+
+                # append mode: for breaking up source over many slides
                 append = 'append' in ln.rstrip().split()
+
+                fns.add(fn)
                 handle_source_file(fh, md_ofh, fn, force=force, no_echo=no_echo, append=append)
             elif ln.strip().startswith('<!---cppmd-shell'):
+
+                # no-echo mode: for shell code that should not be rendered in
+                # slides
                 no_echo = ln.rstrip().split()[-1] == 'no-echo'
+
                 handle_shell_commands(fh, md_ofh, last_source_file=last_source_file, no_echo=no_echo)
             else:
                 md_ofh.write(ln)
+
     if not no_pandoc:
         if beamer_theme is not None:
             beamer_theme = '-V theme:' + beamer_theme + ' '
@@ -172,12 +212,16 @@ def go(fh, prefix, force, no_pandoc, beamer_theme=None):
         print('Running pandoc command: "%s"' % cmd, file=sys.stderr)
         os.system(cmd)
 
+    if not skip_gitignore:
+        update_gitignore(fns)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Run a C/C++ markdown file, creating source files, '
-                    'running shell commands and pasting their output '
-                    'appropriately formatted blocks.  pandoc must be '
-                    'installed')
+        description='Run a runnable C/C++ markdown file (.cppmd).  Create '
+                    'source files (<!---cppmd-file (code) -->) '
+                    'run shell commands (<!---cppmd-shell (code) -->) '
+                    'and paste their output into the slides appropriately.'
+                    'pandoc must be installed')
     parser.add_argument(
         '--prefix', metavar='path', type=str, required=True,
         help='Write output to <prefix>.md and <prefix>.pdf')
@@ -190,8 +234,13 @@ if __name__ == '__main__':
     parser.add_argument(
         '--skip-pandoc', action='store_const', const=True, default=False,
         help='Don\'t run pandoc; just write the <prefix>.md file')
+    parser.add_argument(
+        '--dont-update-gitignore', action='store_const', const=True, default=False,
+        help='By default, .gitignore is updated to ignore files generated with '
+             '<!---cppmd-file (code) -->.  This disables that behavior.')
     args = parser.parse_args()
     go(sys.stdin, args.prefix,
        force=args.force,
        no_pandoc=args.skip_pandoc,
-       beamer_theme=args.beamer_theme)
+       beamer_theme=args.beamer_theme,
+       skip_gitignore=args.dont_update_gitignore)
