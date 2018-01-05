@@ -1,0 +1,473 @@
+# Outline
+
+<!---cppmd-file no-echo count_bases_1.c
+#include <stdio.h>
+#include <string.h>
+
+// printf declared in stdio.h
+// strlen declared in string.h
+
+int main(void)
+{
+    // "dna" holds beginning of human mitochrondrial genome sequence
+    const char *dna = "GATCACAGGTCTATCACCCTATTAACCACTCACGGGAGCTCTCCATGCAT"
+                      "TTGGTATTTTCGTCTGGGGGGTGTGCACGCGATAGCATTGCGAGACGCTG"
+                      "GAGCCGGAGCACCCTATGTCGCAGTATCTGTCTTTGATTCCTGCCTCATT"
+                      "CTATTATTTATCGCACCTACGTTCAATATTACAGGCGAACATACCTACTA"
+                      "AAGTGTGTTAATTAATTAATGCTTGTAGGACATAATAATAACAATTGAAT";
+
+    // Note: above is one long string literal, wrapped across lines
+
+    int num_a = 0;
+    int num_c = 0;
+    int num_g = 0;
+    int num_t = 0;
+
+    // strlen is a function that returns the length of the string
+    int dna_len = strlen(dna);
+
+    for(int i = 0; i < dna_len; i++) {
+        char dna_char = dna[i];
+        // TODO: tally As, Cs, Gs, and Ts
+    }
+
+    printf("A:%d, C:%d, G:%d, T:%d\n", num_a, num_c, num_g, num_t);
+}
+-->
+
+<!---cppmd-shell no-echo
+mkdir -p ~/cs120; chmod a+rx ~/cs120
+cp %PREV% ~/cs120 ; chmod a+r ~/cs120/%PREV%
+-->
+
+# DNA exercise
+
+* Log into CS undergraduate cluster
+    * Terminal: `ssh ` ***user*** `@ugrad` ***[1-24]*** `.cs.jhu.edu`
+    * PuTTY: connect to: `ugrad` ***[1-24]*** `.cs.jhu.edu`
+* `mkdir -p cs120/2_01`
+* `cd cs120/2_01`
+* `cp ~langmea/cs120/count_bases.c .`
+* `nano count_bases.c`
+    * Or your favorite `nano` alternative
+* To test:
+    * `gcc count_bases.c -std=c99 -pedantic -Wall -Wextra`
+    * `./a.out`
+
+# Text exercise
+
+<!---cppmd-file no-echo count_chars.c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// printf declared in stdio.h
+// strlen declared in string.h
+
+// isalpha, isdigit, isspace declared in ctype.h
+// See also: http://www.cplusplus.com/reference/cctype/
+
+int main(void)
+{
+    const char *text = "4 score and 7 years ago our fathers brought "
+                       "4th on this continent, a new nation, "
+                       "conceived in Liberty, and dedic8d to the "
+                       "proposition that all men are cre8d =";
+
+    int num_alpha = 0;  // # alphabet chars ('A'-'Z' and 'a'-'z')
+    int num_digits = 0; // # digit chars ('0' - '9')
+    int num_space = 0;  // # whitespace chars (spaces, tabs, newlines, etc)
+
+    int text_len = strlen(text);
+
+    int i = 0;
+    while(i < text_len) { // don't modify the while loop or its condition
+        // TODO: count alphabetical, digit and whitespace characters
+    };
+
+    // Special challenge: instead of using isalpha, isdigit and
+    // isspace, use relational operators and your knowledge of the
+    // characters' ASCII values: http://www.asciitable.com
+
+    printf("# alphabetical:%d, # digit:%d, # whitespace:%d\n",
+           num_alpha, num_digits, num_space);
+}
+-->
+
+<!---cppmd-shell no-echo
+mkdir -p ~/cs120; chmod a+rx ~/cs120
+cp %PREV% ~/cs120 ; chmod a+r ~/cs120/%PREV%
+-->
+
+* (Assuming you're still in `cs120/2_01` subdirectory)
+* `cp ~langmea/cs120/count_chars.c .`
+* `nano count_chars.c`
+    * Or your favorite `nano` alternative
+* To test:
+    * `gcc count_chars.c -std=c99 -pedantic -Wall -Wextra`
+    * `./a.out`
+
+# Characters, strings, arrays
+
+* We said a `char` variable holds a single character
+    * `char digit = '4';`
+    * `char bang = '!';`
+    * Note: these *must* be single quotes; in C/C++, double quotes are strictly for strings, single quotes strictly for `char`s
+* Behind the scenes, `char` is just like `int`
+    * This is valid: `char digit = '4' - 1;`
+    * `digit` now contains the character `'3'`
+
+# ASCII
+
+* ASCII or a similar standard governs the mapping between characters and integers
+
+\centerline{\includegraphics[width=3.5in]{chars-table-landscape.jpg}}
+
+# Characters, strings, arrays
+
+* `char` variable holds a character
+    * `char digit = '4';`
+    * `char bang = '!';`
+    * Note: *single* quotes for `char`s, *double* quotes are for strings
+* Behind the scenes, `char` is just like `int`
+    * This is valid: `char digit = '4' - 1;`
+    * `digit` now contains the character `'3'`
+
+# ASCII
+
+* ASCII or a similar standard governs the mapping between characters and integers
+
+\centerline{\includegraphics[width=3.5in]{images/chars-table-landscape.jpg}}
+
+# Character example
+
+\footnotesize
+
+<!---cppmd-file convert_digit_0.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main(void)
+{
+    char char_0 = '0';
+    int int_0 = char_0 - '0';
+    printf("Character printed as character: %c\n", char_0);
+    printf("Character printed as integer: %d\n", char_0);
+    printf("Integer printed as integer: %d\n", int_0);
+}
+-->
+
+<!---cppmd-shell
+gcc convert_digit_0.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Character example
+
+\footnotesize
+
+<!---cppmd-file convert_digit_7.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main(void)
+{
+    char char_7 = '7';
+    int int_7 = char_7 - '0';
+    printf("Character printed as character: %c\n", char_7);
+    printf("Character printed as integer: %d\n", char_7);
+    printf("Integer printed as integer: %d\n", int_7);
+}
+-->
+
+<!---cppmd-shell
+gcc convert_digit_7.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+* A sequence of characters handled as a unit
+* In C, a string is an array of characters with final character equal to the "null character" `'\0'`
+
+# Strings
+
+* Declaring a string:
+
+```c
+char day[] = "monday";
+// alternately
+const char *day_ptr = "monday";
+```
+
+* First declaration shows a string is like an *array*
+* Second shows a string is like a *pointer*
+* More on this later
+
+# Strings
+
+* Array of characters with final character equal to the "null character" `'\0'`
+
+```c
+// this definition:
+char day1[] = "monday";
+
+// is the same as this:
+char day2[] = {'m', 'o', 'n', 'd', 'a', 'y', '\0'};
+```
+
+# Strings
+
+* Access elements of the string using *square bracket* notation (AKA *indexing*)
+
+\footnotesize
+
+<!---cppmd-file string_indexing_1.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main(void)
+{
+    const char *str = "hello";
+    printf("%c %c %c\n", str[1], str[2], str[4]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+\footnotesize
+
+<!---cppmd-file string_copy_1.c
+#include <stdio.h>
+
+int main(void)
+{
+    const char *str = "hello";
+    char str_copy[5];
+    for(int i = 0; i < 5; i++) {
+        str_copy[i] = str[i];
+    }
+    puts(str);
+    puts(str_copy);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+\footnotesize
+
+<!---cppmd-file string_copy_2.c
+#include <stdio.h>
+
+int main(void)
+{
+    const char *str = "hello";
+    char str_copy[6];
+    for(int i = 0; i < 6; i++) {
+        str_copy[i] = str[i];
+    }
+    puts(str);
+    puts(str_copy);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+* `#include <string.h>` for helpful string functions:
+    * `strlen(s)` returns length of string `s`
+    * `strcmp(s1, s2)` compares two strings alphabetically
+        * negative: `s1 alphabetically before `s2`
+        * zero: `s1` and `s2` equal
+        * positive: `s2` alphabetically before `s1`
+    * See also: `strcpy`, `strcat`, `strtok`, others
+    * [`http://www.cplusplus.com/reference/cstring/`](http://www.cplusplus.com/reference/cstring/)
+
+# Short circuiting
+
+* When C evaluates a logical expression...
+    * `if(a == 7 || b == 7)`
+* ...it *short circuits* as soon as answer is definitely true or definitely false, regardless of other clauses
+
+# Short circuiting
+
+<!---cppmd-file no-echo gpa.c
+-->
+
+# Arrays
+
+* TODO
+
+# Assert
+
+* `assert` is a powerful tool for testing your assumptions
+* TODO
+# GPA exercise
+
+* You must submit individually, but you can talk to each other and work together
+* Today you must *submit your code before you leave*
+    * Whether or not you're totally done
+    * Your work is factored into your attendance grade
+    * Good practice for homework submission
+* We will continue to do this regularly
+
+# How to submit
+
+* Review zipping and transferring instructions on Piazza
+    * [`http://j.mp/cs120_hts`](http://j.mp/cs120_hts)
+* Submit zip file on Blackboard:
+    * Blackboard course: EN.600.120.01.SP16
+    * Click "In-Class Exercise Submission" on left
+    * Click "Feb 3-4"
+    * Attach File -> Browse My Computer
+    * Select zip
+    * Submit
+
+# GPA exercise
+
+* Log into CS undergraduate cluster
+* From your home directory:
+    * `mkdir -p cs120/2_03`
+    * `cd cs120/2_03`
+* Edit template:
+    * `cp ~langmea/cs120/gpa.* .`
+    * `nano gpa.c`
+        * Or your favorite `nano` alternative
+    * Read comments throughout the file for instructions
+* Test:
+    * `gcc gpa.c -std=c99 -pedantic -Wall -Wextra`
+    * `./a.out`
+* *Submit before you leave*
+
+<!---cppmd-file no-echo gpa.c
+/*
+  This is an incomplete program to compute the GPA of a set of courses.
+  gpa.in contains sample input (plain text file)
+  gpa.out contains sample output (plain text file)
+
+  It uses the "standard in" file handle to accept its input.  We will
+  learn more about that later.  For now, what this means is: if you
+  have a file called "input.txt" that you want to profiled as input,
+  then run:
+
+  ./a.out < input.txt
+
+  This "redirects" the contents of "input.txt" to the standard in file
+  handle so that it is read properly.
+
+  When you did your gpa.in contains an example input:
+
+  ./a.out < gpa.in
+
+  And gpa.out contains the *correct* output given that input.
+
+  (By the way, the slash-star star-slash notation surrounding this
+  comment allows you to create a multi-line comment.  This is easier
+  than doing // over and over again.)
+*/
+
+#include <stdio.h>   // for basic I/O: puts, getchar, printf
+#include <ctype.h>   // for character related functions: isspace, isdigit
+#include <string.h>  // for string functions:
+
+// a symbolic constant; when we write GSIZE, preprocessor substitutes 3
+#define GSIZE 3
+
+// function declarations are called prototypes
+// every function must be declared or fully defined before it is called
+double getpoints(char g[]);
+
+int main(void) {
+    char grade[GSIZE];
+    int i = 0;
+    int ch = 0;
+    int credits = 0;
+    double points = 0;
+    double totalpoints = 0;
+    double totalcredits = 0;
+
+    puts("enter grades and credits: ");
+
+    // repeat until end of input
+    while ((ch = getchar()) != EOF) {
+        // store non-whitespace characters in grade buffer
+        i = 0;
+        while (!isspace(ch)) {
+            grade[i++] = ch;
+            ch = getchar();
+        }
+        grade[i] = '\0';  // "terminate" string with null character
+        points = getpoints(grade); // convert to GPA scale
+
+        // skip whitespace
+        while (isspace(ch)) {
+            ch = getchar();
+        }
+
+        // read credits, one character at a time, build integer
+        credits = 0;
+        while (isdigit(ch)) {
+            credits = credits * 10 + ch - '0';
+            ch = getchar();
+        }
+
+        // go to next line
+        while (ch != '\n') {
+            ch = getchar();
+        }
+
+        printf("grade is: %-2s  credits = %d  points = %4.1f \n",
+                grade, credits, points);
+
+        // TODO: factor this grade into the GPA
+
+    } // while not EOF
+
+    // TODO: print the final GPA
+
+	return 0;
+}
+
+// Converts a letter grade to its corresponding point value.
+double getpoints(char g[]) {
+    double points = 0;
+    g[0] = toupper(g[0]);
+    switch (g[0]) {
+        case 'A': points = 4; break;
+        case 'B': points = 3; break;
+        case 'C': points = 2; break;
+        case 'D': points = 1; break;
+        default: points = 0;
+    }
+
+    if (g[1] == '+' && 'B' <= g[0] && g[0] <= 'D') {
+        points += .3;
+    }
+    if (g[1] == '-' && 'A' <= g[0] && g[0] <= 'C') {
+        points -= .3;
+    }
+    return points;
+}
+-->
+
+<!---cppmd-shell no-echo
+mkdir -p ~/cs120; cp gpa.c ~/cs120
+chmod a+rx ~/cs120; chmod a+r ~/cs120/gpa.c
+-->

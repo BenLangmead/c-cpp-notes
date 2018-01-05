@@ -1,0 +1,310 @@
+# Outline
+
+* Types
+* Arithmetic operators
+* Operator precedence
+* `const`
+* Logical and relational operators
+* Characters & ASCII
+
+And many code examples
+
+# Types
+
+* Integer types
+    * `int`: signed integer
+    * `unsigned`: unsigned integer
+
+* Floating-point (decimal) types
+    * `float`: single-precision floating point number
+    * `double`: double-precision floating point number
+
+# Types
+
+* More details here: [`https://en.wikipedia.org/wiki/C_data_types`](https://en.wikipedia.org/wiki/C_data_types)
+* In this class, we'll avoid the details about:
+    * How integer & floating-point types are represented in memory
+    * How large or small they're allowed to be
+    * Overflow & underflow
+
+# Types & operators
+
+* Character type
+    * `char`: holds a 1-byte character, `'A'`, `'B'`, `'$'`, ...
+    * `char`s are basically integers, as we'll see
+
+* Boolean type
+    * `bool`: value can be `true` or `false`
+    * Integer types can also function as `bool`s, where `0`=`false`, non-`0`=`true`
+        * This is quite common, since `bool` was only introduced in C99
+        * Generally, C mindset is "Booleans are just integers"
+
+# Operators
+
+* `3 + 4`
+    * `3` and `4` are operands, `+` is operator
+    * `3` and `4` are *constants* (not variables)
+* `num_students + 4`
+    * `num_students` and `4` are operands, `+` is operator
+    * `num_students` is a variable
+
+# Arithmetic operators
+
+\centerline{\includegraphics[width=4in]{arithmetic_ops.png}}
+
+\centering
+\scriptsize
+From Deitel & Deitel: C How to Program
+
+# Next few examples
+
+* Reinforce what we learned about types & operators
+* Demonstrate good variable naming, operator precedence, `const`
+
+# Mysterious program
+
+<!---cppmd-file mysterious.c
+#include <stdio.h>
+
+int main(void) {
+    int x = 75;
+    float y = 5.0 / 9.0 * (x - 32);
+    printf("%0.2f", y); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc mysterious.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Less mysterious program
+
+\footnotesize
+
+<!---cppmd-file convert_fc.c
+#include <stdio.h>
+
+// Convert 75 degrees fahrenheit to celsius, print result
+int main(void) {
+    int fahrenheit = 75;
+    float celsius = 5.0 / 9.0 * (fahrenheit - 32);
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+\normalsize
+
+* Output is correct (double-check with google)
+
+<!---cppmd-shell
+gcc convert_fc.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Mistake?
+
+\footnotesize
+
+<!---cppmd-file convert_fc_badprec.c
+#include <stdio.h>
+
+// Convert 75 degrees fahrenheit to celsius, print result
+int main(void) {
+    int fahrenheit = 75;
+    //float celsius = 5.0 / 9.0 * (fahrenheit - 32);
+    float celsius = 5.0 / 9.0 * fahrenheit - 32;
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+# Mistake?
+
+\footnotesize
+
+<!---cppmd-file convert_fc_badprec.c
+#include <stdio.h>
+
+// Convert 75 degrees fahrenheit to celsius, print result
+int main(void) {
+    int fahrenheit = 75;
+    float celsius = 5.0 / 9.0 *  fahrenheit - 32 ;
+    //               was: 9.0 * (fahrenheit - 32);
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc convert_fc_badprec.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+* Mistake because multiplication & division have higher *precedence* than subtraction
+
+# Operator precedence
+
+\centerline{\includegraphics[width=2.5in]{op_precedence_1.jpg}}
+
+# Operator precedence
+
+* More here: [`en.cppreference.com/w/c/language/operator_precedence`](http://en.cppreference.com/w/c/language/operator_precedence)
+* Know where to look up the rules; use parentheses when in doubt
+
+# Program variant
+
+\footnotesize
+
+<!---cppmd-file convert_fc_var1.c
+#include <stdio.h>
+
+// Convert 75 degrees fahrenheit to celsius, print result
+int main(void) {
+    int fahrenheit = 75;
+    int base = 32;
+    float factor = 5.0 / 9.0;
+    float celsius = factor * (fahrenheit - base);
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+\normalsize
+
+* Result is same
+
+\footnotesize
+
+<!---cppmd-shell
+gcc convert_fc_var1.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Using const well
+
+\footnotesize
+
+<!---cppmd-file convert_fc_var2.c
+#include <stdio.h>
+
+// Convert 75 degrees fahrenheit to celsius, print result
+int main(void) {
+    int fahrenheit = 75;
+    const int base = 32; // can't be modified
+    const float factor = 5.0 / 9.0; // can't be modified
+    float celsius = factor * (fahrenheit - base);
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+# const
+
+* `const int base = 32;`
+* Put `const` before the type to say a variable cannot be modified
+
+# Misuse of const
+
+\footnotesize
+
+<!---cppmd-file convert_fc_var3.c
+#include <stdio.h>
+
+// Convert 75 degrees fahrenheit to celsius, print result
+int main(void) {
+    const int fahrenheit = 75;
+    const float celsius = 5.0 / 9.0 * fahrenheit - 32;
+    printf("%0.2f", celsius); // print up to 2 decimal places
+
+    celsius = 5.0 / 9.0 * 07 - 32; // oops! reassigning to a const
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+# Misuse of const
+
+\footnotesize
+
+<!---cppmd-shell
+gcc convert_fc_var3.c -std=c99 -pedantic -Wall -Wextra
+-->
+
+# Logical operators
+
+\centerline{\includegraphics[width=2.75in]{logical_operators.jpg}}
+
+* Inputs and outputs are Boolean values
+\footnotesize
+* [`http://www.tutorialspoint.com/cprogramming/c_operators.htm`](http://www.tutorialspoint.com/cprogramming/c_operators.htm)
+
+# Relational operators
+
+\centerline{\includegraphics[width=2.3in]{relational_operators.jpg}}
+
+* Inputs are numbers, outputs are Boolean values
+\footnotesize
+* [`http://www.tutorialspoint.com/cprogramming/c_operators.htm`](http://www.tutorialspoint.com/cprogramming/c_operators.htm)
+
+# Characters, strings, arrays
+
+* We said a `char` variable holds a single character
+    * `char digit = '4';`
+    * `char bang = '!';`
+    * Note: these *must* be single quotes; double quotes are for strings, not `char`s
+* Behind the scenes, `char` is just like `int`
+    * This is valid: `char digit = '4' - 1;`
+    * `digit` now contains the character `'3'`
+
+# ASCII
+
+* ASCII or a similar standard governs the mapping between characters and integers
+
+\centerline{\includegraphics[width=3.5in]{chars-table-landscape.jpg}}
+
+# Character example
+
+\footnotesize
+
+<!---cppmd-file convert_digit_0.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main(void) {
+    char char_0 = '0';
+    int int_0 = char_0 - '0';
+    printf("Character printed as character: %c\n", char_0);
+    printf("Character printed as integer: %d\n", char_0);
+    printf("Integer printed as integer: %d\n", int_0);
+}
+-->
+
+<!---cppmd-shell
+gcc convert_digit_0.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Character example
+
+\footnotesize
+
+<!---cppmd-file convert_digit_7.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main(void) {
+    char char_7 = '7';
+    int int_7 = char_7 - '0';
+    printf("Character printed as character: %c\n", char_7);
+    printf("Character printed as integer: %d\n", char_7);
+    printf("Integer printed as integer: %d\n", int_7);
+}
+-->
+
+<!---cppmd-shell
+gcc convert_digit_7.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
