@@ -1,18 +1,18 @@
 # Intermediate programming
 
-* Bookmark course page: [`http://ugrad.cs.jhu.edu/~cs120`](http://ugrad.cs.jhu.edu/~cs120)
-* Sign up for & bookmark Piazza: [`http://j.mp/120sp16`](http://j.mp/120sp16)
+* Bookmark course page: [`http://ugrad.cs.jhu.edu/~cs220`](http://ugrad.cs.jhu.edu/~cs220)
+* Sign up for & bookmark Piazza: [`???`](???)
 * We'll also use Blackboard -- more on this later
 
 # Administrative: Syllabus
 
-* Prerequisite: Java or another language (no need for C/C++)
+* Prerequisite: Java or similar (often Python)
+    * C/C++ experience *not* a prerequisite
 * 3 75-minute meetings per week
     * Some lecture, for learning concepts, intuition
-        * Lectures are participatory: please ask questions and interact
+        * Participatory: questions and interaction encouraged
     * In-class coding problems, with help from instructor & TAs
-    * Brief recap at end of class
-* In-class quizzes every other Friday starting 2nd Friday
+* 
 * In-class midterm
 
 # Administrative: Syllabus
@@ -22,6 +22,8 @@
     * Kernighan & Ritchie, C Programming Language (2nd ed)
     * Deitel & Deitel: C++ How to Program
     * Koenig & Moo: Accelerated C++ 2000
+
+I will quote from them and refer to them.
 
 # Administrative: Syllabus
 
@@ -57,6 +59,10 @@
     * All homeworks due at 11pm on due date
     * 11-11:30pm: -10%
     * No submissions accepted after 11:30pm
+
+# Administrative: Homework submissions
+
+It is up to you to ensure that you successfully submit a complete homework.
 
 # Administrative: TAs
 

@@ -1,3 +1,9 @@
+# Outline
+
+* Programming workflow: edit, compile, run
+* Log in, write, compile and run a program
+* Variables
+
 # Basic C/C++ programming workflow
 
 \centerline{\includegraphics[width=4in]{compile_run.png}}
@@ -149,30 +155,3 @@ int main(void) {
 <!---cppmd-shell
 gcc hello_world_err.c -std=c99 -pedantic -Wall -Wextra
 -->
-
-# Variables
-
-* `int num_students;`
-* When declared, a variable gets a *type* (`int`) and *name* (`num_students`)
-* A variable also has a *value* that may change throughput the program's lifetime
-
-# Assignment
-
-* `num_students = 32;`
-* `=` is the *assignment operator*, which modifies a variable's value
-
-# Assignment
-
-* It is *very good practice* to declare and assign *at the same time*:
-    * `int num_students = 32;`
-* Generally, a variable that has been declared but not yet assigned has an "undefined" value
-
-# Aside
-
-* **"Undefined"** strikes fear into our hearts
-* Programs with undefined behavior or data can (and often do) fail in mysterious ways
-* Manner in which they fail might change from run to run
-* We will learn good practices; e.g.:
-    * Declare and assign at the same time
-    * Pay attention to compiler warnings
-    * Use `valgrind` to diagnose memory mistakes (more later)

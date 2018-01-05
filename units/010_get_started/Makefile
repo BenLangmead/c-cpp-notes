@@ -2,7 +2,7 @@
 
 CPPMD=python ../cppmd_render.py
 
-all: 02_stages_hello_world.pdf
+all: 001_get_started.pdf
 
 %.pdf: %.cppmd
 	$(CPPMD) --prefix $(@:%.pdf=%) --beamer-theme=metropolis --force < $<
