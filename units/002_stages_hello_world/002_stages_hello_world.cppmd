@@ -1,0 +1,178 @@
+# Basic C/C++ programming workflow
+
+\centerline{\includegraphics[width=4in]{compile_run.png}}
+
+# Basic C/C++ programming workflow
+
+\vspace{0.25in}
+\centerline{\includegraphics[width=2in]{compile_run_just_edit.png}}
+
+* `emacs dna_search.c` (then edit, save, exit)
+* `emacs string_match.c` (then edit, save, exit)
+* `emacs parse_input.c` (then edit, save, exit)
+
+# Basic C/C++ programming workflow
+
+\vspace{0.25in}
+\centerline{\includegraphics[width=3in]{compile_run_just_compile.png}}
+
+* `gcc dna_search.c string_match.c, parse_input.c -std=c99 -pedantic -Wall -Wextra`
+
+# Inside the compiler
+
+* Step 1: preprocessor
+    * Gather the relevant code
+        * Could be spread across files that ``include'' and depend on each other
+    * Process the directives that start with `#`
+        * We'll soon see `#define`, `#include`
+* Step 2: compiler
+    * Turn human-readable *source code* into *object code*
+    * Might yield warnings & errors if your code has mistakes that are "visible" to compiler
+* Step 3: linker
+    * Gather relevant *object code* into a single executable file
+    * Might yield warnings & errors if relevant code is missing, there's a naming conflict, etc
+
+# Inside the compiler
+
+Between source code and machine code is a human-readable version of the machine code called "assembly language"
+
+* Computer Systems Fundamentals discusses multiple versions of assembly language
+
+\tiny
+\centering
+
+```
+_main:                                  ## @main
+	.cfi_startproc
+## BB#0:
+	pushq	%rbp
+Ltmp0:
+	.cfi_def_cfa_offset 16
+Ltmp1:
+	.cfi_offset %rbp, -16
+	movq	%rsp, %rbp
+Ltmp2:
+	.cfi_def_cfa_register %rbp
+	subq	$16, %rsp
+	leaq	L_.str(%rip), %rdi
+	movl	$0, -4(%rbp)
+	callq	_puts
+```
+
+# Detailed C/C++ programming workflow
+
+\centerline{\includegraphics[height=3.25in]{compile_detailed.png}}
+
+# Workflow exercise
+
+* `ssh ` ***user*** `@ugrad` ***[1-24]*** `.cs.jhu.edu`
+    * e.g. I do: `ssh langmea@ugrad17.cs.jhu.edu`
+* `pwd` (print your home directory path)
+* `mkdir -p cs120/1_29` (subdirectory for today)
+* `cd cs120/1_29`
+* `emacs hello_world.c`
+    * Or your favorite `emacs` alternative
+
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main(void) {
+    puts("Hello world!");
+    return 0;
+}
+-->
+
+* After `emacs hello_world.c`, type above into the editor
+* `Ctrl-x` `Ctrl-s` to save
+* `Ctrl-x` `Ctrl-c` to quit
+
+# Hello world
+
+* Compile and run:
+
+<!---cppmd-shell
+gcc hello_world.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main(void) {
+    puts("Hello world!");
+    return 0;
+}
+-->
+
+* `#include` is a preprocessor directive, similar to `import`
+* `main` is a function, every program has exactly one `main`
+* `int` is its return value
+* `(void)` says that `main` takes no parameters
+
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main(void) {
+    puts("Hello world!");
+    return 0;
+}
+-->
+
+* `puts` prints a string to "standard out" (terminal) followed by newline
+* `return 0` means "program completed with no errors"
+* Explanatory comment before function (`// Print ...`) is good practice
+
+# Hello world
+
+* What if we omit `#include <stdio.h>`?:
+
+<!---cppmd-file hello_world_err.c
+// Print "Hello world!" followed by newline and exit
+int main(void) {
+    puts("Hello world!\n");
+    return 0;
+}
+-->
+
+\scriptsize
+
+<!---cppmd-shell
+gcc hello_world_err.c -std=c99 -pedantic -Wall -Wextra
+-->
+
+# Variables
+
+* `int num_students;`
+* When declared, a variable gets a *type* (`int`) and *name* (`num_students`)
+* A variable also has a *value* that may change throughput the program's lifetime
+
+# Assignment
+
+* `num_students = 32;`
+* `=` is the *assignment operator*, which modifies a variable's value
+
+# Assignment
+
+* It is *very good practice* to declare and assign *at the same time*:
+    * `int num_students = 32;`
+* Generally, a variable that has been declared but not yet assigned has an "undefined" value
+
+# Aside
+
+* **"Undefined"** strikes fear into our hearts
+* Programs with undefined behavior or data can (and often do) fail in mysterious ways
+* Manner in which they fail might change from run to run
+* We will learn good practices; e.g.:
+    * Declare and assign at the same time
+    * Pay attention to compiler warnings
+    * Use `valgrind` to diagnose memory mistakes (more later)
