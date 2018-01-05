@@ -150,13 +150,14 @@ def handle_source_file(fh, ofh, fn, no_echo=False, force=False, append=False):
 
 
 def update_gitignore(fns):
-    ignored = set()
+    ignored = []
     if os.path.exists('.gitignore'):
         with open('.gitignore', 'r') as fh:
             for ln in fh:
-                ignored.add(ln.rstrip())
-    if not ignored.issuperset(fns):
-        ignored.update(fns)
+                ignored.append(ln.rstrip())
+    ignored_set = set(ignored)
+    if not ignored_set.issuperset(fns):
+        ignored.extend(fns)
         with open('.gitignore', 'w') as fh:
             for ig in ignored:
                 fh.write(ig + '\n')
