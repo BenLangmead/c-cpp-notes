@@ -384,9 +384,3 @@ cp %PREV% ~/cs120 ; chmod a+r ~/cs120/%PREV%
 * Behind the scenes, `char` is just like `int`
     * This is valid: `char digit = '4' - 1;`
     * `digit` now contains the character `'3'`
-
-# ASCII
-
-* ASCII or a similar standard governs the mapping between characters and integers
-
-\centerline{\includegraphics[width=3.5in]{chars-table-landscape.jpg}}
