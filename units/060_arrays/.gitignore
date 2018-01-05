@@ -21,3 +21,4 @@ incr_example.c
 a.out
 *.md
 for_example.c
+gpa.c
