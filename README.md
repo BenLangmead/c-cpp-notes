@@ -17,3 +17,12 @@ All the shel commands are run within a Docker image.  We use this image from Doc
 
 * [`benlangmead/fedora-cpp-slides`](https://hub.docker.com/r/benlangmead/fedora-cpp-slides/)
 
+And the corresponding `Dockerfile` and scripts used to build/pull/push are available in the `docker` subdirectory.  The base image is Fedora 27.  The most relevant software versions are:
+
+```
+gcc-7.2.1
+g++-7.2.1
+gdb: Fedora 8.0.1-33.fc27
+valgrind-3.13.0
+git v2.14.3
+```
