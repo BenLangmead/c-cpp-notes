@@ -1,0 +1,160 @@
+# Getting started
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=1in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Course goals on a slide
+
+*Create complex, correct programs in C and C++*
+
+Learn modern programming ecosystem
+
+* Linux
+* Compiler (`gcc`, `g++`)
+* Debugger (`gdb`)
+* Build system (`make`)
+* Source control (`git`)
+
+Learn basic principles of software design and engineering, in preparation for future coursework
+
+# Prerequisites
+
+Course is primarily designed for people with experience with Java or a similar language
+
+C/C++ experience *not* a prerequisite
+
+# Goals
+
+Learn C
+
+* Language features
+* Pointers & dynamic memory allocation
+* "Low-level" programming
+
+Learn C++
+
+* How is it different from C?
+* Object-oriented programming
+* Generic programing
+
+# Goals
+
+Gain proficiency in Linux & related programming tools
+
+* Basic command-line tools
+* Compilers, debuggers, profilers
+
+Grow as a programmer & software engineer
+
+# Why C/C++?
+
+Why C/C++?
+
+* Ubiquitous
+* Efficient
+* Mature
+
+# Ubiquitous
+
+Huge fraction of the world's crucial code is in C
+
+* Used Java?  JVM is written in C++, as are many libraries
+* Used Python?  CPython interpreter written in C
+* Used the Internet?  Networks stacks, code for the embedded systems your traffic traverses, web servers, ...
+* Like science?
+    * https://github.com/collections/software-in-science
+    * My lab members & I program in C/C++ a lot
+
+# Ubiquitous
+
+\centerline{\includegraphics[width=4.75in]{../images/tiobe.png}}
+
+\centering
+\tiny
+
+https://www.tiobe.com/tiobe-index/
+
+\raggedright
+
+\normalsize
+
+Based on search engine hits for `"<language> programming"`
+
+# Efficient
+
+Higher-level languages like Java & Python present a trade-off:
+
+* High-level languages "take care of things" for you
+
+    * Programs can be more concise, abstract
+    * Harder to make mistakes
+
+* ...but also hide things from you
+
+    * How variables are laid out in memory
+    * When memory is allocated and de-allocated
+    * Hardware features, especially non-portable features
+
+Because of what high-level languages hide, efficiency can be hard to achieve
+
+# Mature
+
+Around since the 1970s (C) and 80s (C++)
+
+Undergraduates have learned it for decades
+
+Software jobs often require it; "we need someone who...
+
+* ...can make something really fast if needed"
+* ...knows how to program all kinds of weird hardware"
+* ...knows how to interact with the operating system"
+* ...can handle our large codebase, written in C"
+
+# Why C/C++?
+
+There are other good languages also worth learning
+
+Many aim for a similar level of efficiency as C/C++; often these are called ``systems languages''
+
+* But with simpler language
+* Less "burdened" by long history & by need to stay backward-compatible
+
+Examples
+
+* Swift -- [developer.apple.com/swift](https://developer.apple.com/swift)
+* Go -- [golang.org](https://golang.org)
+* Rust -- [rust-lang.org](https://www.rust-lang.org/)
+
+# Why C/C++?
+
+They seem to come quite close on efficiency...
+
+\vspace{5mm}
+
+...but they do not approach C/C++ in maturity/ubiquity 
+
+# Why C/C++?
+
+\vspace{5mm}
+
+\centerline{\includegraphics[width=3.5in]{../images/tiobe_20.png}}
+
+\centering
+\tiny
+
+https://www.tiobe.com/tiobe-index/

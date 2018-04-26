@@ -1,0 +1,61 @@
+# Unix / Linux
+
+* You will need to get familiar with
+    * How to log into a Unix/Linux system
+        * `ssh` if you're on a Max or Linux system
+        * PuTTY if you're on Windows
+    * Basic command line
+        * Navigating directory structure
+        * Making / removing directories
+        * Copying, moving files
+    * How to edit files
+        * With `emacs`
+
+# Unix / Linux: Tutorial
+
+Short link: [bit.ly/linuxbootcamp](http://bit.ly/linuxbootcamp)
+
+Long link: [http://rik.smith-unna.com/command_line_bootcamp](http://rik.smith-unna.com/command_line_bootcamp)
+
+Through section 22, "Viewing files cat"
+
+# Unix / Linux: Alternate tutorial
+
+The previous one goes down sometimes.  Here's another version:
+
+Short link: [bit.ly/linuxbootcamp2](http://bit.ly/linuxbootcamp2)
+
+Long link: [korflab.ucdavis.edu/bootcamp.html](http://korflab.ucdavis.edu/bootcamp.html)
+
+Through section 23, "Viewing files with cat"
+
+# Administrative: C/C++ programming
+
+We will be programming!
+
+* In class
+* For homeworks
+* For projects
+
+Important that the *environment* you use to test your programs is the same environment we use to grade them
+
+# Administrative: C/C++ programming
+
+Environment where you test your programs must be the same as the environment we use to grade them
+
+Environment =
+
+* version of `gcc` - C compiler
+* version of `g++` - C++ compiler
+* version of `make`, `gdb`, `valgrind`, other tools
+* parameters specified when running those tools
+* etc
+
+# Administrative: C/C++ programming
+
+To ensure the environments match:
+
+* Test your programs on the CS dept Linux undergraduate cluster (more on this later)
+* Use prescribed parameters for `gcc`, `g++` & friends
+    * `gcc -std=c99 -Wall -Wextra -pedantic`
+    * `g++ -std=c++11 -Wall -Wextra -pedantic`
