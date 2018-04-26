@@ -171,7 +171,8 @@ def go(fh, prefix, force, no_pandoc, beamer_theme=None, skip_gitignore=False):
     :param prefix: String to prepend to output files
     :param force: If false, raise error when about to overwtite a file
     :param no_pandoc: If true, skip running pandoc
-    :param pandoc_style: Specifies style to pass to pandoc -t
+    :param beamer_theme: Beamer theme to pass to pandoc -V
+    :param skip_gitignore: False iff we should generate automatic .gitignore
     :return:
     """
     last_source_file = None
