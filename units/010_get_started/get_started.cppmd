@@ -1,3 +1,7 @@
+---
+urlcolor: blue
+---
+
 # Getting started
 
 \centering
@@ -16,7 +20,7 @@ www.langmead-lab.org
 
 \footnotesize
 
-Markdown for these slides available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
 
 # Course goals on a slide
 
@@ -85,9 +89,9 @@ Huge fraction of the world's crucial code is in C
 \centerline{\includegraphics[width=4.75in]{../images/tiobe.png}}
 
 \centering
-\tiny
+\scriptsize
 
-https://www.tiobe.com/tiobe-index/
+[www.tiobe.com/tiobe-index/](https://www.tiobe.com/tiobe-index/)
 
 \raggedright
 
@@ -127,16 +131,15 @@ Software jobs often require it; "we need someone who...
 
 # Why C/C++?
 
-Good and exciting "systems language" also exist
+There are other good languages also worth learning
 
-Many aim for a similar level of efficiency as C/C++
+Many aim for a similar level of efficiency as C/C++; often these are called ``systems languages''
 
 * But with simpler language
 * Less "burdened" by long history & by need to stay backward-compatible
 
 Examples
 
-* C# -- [docs.microsoft.com/en-us/dotnet/csharp](https://docs.microsoft.com/en-us/dotnet/csharp/)
 * Swift -- [developer.apple.com/swift](https://developer.apple.com/swift)
 * Go -- [golang.org](https://golang.org)
 * Rust -- [rust-lang.org](https://www.rust-lang.org/)
@@ -156,6 +159,6 @@ They seem to come quite close on efficiency...
 \centerline{\includegraphics[width=3.5in]{../images/tiobe_20.png}}
 
 \centering
-\tiny
+\scriptsize
 
-https://www.tiobe.com/tiobe-index/
+[www.tiobe.com/tiobe-index/](https://www.tiobe.com/tiobe-index/)
