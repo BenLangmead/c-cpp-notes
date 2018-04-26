@@ -14,6 +14,10 @@ www.langmead-lab.org
 
 \centerline{\includegraphics[width=1in]{../images/cc_by.png}}
 
+\footnotesize
+
+Markdown for these slides available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
 # Course goals on a slide
 
 *Create complex, correct programs in C and C++*
