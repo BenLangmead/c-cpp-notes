@@ -1,225 +1,157 @@
-# Intermediate programming
+# Getting started
 
-* Bookmark course page: [`http://ugrad.cs.jhu.edu/~cs220`](http://ugrad.cs.jhu.edu/~cs220)
-* Sign up for & bookmark Piazza: [`???`](???)
-* We'll also use Blackboard -- more on this later
+\centering
 
-# Administrative: Syllabus
+\Large
 
-* Prerequisite: Java or similar (often Python)
-    * C/C++ experience *not* a prerequisite
-* 3 75-minute meetings per week
-    * Some lecture, for learning concepts, intuition
-        * Participatory: questions and interaction encouraged
-    * In-class coding problems, with help from instructor & TAs
-* 
-* In-class midterm
+Ben Langmead
 
-# Administrative: Syllabus
+ben.langmead@gmail.com
 
-* 4 recommended textbooks
-    * Deitel & Deitel: C How to Program
-    * Kernighan & Ritchie, C Programming Language (2nd ed)
-    * Deitel & Deitel: C++ How to Program
-    * Koenig & Moo: Accelerated C++ 2000
+www.langmead-lab.org
 
-I will quote from them and refer to them.
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
 
-# Administrative: Syllabus
+\centerline{\includegraphics[width=1in]{../images/cc_by.png}}
 
-* Grading
-    * Participation: 15%
-        * To succeed: show up & follow in-class examples & tasks
-        * In-class work really matters! - and you'll have our help
-        * Some in-class work submitted via Blackboard (not graded)
-    * Quizzes: 15%
-        * ~6 quizzes, every other Friday starting 2/5
-        * Conducted on Blackboard
-    * Midterm: 15%
-        * Written, in-class on 3/11
+# Course goals on a slide
 
-# Administrative: Syllabus
+*Create complex, correct programs in C and C++*
 
-* Grading, continued
-    * Homework: 35%
-        * ~7 homeworks
-        * Some individual, some in pairs
-        * Design, implement, test, debug, profile C/C++ programs
-        * Submission via Blackboard
-    * Final team project: 20%
-        * Work with teammates to design and build a large, object-oriented software tool
-        * Likely that all teams will work on same problem
-        * Likely due during final exam period
-        * More details later
-    * No final exam (the project is the "exam")
+Learn modern programming ecosystem
 
-# Administrative: Syllabus
+* Linux
+* Compiler (`gcc`, `g++`)
+* Debugger (`gdb`)
+* Build system (`make`)
+* Source control (`git`)
 
-* Late policy
-    * All homeworks due at 11pm on due date
-    * 11-11:30pm: -10%
-    * No submissions accepted after 11:30pm
+Learn basic principles of software design and engineering, in preparation for future coursework
 
-# Administrative: Homework submissions
+# Prerequisites
 
-It is up to you to ensure that you successfully submit a complete homework.
+Course is primarily designed for people with experience with Java or a similar language
 
-# Administrative: TAs
+C/C++ experience *not* a prerequisite
 
-* We will have an excellent team of Teaching Assistants (TAs) and Course Assistants (CAs)
-    * Identities and office hours are to be determined
-    * Don't stay stuck!  Talk to them
+# Goals
 
-# Administrative: Professor
+Learn C
 
-* I will have a weekly office hour
-    * Office: 329 Malone Hall
-    * Time to be determined once TA office hour is settled
-    * Don't stay stuck!
-    * Don't be afraid!
+* Language features
+* Pointers & dynamic memory allocation
+* "Low-level" programming
 
-# Administrative: Sections
+Learn C++
 
-* 4 sessions of CS120 this spring
-    * This is section 2
-    * Section 1 & 3 taught by Prof. Sara More
-    * Section 4 taught by PhD students Shyam and Yotam
-* We will strive mightily to keep all 4 sections in sync
-    * Same topics covered on approximately the same days
-    * Quizzes on same days
-    * Midterm on same day
-    * Same homeworks, due on same days
-    * Final project same across sections, due dates same
-    * All sections share a Piazza class site
-    * TAs/CAs are (mostly) shared
+* How is it different from C?
+* Object-oriented programming
+* Generic programing
 
-# Administrative: C/C++ programming
+# Goals
 
-* We will be programming!
-    * In class
-    * For homework
-    * For final project
+Gain proficiency in Linux & related programming tools
 
-* Important that the *environment* you use to test your programs is the same environment we use to grade them
+* Basic command-line tools
+* Compilers, debuggers, profilers
 
-# Administrative: C/C++ programming
-
-* Environment where you test your programs must be the same as the environment we use to grade them
-
-* Environment =
-    * version of `gcc` - C compiler
-    * version of `g++` - C++ compiler
-    * version of `make`, `gcov`, `gdb`, `valgrind`, other tools
-    * parameters specified when running those tools
-    * etc
-
-# Administrative: C/C++ programming
-
-* Environment where you test your programs must be the same as the environment we use to grade them
-
-* Two components to making sure the environments match:
-    * Always test your assignments on the CS dept Linux undergraduate cluster (more on this later)
-    * Always use prescribed parameters for `gcc`, `g++` & friends
-        * Prescribed parameters given in class or in homeworks as needed
-
-# Administrative: CS account
-
-* If a CS major or minor, you are entitled to a permanent account on the Linux undergraduate cluster
-    * If you haven't already, visit Steve DeBlasio in Malone G61A
-* Otherwise, I have a form; fill it out and return to me today
-    * Application for access just for this course & semester
-
-# Introducing myself
-
-* Ben Langmead
-* Office: 329 Malone Hall
-* 4th year Assistant Professor
-* Study Computational Genomics
-    * I plan to sneak some genomics into our homework assignments
-* Lab website: [`http://www.langmead-lab.org`](http://www.langmead-lab.org)
-
-# What's Computational Genomics?
-
-* For more:
-    * [`http://www.langmead-lab.org/teaching-materials/`](http://www.langmead-lab.org/teaching-materials/)
-    * [`http://bit.ly/ADS1_videos`](http://bit.ly/ADS1_videos)
-
-# Nature and purpose of CS120
-
-* Course goals
-    * (There's a list of course outcomes on the official syllabus; this is the conversational version)
-    * Learn C
-        * Language features
-        * Pointers & dynamic memory allocation
-        * "Low-level" programming
-    * Learn C++
-        * How is it different from C?
-        * Object-oriented programming
-        * Generic programing
-
-# Nature and purpose of CS120
-
-* Course goals, continued
-    * Gain proficiency in Linux & related programming tools
-        * Basic command-line tools
-        * Compilers, debuggers, profilers
-    * Grow as a programmer & software engineer
-        * Test
-        * Debug
-        * "Long-term lazy"
-        * Requirements -> design -> implementation
+Grow as a programmer & software engineer
 
 # Why C/C++?
 
-* Ubiquitous, efficient, mature
+Why C/C++?
 
-* Ubiquitous: A huge fraction of the world's most crucial code is written in C
-    * Used Java?  JVM is written in C, as are many libraries
-    * Used Python?  Interpreter is written in C, as are many libraries
-    * Used the Internet?  Protocol stacks, code for the embedded systems your traffic traverses, apache web servers, ...
-    * Ubiquitous in science
-        * My lab members and I program in C/C++ all the time
+* Ubiquitous
+* Efficient
+* Mature
+
+# Ubiquitous
+
+Huge fraction of the world's crucial code is in C
+
+* Used Java?  JVM is written in C++, as are many libraries
+* Used Python?  CPython interpreter written in C
+* Used the Internet?  Networks stacks, code for the embedded systems your traffic traverses, web servers, ...
+* Like science?
+    * https://github.com/collections/software-in-science
+    * My lab members & I program in C/C++ a lot
+
+# Ubiquitous
+
+\centerline{\includegraphics[width=4.75in]{../images/tiobe.png}}
+
+\centering
+\tiny
+
+https://www.tiobe.com/tiobe-index/
+
+\raggedright
+
+\normalsize
+
+Based on search engine hits for `"<language> programming"`
+
+# Efficient
+
+Higher-level languages like Java & Python present a trade-off:
+
+* High-level languages "take care of things" for you
+
+    * Programs can be more concise, abstract
+    * Harder to make mistakes
+
+* ...but also hide things from you
+
+    * How variables are laid out in memory
+    * When memory is allocated and de-allocated
+    * Hardware features, especially non-portable features
+
+Because of what high-level languages hide, efficiency can be hard to achieve
+
+# Mature
+
+Around since the 1970s (C) and 80s (C++)
+
+Undergraduates have learned it for decades
+
+Software jobs often require it; "we need someone who...
+
+* ...can make something really fast if needed"
+* ...knows how to program all kinds of weird hardware"
+* ...knows how to interact with the operating system"
+* ...can handle our large codebase, written in C"
 
 # Why C/C++?
 
-* Mature:
-    * Around since the 70s (for C, 80s for C++)
-    * Undergraduates have learned it for decades
-    * Software jobs often require it; "we need someone who...
-        * ...can make something really fast if needed"
-        * ...knows how to program all kinds of weird hardware"
-        * ...knows how to interact with the operating system"
-        * ...can handle our large codebase, written in C"
+Good and exciting "systems language" also exist
+
+Many aim for a similar level of efficiency as C/C++
+
+* But with simpler language
+* Less "burdened" by long history & by need to stay backward-compatible
+
+Examples
+
+* C# -- [docs.microsoft.com/en-us/dotnet/csharp](https://docs.microsoft.com/en-us/dotnet/csharp/)
+* Swift -- [developer.apple.com/swift](https://developer.apple.com/swift)
+* Go -- [golang.org](https://golang.org)
+* Rust -- [rust-lang.org](https://www.rust-lang.org/)
 
 # Why C/C++?
 
-* Efficient: With higher-level languages like Java and Python, you make a trade
-    * High-level languages "take care of things" for you
-        * Programs can be more concise, abstract
-        * Harder to make mistakes
-    * ...but they also hide things from you
-        * How things are laid out in memory
-        * When memory is allocated and de-allocated
-        * Special hardware features, especially non-portable features
+They seem to come quite close on efficiency...
 
-# Unix / Linux
+\vspace{5mm}
 
-* You will need to get familiar with
-    * How to log into a Unix/Linux system
-        * `ssh` if you're on a Max or Linux system
-        * PuTTY if you're on Windows
-    * Basic command line
-        * Navigating directory structure
-        * Making / removing directories
-        * Copying, moving files
-    * How to edit files
-        * With `nano`, or (more advanced) `emacs` or `vim`
+...but they do not approach C/C++ in maturity/ubiquity 
 
-# Unix / Linux
+# Why C/C++?
 
-* Here's where to get started:
-    * [`http://rik.smith-unna.com/command_line_bootcamp`](http://rik.smith-unna.com/command_line_bootcamp)
-    * For Friday, be ready to:
-        * Log into undergraduate Linux cluster
-        * Basic Linux
-        * Edit source files
+\vspace{5mm}
+
+\centerline{\includegraphics[width=3.5in]{../images/tiobe_20.png}}
+
+\centering
+\tiny
+
+https://www.tiobe.com/tiobe-index/
