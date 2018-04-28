@@ -1,17 +1,40 @@
-# Outline
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
 
-* Programming workflow: edit, compile, run
-* Log in, write, compile and run a program
-* Variables
+# Stages of compilation & Hello, world
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=1in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
 
 # Basic C/C++ programming workflow
 
-\centerline{\includegraphics[width=4in]{compile_run.png}}
+\centerline{\includegraphics[width=4in]{../images/compile_run.png}}
 
 # Basic C/C++ programming workflow
 
 \vspace{0.25in}
-\centerline{\includegraphics[width=2in]{compile_run_just_edit.png}}
+\centerline{\includegraphics[width=2in]{../images/compile_run_just_edit.png}}
 
 * `emacs dna_search.c` (then edit, save, exit)
 * `emacs string_match.c` (then edit, save, exit)
@@ -20,31 +43,39 @@
 # Basic C/C++ programming workflow
 
 \vspace{0.25in}
-\centerline{\includegraphics[width=3in]{compile_run_just_compile.png}}
+\centerline{\includegraphics[width=3in]{../images/compile_run_just_compile.png}}
 
 * `gcc dna_search.c string_match.c, parse_input.c -std=c99 -pedantic -Wall -Wextra`
 
 # Inside the compiler
 
-* Step 1: preprocessor
-    * Gather the relevant code
-        * Could be spread across files that ``include'' and depend on each other
-    * Process the directives that start with `#`
-        * We'll soon see `#define`, `#include`
-* Step 2: compiler
-    * Turn human-readable *source code* into *object code*
-    * Might yield warnings & errors if your code has mistakes that are "visible" to compiler
-* Step 3: linker
-    * Gather relevant *object code* into a single executable file
-    * Might yield warnings & errors if relevant code is missing, there's a naming conflict, etc
+Step 1: preprocessor
+
+* Gather relevant source code
+
+    * Could be spread across source files that ``include'' & depend on each other
+
+* Process the directives that start with `#`
+
+    * We'll see `#define`, `#include`
+
+Step 2: compiler
+
+* Turn human-readable *source code* into *object code*
+* Might yield warnings & errors if your code has mistakes
+
+# Inside the compiler
+
+Step 3: linker
+
+* Gather relevant *object code* into a single executable file
+* Might yield warnings & errors if relevant code is missing, there's a naming conflict, etc
 
 # Inside the compiler
 
 Between source code and machine code is a human-readable version of the machine code called "assembly language"
 
-* Computer Systems Fundamentals discusses multiple versions of assembly language
-
-\tiny
+\scriptsize
 \centering
 
 ```
@@ -65,19 +96,13 @@ Ltmp2:
 	callq	_puts
 ```
 
-# Detailed C/C++ programming workflow
+# Hello world
 
-\centerline{\includegraphics[height=3.25in]{compile_detailed.png}}
+Create a directory where you will store your work for today
 
-# Workflow exercise
+Go to that directory and type `emacs hello_world.c`
 
-* `ssh ` ***user*** `@ugrad` ***[1-24]*** `.cs.jhu.edu`
-    * e.g. I do: `ssh langmea@ugrad17.cs.jhu.edu`
-* `pwd` (print your home directory path)
-* `mkdir -p cs120/1_29` (subdirectory for today)
-* `cd cs120/1_29`
-* `emacs hello_world.c`
-    * Or your favorite `emacs` alternative
+* Or use your favorite `emacs` alternative
 
 # Hello world
 
@@ -85,25 +110,60 @@ Ltmp2:
 #include <stdio.h>
 
 // Print "Hello world!" followed by newline and exit
-int main(void) {
-    puts("Hello world!");
+int main() {
+    printf("Hello world!\n");
     return 0;
 }
 -->
 
-* After `emacs hello_world.c`, type above into the editor
-* `Ctrl-x` `Ctrl-s` to save
-* `Ctrl-x` `Ctrl-c` to quit
+After `emacs hello_world.c`, type above into the editor
+
+`Ctrl-x` `Ctrl-s` to save
+
+`Ctrl-x` `Ctrl-c` to quit
 
 # Hello world
 
-* Compile and run:
+Compile:
 
 <!---cppmd-shell
 gcc hello_world.c -std=c99 -pedantic -Wall -Wextra
+ls -l a.out
+-->
+
+The result is an executable program called `a.out`
+
+(Later we'll see how to give it a better name)
+
+# Hello world
+
+If `a.out` is in our current directory, we run it by typing `./a.out`
+
+<!---cppmd-shell
 ./a.out
 -->
 
+# Hello world
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main() {
+    printf("Hello world!\n");
+    return 0;
+}
+-->
+
+`#include` is a preprocessor directive
+
+* Indicates a library to use, like `import` in Java or Python
+
+`main` is a function, every program has exactly one `main`
+
+`int` is its return type
+
+`()` says that `main` takes no parameters
 
 # Hello world
 
@@ -111,44 +171,36 @@ gcc hello_world.c -std=c99 -pedantic -Wall -Wextra
 #include <stdio.h>
 
 // Print "Hello world!" followed by newline and exit
-int main(void) {
-    puts("Hello world!");
+int main() {
+    printf("Hello world!\n");
     return 0;
 }
 -->
 
-* `#include` is a preprocessor directive, similar to `import`
-* `main` is a function, every program has exactly one `main`
-* `int` is its return value
-* `(void)` says that `main` takes no parameters
+
+`printf` prints a string to the terminal
+
+* `\n` indicates a "newline" -- goes to next line
+
+`return 0` means program completed with no errors
+
+Explanatory commenting (`// Print ...`) is good practice
 
 # Hello world
 
-<!---cppmd-file hello_world.c
-#include <stdio.h>
-
-// Print "Hello world!" followed by newline and exit
-int main(void) {
-    puts("Hello world!");
-    return 0;
-}
--->
-
-* `puts` prints a string to "standard out" (terminal) followed by newline
-* `return 0` means "program completed with no errors"
-* Explanatory comment before function (`// Print ...`) is good practice
-
-# Hello world
-
-* What if we omit `#include <stdio.h>`?:
+What if we omit `#include <stdio.h>`?:
 
 <!---cppmd-file hello_world_err.c
 // Print "Hello world!" followed by newline and exit
-int main(void) {
-    puts("Hello world!\n");
+int main() {
+    printf("Hello world!\n");
     return 0;
 }
 -->
+
+# Hello world
+
+Compiler prints a *compiler error* and does not generate `a.out`
 
 \scriptsize
 

@@ -1,5 +1,10 @@
 ---
 urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
 ---
 
 # Course conventions
@@ -22,37 +27,35 @@ www.langmead-lab.org
 
 Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
 
-# Course conventions
-
-Here I describe conventions used throughout the course notes
-
-# Formatting
-
-I adhere fairly closely to the formatting guidelines in the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html#Formatting)
-
-I will use `()` to denote an empty argument list 
-
-# Course conventions
-
-From here on, the conventions I descrive have more to do with language details than with basics
-
-If you are learning C/C++ for the first time, you can skim these; they exist to set expectations for people who already know some C/C++
-
 # Language versions
 
 C standard used is [C99](https://en.wikipedia.org/wiki/C99)
 
-* Though I will explicitly discourage use of variable length arrays
+* I will explicitly discourage use of variable length arrays
 
 C++ standard: [C++11](https://en.wikipedia.org/wiki/C%2B%2B11)
 
-* Though I will deliberately delay introducing some of the C++11 "goodies" like `auto` and ranged-`for`
+* I will delay introducing some C++11 features like `auto` and ranged-`for`
 
-# Compiling
+# Editing
+
+When I code live in the classroom, I use `emacs`
+
+These slides will provide occasional `emacs` tips
+
+Feel free to use your preferred editor; you might choose one with: 
+
+* Syntax highlighting (different colors denote different parts of the program)
+* Integration with `git`
+* Stronger integrations with the compiler
+
+    * E.g. highlighting compiler warnings & errors
+
+# Code
 
 Slides will often present source code
 
-Where possible/convenient, code for the full program will be shown:
+Where possible, code for full program will be shown:
 
 <!---cppmd-file mysterious.c
 #include <stdio.h>
@@ -65,9 +68,9 @@ int main() {
 }
 -->
 
-# Compiling
+# Code
 
-When the code is too long to fit clearly on a slide, we use `...` to denote elided code
+When code is too long to fit, I use `...` to denote elided code
 
 \footnotesize
 
@@ -85,13 +88,62 @@ When the code is too long to fit clearly on a slide, we use `...` to denote elid
     };
 ```
 
-# Compiling
+# Shell / compiling
 
-Sometimes compilation will be:
+Slides will also sometimes present shell commands:
 
-* from source to binary in one command
-* from source to object files (`.o`) in one *compilation* command, and from `.o` to binary in a second *linking* command
+<!---cppmd-file no-echo hello_world.c
+#include <stdio.h>
 
-I will switch between these depending on the situation
+int main() {
+    printf("Hello, world!\n");
+    return 0;
+}
+-->
 
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
 
+`$` prefixes a command you would enter at the shell prompt (excluding the prompt `$` itself)
+
+Output is shown just after the command that generates it
+
+* `./a.out` prints `Hello, world!`
+
+# Shell / compiling
+
+Slides do not assume much Linux proficiency
+
+* I assume you know something about *standard streams*...
+
+    * Standard input
+    * Standard output
+    * Standard error
+
+* ...and input and output redirection, e.g.:
+
+    * `cat file.txt | ./a.out`
+    * `echo "Hello world" | ./a.out`
+    * `./a.out > /dev/null`
+
+# Shell / compiling
+
+Commands and outputs are run in / transcribed from a shell session run in a Fedora 27 Docker container
+
+You can use the same image, but it's not necessary
+
+* Available at: [`hub.docker.com/r/benlangmead/c-cpp-notes/`](https://hub.docker.com/r/benlangmead/c-cpp-notes/)
+* Software versions:
+    * `gcc-7.2.1`
+    * `g++-7.2.1`
+    * `gdb: Fedora 8.0.1-33.fc27`
+    * `valgrind-3.13.0`
+    * `git v2.14.3`
+
+# Shell / compiling
+
+If you are using a different software setup than the one described on the previous slide, you may see different compiler warnings and errors than we show
+
+You may also experience different error messages or symptoms at runtime

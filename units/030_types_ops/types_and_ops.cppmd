@@ -1,5 +1,10 @@
 ---
 urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
 ---
 
 # Variables, types, operators
@@ -16,7 +21,7 @@ www.langmead-lab.org
 
 \centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
 
-\centerline{\includegraphics[width=1in]{../images/cc_by.png}}
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
 
 \footnotesize
 
@@ -71,7 +76,7 @@ https://en.wikipedia.org/wiki/Fahrenheit#/media/File:Raumthermometer_Fahrenheit%
 <!---cppmd-file mysterious.c
 #include <stdio.h>
 
-int main(void) {
+int main() {
     int x = 71;
     float y = 5.0 / 9.0 * (x - 32);
     printf("%.2f", y); // print up to 2 decimal places
@@ -282,6 +287,8 @@ No such thing as `unsigned float` or `unsigned double`
 
 More on *numeric representations* and *numeric precision* later
 
+We typically use `int`, `double` and `char`
+
 <!---cppmd-file no-echo sizes.c
 #include <stdio.h>
 
@@ -333,7 +340,7 @@ gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
 <!---cppmd-file mysterious.c
 #include <stdio.h>
 
-int main(void) {
+int main() {
     int x = 71;
     float y = 5.0 / 9.0 * (x - 32);
     printf("%0.2f", y); // print up to 2 decimal places
@@ -354,7 +361,7 @@ gcc mysterious.c -std=c99 -pedantic -Wall -Wextra
 #include <stdio.h>
 
 // Convert 71 degrees fahrenheit to celsius, print result
-int main(void) {
+int main() {
     int fahrenheit = 71;
     float celsius = 5.0 / 9.0 * (fahrenheit - 32);
     printf("%0.2f", celsius); // print up to 2 decimal places
@@ -379,7 +386,7 @@ gcc convert_fc.c -std=c99 -pedantic -Wall -Wextra
 #include <stdio.h>
 
 // Convert 71 degrees fahrenheit to celsius, print result
-int main(void) {
+int main() {
     int fahrenheit = 71;
     //float celsius = 5.0 / 9.0 * (fahrenheit - 32);
     float celsius = 5.0 / 9.0 * fahrenheit - 32;
@@ -396,7 +403,7 @@ int main(void) {
 #include <stdio.h>
 
 // Convert 71 degrees fahrenheit to celsius, print result
-int main(void) {
+int main() {
     int fahrenheit = 71;
     float celsius = 5.0 / 9.0 *  fahrenheit - 32 ;
     //               was: 9.0 * (fahrenheit - 32);
@@ -414,14 +421,42 @@ gcc convert_fc_badprec.c -std=c99 -pedantic -Wall -Wextra
 
 # Operator precedence
 
-\vspace{3mm}
+Higher in the table means higher precedence
 
-\centerline{\includegraphics[width=2.4in]{op_precedence_1.jpg}}
+\tiny
+
+| Operator      | Function                          | Associativity  |
+|:-------------:|:--------------------------------- |:-------------- |
+| `()`          | Function call / parentheses       | left to right  |
+| `[]`          | Array subscript                   |                |
+| `.`, `->`     | Member selection                  |                |
+| `++`, `--`    | Postincrement/postdecrement       |                |
+|---------------|-----------------------------------|----------------|
+| `++`, `--`    | Preincrement/predecrement         | right to left  |
+| `!`           | Logical negation (not)            |                |
+| `~`           | Bitwise complement (not)          |                |
+| `*`, `&`      | Pointer dereference, reference    |                |
+|---------------|-----------------------------------|----------------|
+| `*`, `/`, `%` | Multiplication, division, modulus | left to right  |
+|---------------|-----------------------------------|----------------|
+| `+`, `-`      | Addition, subtraction             | left to right  |
+|---------------|-----------------------------------|----------------|
+| `<<`, `>>`    | Bitwise left- and right shift     | left to right  |
+|---------------|-----------------------------------|----------------|
+| `<`, `<=`     | Relational operators              | left to right  |
+| `>=`, `>`     |                                   |                |
 
 # Operator precedence
 
-* More here: [`en.cppreference.com/w/c/language/operator_precedence`](http://en.cppreference.com/w/c/language/operator_precedence)
-* Know where to look up the rules; use parentheses when in doubt
+Know where to look up the rules
+
+\footnotesize
+
+* [`en.cppreference.com/w/c/language/operator_precedence`](http://en.cppreference.com/w/c/language/operator_precedence)
+
+\normalsize
+
+...and use parentheses when in doubt
 
 # Program variant
 
@@ -431,7 +466,7 @@ gcc convert_fc_badprec.c -std=c99 -pedantic -Wall -Wextra
 #include <stdio.h>
 
 // Convert 71 degrees fahrenheit to celsius, print result
-int main(void) {
+int main() {
     int fahrenheit = 71;
     int base = 32;
     float factor = 5.0 / 9.0;
@@ -443,7 +478,7 @@ int main(void) {
 
 \normalsize
 
-* Result is same
+Result is same
 
 \footnotesize
 
@@ -460,7 +495,7 @@ gcc convert_fc_var1.c -std=c99 -pedantic -Wall -Wextra
 #include <stdio.h>
 
 // Convert 71 degrees fahrenheit to celsius, print result
-int main(void) {
+int main() {
     int fahrenheit = 71;
     const int base = 32; // can't be modified
     const float factor = 5.0 / 9.0; // can't be modified
@@ -470,12 +505,13 @@ int main(void) {
 }
 -->
 
-# const
+# `const`
 
-* `const int base = 32;`
-* Put `const` before the type to say a variable cannot be modified after first assignment
+`const int base = 32;`
 
-# Misuse of const
+`const` before a type says the variable *cannot be modified later*
+
+# `const`
 
 \footnotesize
 
@@ -483,7 +519,7 @@ int main(void) {
 #include <stdio.h>
 
 // Convert 71 degrees fahrenheit to celsius, print result
-int main(void) {
+int main() {
     const int fahrenheit = 71;
     const float celsius = 5.0 / 9.0 * fahrenheit - 32;
     printf("%0.2f", celsius); // print up to 2 decimal places
@@ -494,7 +530,7 @@ int main(void) {
 }
 -->
 
-# Misuse of const
+# `const`
 
 \footnotesize
 
@@ -502,28 +538,23 @@ int main(void) {
 gcc convert_fc_var3.c -std=c99 -pedantic -Wall -Wextra
 -->
 
-# Logical operators
+# Logical & relational operators
 
-\centerline{\includegraphics[width=2.75in]{logical_operators.jpg}}
+Relational & logical operators:
 
-* Inputs and outputs are Boolean values
-\footnotesize
-* [`http://www.tutorialspoint.com/cprogramming/c_operators.htm`](http://www.tutorialspoint.com/cprogramming/c_operators.htm)
-
-# Relational operators
-
-\centerline{\includegraphics[width=2.3in]{relational_operators.jpg}}
-
-* Inputs are numbers, outputs are Boolean values
-\footnotesize
-* [`http://www.tutorialspoint.com/cprogramming/c_operators.htm`](http://www.tutorialspoint.com/cprogramming/c_operators.htm)
-
-# Characters, strings, arrays
-
-* We said a `char` variable holds a single character
-    * `char digit = '4';`
-    * `char bang = '!';`
-    * Note: these *must* be single quotes; double quotes are for strings, not `char`s
-* Behind the scenes, `char` is just like `int`
-    * This is valid: `char digit = '4' - 1;`
-    * `digit` now contains the character `'3'`
+\begin{table}[ht]
+\centering
+\begin{tabular}{clcr}
+\hline
+Operator & Function & Example & Result \\
+\hline
+\texttt{==} / \texttt{!=} & Equals / does not equal & \texttt{1 == 1} & true (non-0) \\
+\texttt{<} / \texttt{>} & Less / greater & \texttt{5 < 7} & true (non-0) \\
+\texttt{<=} / \texttt{>=} & Less / greater or equal & \texttt{5 >= 7} & false (0) \\
+\hline
+\texttt{\&\&} & Both true (\textit{AND}) & \texttt{1 \&\& 0} & false (0) \\
+\texttt{||} & Either true (\textit{OR}) & \texttt{1 || 0} & true (non-0) \\
+\texttt{!} & Opposite (\textit{NOT}) & \texttt{!(1 || 0)} & false (0) \\
+\hline
+\end{tabular}
+\end{table}

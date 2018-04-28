@@ -1,5 +1,10 @@
 ---
 urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
 ---
 
 # Getting started
@@ -146,11 +151,11 @@ Examples
 
 # Why C/C++?
 
-They seem to come quite close on efficiency...
+On efficiency, they approach C/C++
 
-\vspace{5mm}
+But they do not approach C/C++ in maturity/ubiquity 
 
-...but they do not approach C/C++ in maturity/ubiquity 
+* Some, like Swift, are associated with (& tied to) particular companies
 
 # Why C/C++?
 
