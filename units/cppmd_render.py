@@ -68,7 +68,8 @@ def prefixize(st, pref):
 
 
 def wrap(st):
-    return '\n'.join(textwrap.wrap(st, 70, replace_whitespace=False)) + '\n' 
+    wrapped = map(lambda x: textwrap.fill(x, 80, replace_whitespace=False), st.splitlines())
+    return '\n'.join(wrapped) + '\n'
 
 
 def handle_shell_commands(fh, ofh, last_source_file=None, no_echo=False, no_console=False, prefix='$ '):
