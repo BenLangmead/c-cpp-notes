@@ -1,54 +1,132 @@
-# Outline
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
 
-Decision statements
+# Decisions
 
-* `if / else if / else`
-* `switch / case`
+\centering
 
-# if
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
 
 \footnotesize
 
-<!---cppmd-file eg_02_01_1.c
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# `if` example
+
+\footnotesize
+
+<!---cppmd-file if1.c
 #include <stdio.h>
 
-int main(void) {
+int main() {
     int number = 12;
     if(number % 2 == 0) {
-        puts("yes");
+        printf("yes\n");
+    }
+    return 0;
+}
+-->
+
+\normalsize
+
+Does it say "yes"?
+
+# `if` example
+
+\footnotesize
+
+<!---cppmd-file if1.c
+#include <stdio.h>
+
+int main() {
+    int number = 12;
+    if(number % 2 == 0) {
+        printf("yes\n");
     }
     return 0;
 }
 -->
 
 <!---cppmd-shell
-gcc %PREV% -std=c99 -pedantic -Wall -Wextra
-./a.out
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+# `if` example
+
+\footnotesize
+
+<!---cppmd-file if2.c
+#include <stdio.h>
+
+int main() {
+    int number = 13;
+    if(number % 2 == 0) {
+        printf("yes\n");
+    }
+    else {
+        printf("no\n");
+    }
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+# `if` example
+
+\footnotesize
+
+<!---cppmd-file if3.c
+#include <stdio.h>
+
+int main() {
+    int number = 13;
+    if(number = 1) {
+        printf("yes\n");
+    }
+    else {
+        printf("no\n");
+    }
+    return 0;
+}
 -->
 
 # if / else
 
-\footnotesize
-
-<!---cppmd-file eg_02_01_2.c
-#include <stdio.h>
-
-int main(void) {
-    int number = 13;
-    if(number % 2 == 0) {
-        puts("yes");
-    }
-    else {
-        puts("no");
-    }
-    return 0;
-}
--->
+\scriptsize
 
 <!---cppmd-shell
-gcc %PREV% -std=c99 -pedantic -Wall -Wextra
-./a.out
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
 -->
+
+# if / else
+
+*Careful*: Expression `number = 1` evaluates *to the assigned value*, which is 1
+
+* Makes it easier to confuse `number = 1` and `number == 1`
+
+Fortunately, modern compilers can warn us if we mistakenly use assignment in a condition
 
 # if / else if / else
 
@@ -56,22 +134,22 @@ gcc %PREV% -std=c99 -pedantic -Wall -Wextra
 
 <!---cppmd-file grading.c
 #include <stdio.h>
-int main(void) {
+int main() {
     int x = 79;
     if(x >= 90) {
-        puts("A");
+        printf("A\n");
     }
     else if(x >= 80) {
-        puts("B");
+        printf("B\n");
     }
     else if(x >= 70) {
-        puts("C");
+        printf("C\n");
     }
     else if(x >= 60) {
-        puts("D");
+        printf("D\n");
     }
     else {
-        puts("F");
+        printf("F\n");
     }
     return 0;
 }
@@ -79,9 +157,11 @@ int main(void) {
 
 # if / else if / else
 
+\footnotesize
+
 <!---cppmd-shell
-gcc grading.c -std=c99 -pedantic -Wall -Wextra
-./a.out
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
 -->
 
 # switch / case
@@ -90,7 +170,7 @@ gcc grading.c -std=c99 -pedantic -Wall -Wextra
 
 <!---cppmd-file grading_switch.c
 #include <stdio.h>
-int main(void) {
+int main() {
     char grade = 'C';
     int points = 0;
     switch(grade) {
@@ -108,13 +188,15 @@ int main(void) {
             break;
         default:
             points = 0;
-            break;
     }
     printf("Grade %c contributes %d GPA points\n", grade, points);
+    return 0;
 }
 -->
 
 # switch / case
+
+\footnotesize
 
 <!---cppmd-shell
 gcc %PREV% -std=c99 -pedantic -Wall -Wextra
@@ -127,14 +209,14 @@ gcc %PREV% -std=c99 -pedantic -Wall -Wextra
 
 ```c
 if(a) {
-    puts("a is true");
+    printf("a is true\n");
 }
 
 if(a) {
-    puts("a is true");
+    printf("a is true\n");
 }
 else {
-    puts("a is false");
+    printf("a is false\n");
 }
 ```
 
@@ -142,13 +224,13 @@ else {
 
 ```c
 if(a) {
-    puts("a was true");
+    printf("a was true\n");
 }
 else if(b) {
-    puts("a is false and b is true");
+    printf("a is false and b is true\n");
 }
 else {
-    puts("both a and b are false");
+    printf("both a and b are false\n");
 }
 ```
 
@@ -170,91 +252,205 @@ else {
 
 # Compound assignments
 
-\centerline{\includegraphics[width=4in]{compound_assign.jpg}}
+Compound assignment operators perform an operation with a variable operand and assign the result back to teh variable
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{cc}
+\hline
+Example & Equivalent \\
+\hline
+\texttt{a += 5} & \texttt{a = a + 5} \\
+\texttt{a -= 5} & \texttt{a = a - 5} \\
+\texttt{a *= 5} & \texttt{a = a * 5} \\
+\texttt{a /= 5} & \texttt{a = a / 5} \\
+\texttt{a \%= 5} & \texttt{a = a \% 5} \\
+\hline
+\end{tabular}
+\end{table}
 
 # Increment and decrement
 
-\vspace{5mm}
-\centerline{\includegraphics[width=4in]{incr_decr.jpg}}
+Increment and decrement operators act like `+= 1` and `-= 1`
 
-* Note the difference:
-    * `i++` increments `i` and evaluates to *old* `i`
-    * `++i` increments `i` and evaluates to *new* `i`
-    * Likewise for `i--`, `--i`
-
-# Difference between i++ and ++i
-
-\scriptsize
-
-<!---cppmd-file incr_example.c
-#include <stdio.h>
-int main(void) {
-    int i = 0;
-    if(++i) {
-        puts("++i was non-zero");
-    }
-    printf("i=%d\n", i);
-    i = 0;
-    if(i++) {
-        puts("i++ was non-zero");
-    }
-    printf("i=%d\n", i);
-}
--->
-
-<!---cppmd-shell
-gcc %PREV% -std=c99 -pedantic -Wall -Wextra
-./a.out
--->
+\begin{table}[ht]
+\centering
+\begin{tabular}{ccc}
+\hline
+Example & Equivalent & Evaluates to \\
+\hline
+\texttt{a++} & \texttt{a += 1} & original (smaller) \texttt{a} \\
+\texttt{++a} & \texttt{a += 1} & new (larger) \texttt{a} \\
+\texttt{a--} & \texttt{a -= 1} & original (larger) \texttt{a} \\
+\texttt{--a} & \texttt{a -= 1} & new (smaller) \texttt{a} \\
+\hline
+\end{tabular}
+\end{table}
 
 # for
 
 <!---cppmd-file for_example.c
 #include <stdio.h>
-int main(void) {
+int main() {
     for(int i = 0; i < 10; i++) {
         printf("%d ", i);
     }
+    return 0;
 }
 -->
 
+\footnotesize 
+
 <!---cppmd-shell
-gcc %PREV% -std=c99 -pedantic -Wall -Wextra
-./a.out
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
 -->
 
 # while
 
-\footnotesize
-
 <!---cppmd-file while_example.c
 #include <stdio.h>
-int main(void) {
+int main() {
     int i = 1;
     while((i % 7) != 0) {
         printf("%d ", i);
         i++;
     }
+    return 0;
 }
+-->
+
+\footnotesize
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
 -->
 
 # do / while
 
 <!---cppmd-file do_while_example.c
 #include <stdio.h>
-int main(void) {
+int main() {
     int i = 0;
     do {
         printf("%d ", i);
         i++;
     } while((i % 7) != 0);
+    return 0;
 }
 -->
+
+\footnotesize
 
 <!---cppmd-shell
 gcc %PREV% -std=c99 -pedantic -Wall -Wextra
 ./a.out
 -->
+
+# `scanf` loop
+
+\footnotesize
+
+<!---cppmd-file sum.c
+#include <stdio.h>
+int main() {
+    int sum = 0;
+    while(1) {
+        int addend = 0;
+        if(scanf("%d", &addend) != 1) {
+            break; // immediately exit loop
+        }
+        sum += addend;
+    }
+    printf("%d\n", sum);
+    return 0;
+}
+-->
+
+\normalsize
+
+This continues to scan even when you press enter.  To signal end-of-input, press `Ctrl-D` (possibly twice).  
+
+# Nesting
+
+Loops can be nested inside other loops
+
+Loops & decision statements can be arbitrarily nested
+
+* We use terms *outer* & *inner* to distinguish levels of nesting
+
+\footnotesize
+
+```c
+    while(...) {          // OUTER LOOP
+        if(...) {
+            do {          // INNER LOOP
+                if(...) {
+                    ...
+                } else {
+                    ...
+                }
+            } while(...);
+        }
+    }
+```
+
+# `break` & `continue`
+
+`break` exits a loop, `continue` advances to the next iteration
+
+They affect the *most immediate loop* containing the `break`/`continue`.
+
+\footnotesize
+
+```c
+    while(...) {          // OUTER LOOP
+        if(...) {
+            break;        // exit outer loop
+        }
+        do {              // INNER LOOP
+            if(...) {
+                continue; // advance inner loop
+            }
+        } while(...);
+    }
+```
+
+\normalsize
+
+`break`/`continue` work *only* with loops, not with `if`/`else`, functions, etc
+
+# Code blocks
+
+In examples so far, we used `{...}` to delimit a block of code:
+
+```c
+    while(...) {
+        if(...) {
+            break;
+        }
+        do {
+            if(...) {
+                continue;
+            }
+        } while(...);
+    }
+```
+
+# Code blocks
+
+If block consists of single statement, can omit `{` and `}`
+
+
+```c
+    while(...) {
+        if(...) break;        // { } omitted
+        do {
+            if(...) continue; // { } omitted
+        } while(...);
+    }
+```
 
 # Loop summary
 
@@ -266,121 +462,6 @@ gcc %PREV% -std=c99 -pedantic -Wall -Wextra
     * `initialize` happens first; usually declares & assigns "index variable"
     * Iterates $\geq$ 0 times, as long as boolean expression is true
     * Right after `stmts`, `update` is run; often it increments the index variable (`i++`)
-* More examples: [`http://bit.ly/cs120_loop_eg`](http://bit.ly/cs120_loop_eg)
+* `break` immediately exits loop
+* `continue` immediately proceeds to next iteration of loop
 
-<!---cppmd-file no-echo count_bases_1.c
-#include <stdio.h>
-#include <string.h>
-
-// printf declared in stdio.h
-// strlen declared in string.h
-
-int main(void)
-{
-    // "dna" holds beginning of human mitochrondrial genome sequence
-    const char *dna = "GATCACAGGTCTATCACCCTATTAACCACTCACGGGAGCTCTCCATGCAT"
-                      "TTGGTATTTTCGTCTGGGGGGTGTGCACGCGATAGCATTGCGAGACGCTG"
-                      "GAGCCGGAGCACCCTATGTCGCAGTATCTGTCTTTGATTCCTGCCTCATT"
-                      "CTATTATTTATCGCACCTACGTTCAATATTACAGGCGAACATACCTACTA"
-                      "AAGTGTGTTAATTAATTAATGCTTGTAGGACATAATAATAACAATTGAAT";
-
-    // Note: above is one long string literal, wrapped across lines
-
-    int num_a = 0;
-    int num_c = 0;
-    int num_g = 0;
-    int num_t = 0;
-
-    // strlen is a function that returns the length of the string
-    int dna_len = strlen(dna);
-
-    for(int i = 0; i < dna_len; i++) {
-        char dna_char = dna[i];
-        // TODO: tally As, Cs, Gs, and Ts
-    }
-
-    printf("A:%d, C:%d, G:%d, T:%d\n", num_a, num_c, num_g, num_t);
-}
--->
-
-<!---cppmd-shell no-echo
-mkdir -p ~/cs120; chmod a+rx ~/cs120
-cp %PREV% ~/cs120 ; chmod a+r ~/cs120/%PREV%
--->
-
-# DNA exercise
-
-* Log into CS undergraduate cluster
-    * Terminal: `ssh ` ***user*** `@ugrad` ***[1-24]*** `.cs.jhu.edu`
-    * PuTTY: connect to: `ugrad` ***[1-24]*** `.cs.jhu.edu`
-* `mkdir -p cs120/2_01`
-* `cd cs120/2_01`
-* `cp ~langmea/cs120/count_bases.c .`
-* `nano count_bases.c`
-    * Or your favorite `nano` alternative
-* To test:
-    * `gcc count_bases.c -std=c99 -pedantic -Wall -Wextra`
-    * `./a.out`
-
-# Text exercise
-
-<!---cppmd-file no-echo count_chars.c
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-
-// printf declared in stdio.h
-// strlen declared in string.h
-
-// isalpha, isdigit, isspace declared in ctype.h
-// See also: http://www.cplusplus.com/reference/cctype/
-
-int main(void)
-{
-    const char *text = "4 score and 7 years ago our fathers brought "
-                       "4th on this continent, a new nation, "
-                       "conceived in Liberty, and dedic8d to the "
-                       "proposition that all men are cre8d =";
-
-    int num_alpha = 0;  // # alphabet chars ('A'-'Z' and 'a'-'z')
-    int num_digits = 0; // # digit chars ('0' - '9')
-    int num_space = 0;  // # whitespace chars (spaces, tabs, newlines, etc)
-
-    int text_len = strlen(text);
-
-    int i = 0;
-    while(i < text_len) { // don't modify the while loop or its condition
-        // TODO: count alphabetical, digit and whitespace characters
-    };
-
-    // Special challenge: instead of using isalpha, isdigit and
-    // isspace, use relational operators and your knowledge of the
-    // characters' ASCII values: http://www.asciitable.com
-
-    printf("# alphabetical:%d, # digit:%d, # whitespace:%d\n",
-           num_alpha, num_digits, num_space);
-}
--->
-
-<!---cppmd-shell no-echo
-mkdir -p ~/cs120; chmod a+rx ~/cs120
-cp %PREV% ~/cs120 ; chmod a+r ~/cs120/%PREV%
--->
-
-* (Assuming you're still in `cs120/2_01` subdirectory)
-* `cp ~langmea/cs120/count_chars.c .`
-* `nano count_chars.c`
-    * Or your favorite `nano` alternative
-* To test:
-    * `gcc count_chars.c -std=c99 -pedantic -Wall -Wextra`
-    * `./a.out`
-
-# Characters, strings, arrays
-
-* We said a `char` variable holds a single character
-    * `char digit = '4';`
-    * `char bang = '!';`
-    * Note: these *must* be single quotes; in C/C++, double quotes are strictly for strings, single quotes strictly for `char`s
-* Behind the scenes, `char` is just like `int`
-    * This is valid: `char digit = '4' - 1;`
-    * `digit` now contains the character `'3'`
