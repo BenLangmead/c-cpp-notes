@@ -1,25 +1,51 @@
-# Outline
+---
+urlcolor: blue
+---
 
-* Variables & types
-* Arithmetic operators
-* Operator precedence
-* `const`
-* Logical and relational operators
-* Characters & ASCII
+# Variables, types, operators
 
-And many code examples
+\centering
 
-# Mysterious program
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=1in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Mystery program
 
 What does this program do?
 
 <!---cppmd-file mysterious.c
 #include <stdio.h>
 
-int main(void) {
+int main() {
     int x = 71;
     float y = 5.0 / 9.0 * (x - 32);
-    printf("%0.2f", y); // print up to 2 decimal places
+    printf("%.2f", y); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+# Mystery program
+
+<!---cppmd-file mysterious.c
+#include <stdio.h>
+
+int main() {
+    int x = 71;
+    float y = 5.0 / 9.0 * (x - 32);
+    printf("%.2f", y); // print up to 2 decimal places
     return 0;
 }
 -->
@@ -33,7 +59,7 @@ gcc mysterious.c -std=c99 -pedantic -Wall -Wextra
 
 \vspace{3mm}
 
-\centerline{\includegraphics[width=3in]{fahrenheit_celsius.jpg}}
+\centerline{\includegraphics[width=3in]{../images/fahrenheit_celsius.jpg}}
 
 \centering
 \tiny
@@ -46,6 +72,24 @@ https://en.wikipedia.org/wiki/Fahrenheit#/media/File:Raumthermometer_Fahrenheit%
 #include <stdio.h>
 
 int main(void) {
+    int x = 71;
+    float y = 5.0 / 9.0 * (x - 32);
+    printf("%.2f", y); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc mysterious.c -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Mystery program
+
+<!---cppmd-file mysterious.c
+#include <stdio.h>
+
+int main() {
     int x = 71;
     float y = 5.0 / 9.0 * (x - 32);
     printf("%0.2f", y); // print up to 2 decimal places
@@ -67,24 +111,61 @@ int main(void) {
 
 `=` is the *assignment operator*, which modifies a variable's value
 
-* `num_students = 32;`
+```
+    num_students = 32; // assign
+    printf("Student added\n");
+    num_students = 33; // assign again
+    printf("2 students dropped\n");
+    num_students = 31; // assign again
+```
 
 # Assignment
 
-* It is good practice to declare and assign *at the same time*:
-    * `int num_students = 32;`
-* This is also called *initializing* the variable
-* Generally, a variable that has been declared but not yet assigned has an "undefined" value
+It is good practice to declare and assign *at the same time*:
 
-# Aside
+```
+    int num_students = 32;
+```
 
-* **"Undefined"** strikes fear into our hearts
-* Programs with undefined data or behavior can (often do) fail in mysterious ways
-* Failure mode might change from run to run
-* We will learn good practices; e.g.:
-    * Declare and assign at the same time
-    * Pay attention to compiler warnings
-    * Use `valgrind` to diagnose memory mistakes (more later)
+This is also called *initializing* the variable
+
+A variable that has been declared but not yet assigned has an "undefined" value
+
+# Mystery program
+
+What's a good way to make this mystery program less mysterious?
+
+<!---cppmd-file mysterious.c
+#include <stdio.h>
+
+int main() {
+    int x = 71;
+    float y = 5.0 / 9.0 * (x - 32);
+    printf("%0.2f", y); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+# Less mysterious program
+
+\footnotesize
+
+<!---cppmd-file convert_fc.c
+#include <stdio.h>
+
+// Convert 71 degrees fahrenheit to celsius, print result
+int main() {
+    int fahrenheit = 71;
+    float celsius = 5.0 / 9.0 * (fahrenheit - 32);
+    printf("%0.2f", celsius); // print up to 2 decimal places
+    return 0;
+}
+-->
+
+\normalsize
+
+* Give variables meaningful names
+* `// explanatory comments`
 
 # Types
 
@@ -96,47 +177,156 @@ int main(void) {
     * `float`: single-precision floating point number
     * `double`: double-precision floating point number
 
+# Review
+
+`int num_students = 35;`
+
+* Variables have a name, a value and a type
+* Type determines the kind of values it's allowed to have
+* Good practice: give (*assign*) a variable a value at the same time as you *declare* it
+* Give variables meaningful names
+
 # Types
 
-* More details here: [`https://en.wikipedia.org/wiki/C_data_types`](https://en.wikipedia.org/wiki/C_data_types)
-* In this class, we'll avoid the details about:
-    * How integer & floating-point types are represented in memory
-    * How large or small they're allowed to be
-    * Overflow & underflow
+Integer types
 
-# Types & operators
+* `int`: positive or negative integer
+* `unsigned int`: positive integer (or 0)
 
-* Character type
-    * `char`: holds a 1-byte character, `'A'`, `'B'`, `'$'`, ...
-    * `char`s are basically integers, as we'll see
+\footnotesize
 
-* Boolean type
-    * `bool`: value can be `true` or `false`
-    * Integer types can also function as `bool`s, where `0`=`false`, non-`0`=`true`
-        * This is quite common, since `bool` was only introduced in C99
-        * Generally, C mindset is "booleans are just integers"
+<!---cppmd-file ints.c
+#include <stdio.h>
+
+int main() {
+    int x = -10; 
+    unsigned int y = 333;
+    printf("%d %u\n", x, y);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Types
+
+Floating-point (decimal) types
+
+* `float`: single-precision floating point number
+* `double`: double-precision floating point number
+
+\footnotesize
+
+<!---cppmd-file floats.c
+#include <stdio.h>
+
+int main() {
+    float w = 10000.0; 
+    double z = 3.141592;
+    printf("%f %.3f %e\n", w, z, w);
+    // %e: scientific notation, %.3f: print 3 decimal places
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Types
+
+`char`: character type
+
+* Holds a 1-byte character, `'A'`, `'B'`, `'$'`, `'\n'`...
+* `char`s are basically integers, as we'll see
+
+# Types
+
+Some other languages support a "Boolean" (true or false) type
+
+In C, integers function as booleans
+
+* `0`=`false`, non-`0`=`true`
+
+# Types
+
+\footnotesize
+
+| Type     | Stands for                        | Size*   |  Range                    |
+| --------:|:--------------------------------- |:--------|:------------------------- |
+| `char`   | Character                         | 1 byte  | -128 -- 127               |
+| `short`  | Short integer                     | 2 bytes | -32,768 -- 32,767         |
+| `int`    | Integer                           | 4 bytes | $-2^{31}$ -- ($2^{31}-1$) |
+| `long`   | Long integer                      | 8 bytes | $-2^{63}$ -- ($2^{63}-1$) |
+| `float`  | Floating point (single precision) | 4 bytes | 1.2e-38 -- 3.4e+38        |
+| `double` | Floating point (double precision) | 8 bytes | 2.3e-308 -- 1.7e+308      |
+
+\* Size can vary depending on platform
+
+# Types
+
+*Unsigned* types can't represent negative numbers, but range to somewhat higher positive numbers:
+
+| Type              | Stands for            | Size*   |  Range        |
+| -----------------:|:--------------------- |:--------|:------------- |
+| `unsigned char`   | Unsigned character    | 1 byte  | 0 -- 255      |
+| `unsigned int`    | Unsigned integer      | 4 bytes | 0 -- $2^{32}$ |
+| `unsigned long`   | Unsigned long integer | 8 bytes | 0 -- $2^{64}$ |
+| `size_t`          | (same)                | 8 bytes | 0 -- $2^{64}$ |
+
+No such thing as `unsigned float` or `unsigned double`
+
+More on *numeric representations* and *numeric precision* later
+
+<!---cppmd-file no-echo sizes.c
+#include <stdio.h>
+
+int main() {
+    printf("sizeof(char)           = %d\n", (int)sizeof(char));
+    printf("sizeof(short)          = %d\n", (int)sizeof(short));
+    printf("sizeof(int)            = %d\n", (int)sizeof(int));
+    printf("sizeof(long)           = %d\n", (int)sizeof(long));
+    printf("sizeof(float)          = %d\n", (int)sizeof(float));
+    printf("sizeof(double)         = %d\n", (int)sizeof(double));
+    printf("sizeof(unsigned char)  = %d\n", (int)sizeof(unsigned char));
+    printf("sizeof(unsigned int)   = %d\n", (int)sizeof(unsigned int));
+    printf("sizeof(unsigned long)  = %d\n", (int)sizeof(unsigned long));
+    printf("sizeof(size_t)         = %d\n", (int)sizeof(size_t));
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
 
 # Operators
 
-* `3 + 4`
-    * `3` and `4` are operands, `+` is operator
-    * `3` and `4` are *constants* (not variables)
-* `num_students + 4`
-    * `num_students` and `4` are operands, `+` is operator
-    * `num_students` is a variable
+`3 + 4`
+
+* `3` and `4` are *operands*, `+` is *operator*
+* `3` and `4` are *constants* (not variables)
+
+`num_students + 4`
+
+* `num_students` and `4` are operands, `+` is operator
+* `num_students` is a variable
 
 # Arithmetic operators
 
-\centerline{\includegraphics[width=4in]{arithmetic_ops.png}}
-
-\centering
-\scriptsize
-From Deitel & Deitel: C How to Program
-
-# Next few examples
-
-* Reinforce what we learned about variables, types & operators
-* Demonstrate good variable naming, operator precedence, `const`
+| Operator | Function                | Expression  | Result  |
+|:--------:|:----------------------- | -----------:| -------:|
+| `+`      | Addition                |     `4 + 3` |     `7` |
+| `-`      | Subtraction             |     `7 - 6` |     `1` |
+| `*`      | Multiplication          |     `4 * 5` |    `20` |
+| `/`      | Integer division        |     `7 / 2` |     `3` |
+| `/`      | Floating-point division | `7.0 / 2.0` |   `3.5` |
+| `%`      | Integer remainder       |    `11 % 3` |     `2` |
 
 # Mysterious program
 
@@ -283,7 +473,7 @@ int main(void) {
 # const
 
 * `const int base = 32;`
-* Put `const` before the type to say a variable cannot be modified
+* Put `const` before the type to say a variable cannot be modified after first assignment
 
 # Misuse of const
 
