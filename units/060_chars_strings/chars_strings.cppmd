@@ -1,8 +1,255 @@
-# Outline
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
 
-* `char` type
-* ASCII table
-* Strings
+# Characters & strings
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Characters
+
+`char` variable holds a single character
+
+* `char digit = '4';`
+* `char bang = '!';`
+* These *must* be single quotes; double quotes are for strings only
+
+Behind the scenes, `char` is much like `int`
+
+* This is valid: `char digit = '4' - 1;`
+* `digit` now contains the character `'3'`
+
+`printf` format string for `char` is `%c`
+
+# ASCII
+
+* ASCII or a similar standard governs the mapping between characters and integers
+
+\centerline{\includegraphics[width=3.5in]{chars-table-landscape.jpg}}
+
+# Character example
+
+\footnotesize
+
+<!---cppmd-file convert_digit_0.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main() {
+    char char_0 = '0';
+    int int_0 = char_0 - '0';
+    printf("Character printed as character: %c\n", char_0);
+    printf("Character printed as integer: %d\n", char_0);
+    printf("Integer printed as integer: %d\n", int_0);
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Character example
+
+\footnotesize
+
+<!---cppmd-file convert_digit_7.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main() {
+    char char_7 = '7';
+    int int_7 = char_7 - '0';
+    printf("Character printed as character: %c\n", char_7);
+    printf("Character printed as integer: %d\n", char_7);
+    printf("Integer printed as integer: %d\n", int_7);
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+"Hello world"
+
+"1.e4 e5 2.Nf3 f6 3.Nxe5 fxe5"
+
+"GATCACAGGTCTATCACCCTATTAACCACTCACGGGAGCTCTCCATGCAT"
+
+"BAC -0.3 GOOGL +0.8 CIT -1.2"
+
+# Strings
+
+In C, a string is an array of characters with final character equal to the "null character" `'\0'`
+
+# Strings
+
+* Declaring a string:
+
+```c
+char day[] = "monday";
+// alternately
+const char *day_ptr = "monday";
+```
+
+First declaration shows a string is like an *array*
+
+Second shows a string is like a *pointer*
+
+# Strings
+
+* Array of characters with final character equal to the "null character" `'\0'`
+
+```c
+// this definition:
+char day1[] = "monday";
+
+// is the same as this:
+char day2[] = {'m', 'o', 'n', 'd', 'a', 'y', '\0'};
+```
+
+# Strings
+
+* Access elements of the string using *square bracket* notation (AKA *indexing*)
+
+\footnotesize
+
+<!---cppmd-file string_indexing_1.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main() {
+    const char str[] = "hello";
+    printf("%c %c %c\n", str[1], str[2], str[4]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+To print a string with `printf`, use `%s`
+
+\footnotesize
+
+<!---cppmd-file string_indexing_1.c
+#include <stdio.h>
+
+// Convert decimal character into corresponding int
+int main() {
+    const char str[] = "World";
+    printf("Hello, %s!\n", str);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+What's the mistake?
+
+\footnotesize
+
+<!---cppmd-file string_copy_1.c
+#include <stdio.h>
+
+int main() {
+    const char str[] = "hello";
+    char str_copy[5];
+    for(int i = 0; i < 5; i++) {
+        str_copy[i] = str[i];
+    }
+    printf("%s\n", str);
+    printf("%s\n", str_copy);
+    return 0;
+}
+-->
+
+# Strings
+
+```
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+```
+
+\includegraphics[width=0.8in]{hello_garbage.png}
+
+We failed to null terminate the second string, so `printf` prints a few characters beyond the end of the string.  That's memory we don't own and didn't initialize -- it "undefined" and could be anything.
+
+# Strings
+
+\footnotesize
+
+<!---cppmd-file string_copy_2.c
+#include <stdio.h>
+
+int main() {
+    const char str[] = "hello";
+    char str_copy[6]; // was [5]
+    for(int i = 0; i < 6; i++) { // was i < 5
+        str_copy[i] = str[i];
+    }
+    printf("%s\n", str);
+    printf("%s\n", str_copy);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Strings
+
+`#include <string.h>` for helpful string functions:
+
+`strlen(s)` returns length of string `s`
+`strcmp(s1, s2)` compares two strings alphabetically
+
+    * negative: `s1 alphabetically before `s2`
+    * zero: `s1` and `s2` equal
+    * positive: `s2` alphabetically before `s1`
+
+See also: `strcpy`, `strcat`, `strtok`, others
+
+    * [`www.cplusplus.com/reference/cstring/`](http://www.cplusplus.com/reference/cstring/)
+
+
+
+# Characters and strings
 
 <!---cppmd-file no-echo count_bases_1.c
 #include <stdio.h>

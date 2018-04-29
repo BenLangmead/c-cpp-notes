@@ -1,0 +1,167 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Printing messages
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Printing
+
+`printf` prints a message to screen
+
+\footnotesize
+
+<!---cppmd-file hello_world.c
+#include <stdio.h>
+
+// Print "Hello world!" followed by newline and exit
+int main() {
+    printf("Hello world!\n");
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+\normalsize
+
+`\n` at the end is a "newline" character, so subsequent output appears on the next line
+
+# Printing
+
+`printf` can handle numbers and other types 
+
+\footnotesize
+
+<!---cppmd-file mysterious.c
+#include <stdio.h>
+
+int main() {
+    int x = 71;
+    float y = 5.0 / 9.0 * (x - 32);
+    printf("%.2f\n", y); // print y up to 2 decimal places
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Printing
+
+`printf` is a function taking one or more *arguments*
+
+Arguments are comma-separated & specified between parentheses
+
+\footnotesize
+
+```c
+  printf("Hello, world!\n"); // one argument
+
+  double y = 3.33;
+  printf("%.2f\n", y);       // 2 arguments
+  
+  printf("%d items left; price: $%.2f\n", 10, 44.44);  // 3 args
+```
+
+# Printing
+
+First argument is a *format string*
+
+```
+   "%d items left; price: $%.2f"
+```
+
+Format string contain format specifiers that start with `%`
+
+* Each specifies *type* of an item to print
+
+# Printing
+
+Format specifiers:
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+\hline
+Specifier & Type & Example output \\
+\hline
+\texttt{\%d} & \texttt{int} & \texttt{77} \\
+\texttt{\%f} & \texttt{float} or \texttt{double} & \texttt{3.333333} \\
+\texttt{\%c} & \texttt{char} & \texttt{P} \\
+\texttt{\%s} & string & \texttt{Hello, world!} \\
+\hline
+\end{tabular}
+\end{table}
+
+<!---cppmd-file no-echo print_double.c
+#include <stdio.h>
+
+int main() {
+    printf("%f\n", 10.0/3);
+    printf("%d\n%d\n%d\n", 1, 2, 3);
+    printf("%f rounded is %.2f\n", 10.0/3, 10.0/3);
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Printing
+
+```c
+printf("Hello, world!\n");
+```
+
+```
+    Hello, world!
+```
+
+```c
+printf("%d\n%d\n%d\n%c\n", 3, 2, 1, '!');
+```
+
+```
+    3
+    2
+    1
+    !
+```
+
+```c
+printf("%f rounded is %.2f\n", 10.0/3, 10.0/3);
+```
+
+```
+    3.333333 rounded is 3.33
+```

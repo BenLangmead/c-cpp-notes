@@ -1,0 +1,286 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Arrays
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Arrays
+
+\centering
+\Large
+
+`int c[12];`
+
+\raggedright
+\normalsize
+\vspace{5mm}
+
+An *array* variable consists of several elements laid out consecutively in memory
+
+All elements have same type; `int` in this example
+
+Individual elements accessed with `[]` notation
+
+`[0]` refers to first element
+
+# Arrays
+
+<!---cppmd-file array_1.c
+#include <stdio.h>
+int main() {
+    int c[12];
+    c[0] = 7; // first element
+    c[11] = 1; // last element
+    printf("first c=%d, last c=%d\n", c[0], c[11]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Arrays
+
+Square brackets go after the variable name, not after the type
+
+* Unlike Java!
+
+\footnotesize
+
+<!---cppmd-file array_2.c
+int main() {
+    int[12] c; // oops
+    return 0;
+}
+-->
+
+\scriptsize
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+-->
+
+# Arrays
+
+*Danger*: Elements are undefined until explicitly initialized
+
+One way to initialize is with a loop:
+
+\footnotesize
+
+<!---cppmd-file array_3.c
+#include <stdio.h>
+int main() {
+    int c[12];
+    for(int i = 0; i < 12; i++) {
+        c[i] = i;
+    }
+    printf("c[4]=%d, c[9]=%d\n", c[4], c[9]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Arrays
+
+Can initialize to a specified sequence of values
+
+Comma separated within `{` ... `}`:
+
+\footnotesize
+
+<!---cppmd-file array_4.c
+#include <stdio.h>
+int main() {
+    int c[5] = {2, 4, 6, 8, 10};
+    printf("c[1]=%d, c[3]=%d\n", c[1], c[3]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Arrays
+
+When initializing with `{` ... `}`, array size can be omitted
+
+Compiler figures it out for you
+
+\footnotesize
+
+<!---cppmd-file array_5.c
+#include <stdio.h>
+int main() {
+    int c[ ] = {2, 4, 6, 8, 10};
+    //    ^ no size
+    printf("c[1]=%d, c[3]=%d\n", c[1], c[3]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Arrays
+
+\footnotesize
+
+<!---cppmd-file array_6.c
+#include <stdio.h>
+int main() {
+    int data[10] = {2, 1, 1, 1, 2, 0, 1, 2, 1, 0};
+    int freq[3] = {0, 0, 0};
+    for(int i = 0; i < 10; i++) {
+        freq[data[i]]++;
+    }
+    printf("%d, %d, %d\n", freq[0], freq[1], freq[2]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+\normalsize
+
+What would happen of some elements of `data` were `3`?
+
+# Arrays
+
+Typical array-related mistakes:
+
+* Failing to initialize
+
+    * Element values are unpredictable (*undefined*) until they've been initialized
+
+* Trying to access an element *out of bounds*
+
+    * Later we will diagnose using `valgrind`
+
+# Arrays
+
+\footnotesize
+
+<!---cppmd-file array_7.c
+#include <stdio.h>
+int main() {
+    int data[10] = {2, 3, 3, 1, 2, 0, 1, 2, 1, 0};
+    int freq[3] = {0, 0, 0};
+    for(int i = 0; i < 10; i++) {
+        freq[data[i]]++;  // oops! we go out of bounds when data[i] is 3 
+    }
+    printf("%d, %d, %d\n", freq[0], freq[1], freq[2]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+\normalsize
+
+Going out of bounds might not yield an explicit error (unlike Java & Python) and might not crash 
+
+# Arrays
+
+\footnotesize
+
+<!---cppmd-file array_8.c
+#include <stdio.h>
+int main() {
+    int data[10] = {2, 3, 3, 1, 2, 1000000, 1, 2, 1, 0};
+    //                         !!! ^^^^^^^ !!!
+    int freq[3] = {0, 0, 0};
+    for(int i = 0; i < 10; i++) {
+        freq[data[i]]++;  // oops! we can go *way* out of bounds 
+    }
+    printf("%d, %d, %d\n", freq[0], freq[1], freq[2]);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+```
+Segmentation fault: 11
+```
+
+\normalsize
+
+Going farther out of bounds increases chance that program will crash 
+
+# Arrays
+
+`sizeof(x)` returns the number of bytes used to store `x`
+
+\footnotesize
+
+<!---cppmd-file sizeof.c
+#include <stdio.h>
+int main() {
+    int int_single;
+    int int_array10[10];
+    printf("sizeof(int_single) = %d\n", (int)sizeof(int_single));
+    printf("sizeof(int_array10) = %d\n", (int)sizeof(int_array10));
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+\normalsize
+
+# Arrays
+
+Unlike Python, no "slicing" in C
+
+* E.g. can't access several elements at once using `c[1:4]`
+
+More discussion of arrays later:
+
+* How to pass them to and from functions
+* Their relationship to pointers
