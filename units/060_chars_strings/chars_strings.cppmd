@@ -44,7 +44,9 @@ Behind the scenes, `char` is much like `int`
 
 # ASCII
 
-* ASCII or a similar standard governs the mapping between characters and integers
+ASCII governs the mapping between typical characters and integers
+
+\vspace{5mm}
 
 \centerline{\includegraphics[width=3.5in]{../images/ascii.png}}
 
@@ -229,7 +231,11 @@ gcc %PREV% -std=c99 -pedantic -Wall -Wextra
 
 \includegraphics[width=0.8in]{../images/hello_garbage.png}
 
-We failed to null terminate the second string, so `printf` prints a few characters beyond the end of the string.  That's memory we don't own and didn't initialize -- it "undefined" and could be anything.
+Failed to null-terminate the copy, so `printf` prints beyond the end
+
+* That's memory we don't own and didn't initialize
+* It's "undefined"; could be anything!
+* In this case, it's "garbage" that prints out as question marks
 
 # Strings
 
