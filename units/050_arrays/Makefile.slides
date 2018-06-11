@@ -2,7 +2,7 @@
 
 CPPMD=python ../cppmd_render.py
 
-all: $(basename $(wildcard *.cppmd)).pdf
+all: $(addsuffix .pdf,$(basename $(wildcard *.cppmd)))
 
 %.pdf: %.cppmd
 	$(CPPMD) --prefix $(@:%.pdf=%) --beamer-theme=metropolis --force < $<

@@ -136,7 +136,7 @@ gcc %PREV% -std=c99 -pedantic -Wall -Wextra
 
 When initializing with `{` ... `}`, array size can be omitted
 
-Compiler figures it out for you
+Compiler figures it out
 
 \footnotesize
 
@@ -187,7 +187,7 @@ Typical array-related mistakes:
 
 * Failing to initialize
 
-    * Element values are unpredictable (*undefined*) until they've been initialized
+    * Element values are unpredictable (*undefined*) until initialized
 
 * Trying to access an element *out of bounds*
 
@@ -252,17 +252,17 @@ Going farther out of bounds increases chance that program will crash
 
 # Arrays
 
-`sizeof(x)` returns the number of bytes used to store `x`
+`sizeof(x)` returns the number of bytes used to store `x` as an `unsigned long`
 
 \footnotesize
 
 <!---cppmd-file sizeof.c
 #include <stdio.h>
 int main() {
-    int int_single;
-    int int_array10[10];
-    printf("sizeof(int_single) = %d\n", (int)sizeof(int_single));
-    printf("sizeof(int_array10) = %d\n", (int)sizeof(int_array10));
+    double d_single;
+    double d_array10[10];
+    printf("sizeof(d_single) = %lu\n", sizeof(d_single));
+    printf("sizeof(d_array10) = %lu\n", sizeof(d_array10));
     return 0;
 }
 -->
