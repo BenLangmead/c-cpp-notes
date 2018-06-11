@@ -113,13 +113,16 @@ Format specifiers:
 \hline
 Specifier & Type & Example output \\
 \hline
-\texttt{\%d} & \texttt{int} & \texttt{77} \\
+\texttt{\%d} & \texttt{int} & \texttt{-43} \\
+\texttt{\%u} & \texttt{unsigned} & \texttt{77} \\
 \texttt{\%f} & \texttt{float} or \texttt{double} & \texttt{3.333333} \\
 \texttt{\%c} & \texttt{char} & \texttt{P} \\
 \texttt{\%s} & string & \texttt{Hello, world!} \\
 \hline
 \end{tabular}
 \end{table}
+
+Use `%ld` for `long` and `%lu` for `unsigned long`
 
 <!---cppmd-file no-echo print_double.c
 #include <stdio.h>
