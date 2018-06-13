@@ -1,0 +1,150 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Assertions
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+
+# Assertions
+
+Help to:
+ 
+* Catch bugs as close to the source as possible
+* Document and enforce *assumptions* and *invariants*
+
+# Assertions
+
+```c
+#include <assert.h>
+
+assert(true/false expression);
+```
+
+If `boolean expression` is false:
+
+* Program exits immediately
+* Exit level is non-zero, like when `main` returns non-zero
+* Message is printed like:
+
+\footnotesize
+
+```
+Assertion failed: (denom != 0), function main, file foo.c, line 95.
+```
+
+# Assertions
+
+Document your assumptions:
+
+```c
+    int sum = a*a + b*b;
+    assert(sum >= 0);
+```
+
+\vspace{8mm}
+
+```c
+    if(isalpha(c)) {
+        assert(c >= 'A');
+        printf("%d\n", c - 'A');
+    }
+```
+
+# Assertions
+
+`assert` is not for typical error checking
+
+\footnotesize
+
+```c
+    FILE* input = fopen("numbers.txt", "r");
+    if(input == NULL) {
+        printf("Error: could not open input file\n");
+        return 1; // indicate error
+    }
+```
+
+# Assertions
+
+If checking for bad user input, or something else that is *strange but not impossible*:
+
+* Use `if`,
+* print a meaningful message, and
+* if you must exit, return non-zero from `main` to indicate failure
+
+For conditions that imply *your program is incorrect*, use `assert`
+
+# Assertions
+
+\scriptsize
+
+<!---cppmd-file assert_eg.c
+#include <stdio.h>
+#include <assert.h>
+
+int main() {
+    int n = 0;
+    scanf("%d", &n);
+    if(n == 0) {
+        printf("n must not be 0\n");
+        return 1;
+    }
+    int n_sq = n * n;
+    assert(n_sq >= n); // if false, something's wrong
+    float n_inv = 1.0 / n;
+    printf("squared=%d, inverse=%0.2f\n", n_sq, n_inv);
+    return 0;
+}
+-->
+
+# Assertions
+
+\footnotesize
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+echo 4 | ./a.out
+-->
+
+<!---cppmd-shell
+echo -2 | ./a.out
+-->
+
+<!---cppmd-shell
+echo 0 | ./a.out
+-->
+
+```
+$ echo 200000000 | ./a.out
+Assertion failed: (n_sq >= n), function main,
+    file assert_eg.c, line 12.
+```
+
+\normalsize
+
+Due to overflow of `int`!
+
+* We'll talk more about overflow later
