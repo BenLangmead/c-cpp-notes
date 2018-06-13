@@ -1,0 +1,100 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Program structure
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Program structure
+
+Big C projects are split across many `.c` source files
+
+Header (`.h`) are part of the "glue" allowing `.c` files to be combined
+
+# Program structure
+
+\centerline{\includegraphics[width=4.3in]{../images/interest_structure.png}}
+
+`main` calls `compound`, but `compound` is defined in a different `.c` file
+
+Need to solve two problems:
+
+* `main` needs to be preceded by a prototype for `compound`
+* `main.c` and `interest.c` need to be compiled *together* somehow
+
+# Headers
+
+\centerline{\includegraphics[width=4.3in]{../images/interest_header.png}}
+
+Header (`.h`) files contain prototypes & declarations that allow code in one `.c` file to use functions and variables in another
+
+In this case, `interest.h` has a prototype for `compound`, and we `#include "interest.h"` in `main.c`
+
+# Headers
+
+When you `#include` a header file you created, use `"` `"` instead of angle brackets `<` `>`
+
+`<` `>` is for standard headers provided by C, like `<stdio.h>` or `<assert.h>`
+
+# Headers
+
+<!---cppmd-file no-echo interest.h
+// Prototype
+float compound(float, float, int);
+-->
+
+<!---cppmd-file no-echo interest.c
+#include <math.h>
+
+float compound(float p, float r, int n) {
+   return p * pow(1 + r/n, n);
+}
+
+-->
+
+<!---cppmd-file no-echo main.c
+#include <stdio.h>
+#include "interest.h"
+
+int main() {
+    float total = compound(100.0, 0.10, 10);
+    printf("%0.2f\n", total);
+    return 0;
+}
+-->
+
+Compile the two `.c` files together by simply specifying both as arguments to `gcc`:
+
+\footnotesize
+
+<!---cppmd-shell
+gcc main.c interest.c -std=c99 -pedantic -Wall -Wextra -lm
+./a.out
+-->
+
+\normalsize
+
+You don't have to tell `gcc` about the `.h` files; the `#include` statements take care of that
+
