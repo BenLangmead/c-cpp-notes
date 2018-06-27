@@ -31,32 +31,40 @@ Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github
 
 Big C projects are split across many `.c` source files
 
-Header (`.h`) are part of the "glue" allowing `.c` files to be combined
+Header (`.h`) are part of the "glue" for combining `.c` files
 
 # Program structure
 
 \centerline{\includegraphics[width=4.3in]{../images/interest_structure.png}}
 
-`main` calls `compound`, but `compound` is defined in a different `.c` file
+`main` calls `compound`; `compound` is defined in a different `.c` file
 
-Need to solve two problems:
+Two problems:
 
 * `main` needs to be preceded by a prototype for `compound`
 * `main.c` and `interest.c` need to be compiled *together* somehow
 
 # Headers
 
+\vspace{4mm}
+
 \centerline{\includegraphics[width=4.3in]{../images/interest_header.png}}
 
-Header (`.h`) files contain prototypes & declarations that allow code in one `.c` file to use functions and variables in another
+Header (`.h`) files contain prototypes & declarations allowing code in one `.c` file to use functions & variables in another
 
-In this case, `interest.h` has a prototype for `compound`, and we `#include "interest.h"` in `main.c`
+`interest.h` has a prototype for `compound`
+
+* `#include "interest.h"` allows us to use it
 
 # Headers
 
-When you `#include` a header file you created, use `"` `"` instead of angle brackets `<` `>`
+When `#include`'ing a `.h` *you created*, use `"` `"` instead of `<` `>`
 
-`<` `>` is for standard headers provided by C, like `<stdio.h>` or `<assert.h>`
+```c
+    #include <stdio.h>    // provided by C
+    #include <assert.h>   // provided by C
+    #include "interest.h" // I wrote this
+```
 
 # Headers
 
@@ -98,3 +106,73 @@ gcc main.c interest.c -std=c99 -pedantic -Wall -Wextra -lm
 
 You don't have to tell `gcc` about the `.h` files; the `#include` statements take care of that
 
+# Headers
+
+What if we forget to `#include "interest.h"`?
+
+<!---cppmd-file no-echo main_noinc.c
+#include <stdio.h>
+
+int main() {
+    float total = compound(100.0, 0.10, 10);
+    printf("%0.2f\n", total);
+    return 0;
+}
+-->
+
+\footnotesize
+
+<!---cppmd-shell
+gcc main_noinc.c interest.c -std=c99 -pedantic -Wall -Wextra -lm
+./a.out
+-->
+
+\normalsize
+
+A compiler warning and a wrong answer; what happened?
+
+* Hint: look back at notes on functions
+
+# Steps of compilation
+
+We discussed compilation steps when we first saw ``Hello, World!''
+
+1. Preprocessor
+
+    * Gather relevant source code
+    * Handle `#include`'s and `#define`'s
+
+2. Compiler
+
+    * Gather preproessed code and compile to object code
+    * If using `-c`, stop here and output `.o` files
+
+3. Linker
+
+    * Gather *object code* into a single executable file
+
+# Steps of compilation
+
+Steps 1/2 and 3 can be separate
+
+\footnotesize
+
+```
+  # Steps 1 & 2 -- preprocess and compile to separate .o's
+  gcc main.c -c -std=c99 -pedantic -Wall -Wextra -lm
+  gcc interest.c -c -std=c99 -pedantic -Wall -Wextra -lm
+  
+  # Step 3 -- combine .o's into single executable
+  gcc -o main main.o interest.o
+```
+
+\normalsize
+
+Or they can all happen at once
+
+\footnotesize
+
+```
+  # Steps 1, 2 & 3
+  gcc -o main main.c interest.c -c -std=c99 -pedantic -Wall -Wextra -lm
+```

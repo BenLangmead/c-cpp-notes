@@ -5,7 +5,7 @@ CPPMD=python ../cppmd_render.py
 all: $(addsuffix .pdf,$(basename $(wildcard *.cppmd)))
 
 %.pdf: %.cppmd
-	$(CPPMD) --prefix $(@:%.pdf=%) --beamer-theme=metropolis --force < $<
+	$(CPPMD) --prefix $(@:%.pdf=%) --beamer-theme=metropolis --force --dont-update-gitignore < $<
 
 .PHONY: clean
 clean:
