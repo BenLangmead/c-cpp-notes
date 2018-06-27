@@ -14,3 +14,5 @@ chmod a+x .build.sh
 cd ..
 docker run -t -i -v`pwd`:/app benlangmead/fedora-cpp-slides /app/$d/.build.sh
 cd $d
+
+rm -f .build.sh
