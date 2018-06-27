@@ -86,9 +86,9 @@ Arguments are comma-separated & specified between parentheses
   printf("Hello, world!\n"); // one argument
 
   double y = 3.33;
-  printf("%.2f\n", y);       // 2 arguments
+  printf("%.2lf\n", y);       // 2 arguments
   
-  printf("%d items left; price: $%.2f\n", 10, 44.44);  // 3 args
+  printf("%d items left; price: $%.2lf\n", 10, 44.44);  // 3 args
 ```
 
 # Printing
@@ -105,8 +105,6 @@ Format string contain format specifiers that start with `%`
 
 # Printing
 
-Format specifiers:
-
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrr}
@@ -115,22 +113,26 @@ Specifier & Type & Example output \\
 \hline
 \texttt{\%d} & \texttt{int} & \texttt{-43} \\
 \texttt{\%u} & \texttt{unsigned} & \texttt{77} \\
-\texttt{\%f} & \texttt{float} or \texttt{double} & \texttt{3.333333} \\
+\texttt{\%f} & \texttt{float} & \texttt{3.333333} \\
 \texttt{\%c} & \texttt{char} & \texttt{P} \\
 \texttt{\%s} & string & \texttt{Hello, world!} \\
 \hline
 \end{tabular}
 \end{table}
 
-Use `%ld` for `long` and `%lu` for `unsigned long`
+Putting `l` just after the `%` modifies the type to be longer
+
+* `%ld` for `long` (instead of `int`)
+* `%lu` for `unsigned long` (instead of `unsigned`)
+* `%lf` for `double` (instead of `float`)
 
 <!---cppmd-file no-echo print_double.c
 #include <stdio.h>
 
 int main() {
-    printf("%f\n", 10.0/3);
+    printf("%lf\n", 10.0/3);
     printf("%d\n%d\n%d\n", 1, 2, 3);
-    printf("%f rounded is %.2f\n", 10.0/3, 10.0/3);
+    printf("%lf rounded is %.2lf\n", 10.0/3, 10.0/3);
     return 0;
 }
 -->
@@ -168,3 +170,14 @@ printf("%f rounded is %.2f\n", 10.0/3, 10.0/3);
 ```
     3.333333 rounded is 3.33
 ```
+
+# Printing
+
+Questions about types?
+
+* What is the difference between `int` and `long`?
+* How large are they?
+* How are they represented in the computer?
+* When and how can we convert between them?
+
+We will answer these when we discuss numeric representations
