@@ -53,6 +53,7 @@ prepended).
 
 from __future__ import print_function
 
+import re
 import os
 import sys
 import subprocess
@@ -98,9 +99,13 @@ def handle_shell_commands(fh, ofh, last_source_file=None, no_echo=False, no_cons
         if '%PREVBASE%' in ln:
             assert last_source_file is not None
             ln = ln.replace('%PREVBASE%', last_source_file[:last_source_file.rfind('.')])
-        print('Running command "%s"' % ln, file=sys.stderr)
+        to_echo = ln[:]
+        if '%SKIP%' in to_echo:
+            to_echo = re.sub('%SKIP%.*%SKIP%', '', to_echo)
+            ln = re.sub('%SKIP%', '', ln)
+        print('Running command "%s"' % to_echo, file=sys.stderr)
         if not no_echo:
-            ofh.write(prefix + ln + '\n')
+            ofh.write(prefix + to_echo + '\n')
         p = subprocess.Popen(ln, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = p.communicate()
         if not no_console:

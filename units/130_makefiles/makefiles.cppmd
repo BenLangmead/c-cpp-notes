@@ -1,0 +1,246 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Makefiles
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Makefiles
+
+For programs spread across many `.c` & `.h` files and executables, `make` and `Makefile`s tie things together
+
+`Makefile` expresses *dependence relationships* between files
+
+Defines *rules* for building one file from others
+
+# Makefiles
+
+<!---cppmd-file no-echo interest.h
+// Prototype
+float compound(float, float, int);
+-->
+
+<!---cppmd-file no-echo interest.c
+#include <math.h>
+
+float compound(float p, float r, int n) {
+   return p * pow(1 + r/n, n);
+}
+-->
+
+<!---cppmd-file no-echo main.c
+#include <stdio.h>
+#include "interest.h"
+
+int main() {
+    float total = compound(100.0, 0.10, 10);
+    printf("%0.2f\n", total);
+    return 0;
+}
+-->
+
+Example that performs 3 steps (preprocess, compile, link) at once:
+
+* Some `gcc` arguments omitted for conciseness 
+
+<!---cppmd-file Makefile
+interest-example: interest.c interest.h main.c
+	gcc -o interest-example interest.c main.c -lm
+-->
+
+First line says `interest-example` depends on `interest.c`, `interest.h` and `main.c`
+
+Second line gives command for building `interest-example`
+
+# Makefiles
+
+<!---cppmd-shell
+make %SKIP%--no-print-directory %SKIP%interest-example
+./interest-example
+-->
+
+# Makefiles
+
+This version performs steps 1 & 2 (preprocess and compile) separately from step 3 (link)
+
+<!---cppmd-shell no-echo
+rm -f Makefile
+-->
+
+<!---cppmd-file Makefile
+interest-example: interest.o main.o
+	gcc -o interest-example interest.o main.o -lm
+
+interest.o: interest.c interest.h
+	gcc -c interest.c
+
+main.o: main.c interest.h
+	gcc -c main.c
+
+-->
+
+# Makefiles
+
+<!---cppmd-shell no-echo
+rm -f interest-example *.o
+-->
+
+<!---cppmd-shell
+make %SKIP%--no-print-directory %SKIP%interest-example
+./interest-example
+-->
+
+# Makefiles
+
+`Makefile`s can get repetitive, e.g. if we re-write the `gcc` arguments for every rule.  Use *variables* to simplify:
+
+\footnotesize
+
+```
+CC = gcc
+CFLAGS = -std=c99 -Wall -Wextra -pedantic
+
+interest-example: interest.c interest.h main.c
+	$(CC) -o interest-example interest.c main.c $(CFLAGS) -lm
+```
+
+\normalsize
+
+`$(CC)` is replaced by `gcc`
+
+`$(CFLAGS)` is replaced by `-std=c99 -Wall -Wextra -pedantic`
+
+# Vocabulary
+
+\footnotesize
+
+```
+interest-example: interest.c interest.h main.c
+	$(CC) -o interest-example interest.c main.c $(CFLAGS) -lm
+```
+
+\normalsize
+
+`interest-example` is the *target*
+
+`interest.c interest.h main.c` are the *prerequisites*
+
+`$(CC) -o interest-example ...` is the *command *
+
+All these together make up a *rule*
+
+# Makefiles
+
+\footnotesize
+
+```
+interest-example: interest.c interest.h main.c
+	$(CC) $(CFLAGS) -o interest-example interest.c main.c
+```
+
+\normalsize
+
+`make interest-example` asks `make` to build `interest-example` target, **if...**
+
+\footnotesize
+
+* `interest-example` doesn't exist, *or*
+* `interest.c` has changed more recently than `interest-example`, *or*
+* `interest.h` has changed more recently than `interest-example`, *or*
+* `main.c` has changed more recently than `interest-example`
+
+\normalsize
+
+If *any* are true, corresponding command is run
+
+# Makefiles
+
+`make` looks at the ``whole picture'' of how targets are interrelated when deciding what to build 
+
+If you want to build target `A` **and**
+
+* `A` depends on `B` *and*
+* `B` depends on `C` *and*
+* `B` is out of date (i.e. `C` is newer than `B`)
+
+...then `make` builds `B` first, then builds `A`
+
+# Makefiles
+
+For `make` to work, you must be in the same directory with the `Makefile`
+
+* Advanced: use `make -C` if in a different directory
+
+`Makefile` has to be called `Makefile`
+
+* Advanced: use `make -f <name>` if it's not called `Makefile`
+
+Typing `make` without specifying a target builds the *default target*; whichever appears first in the `Makefile`
+
+# Makefiles
+
+A *very* common mistake is to use spaces instead of tabs 
+
+\footnotesize
+
+<!---cppmd-file Makefile
+CC = gcc
+CFLAGS = -std=c99 -Wall -Wextra -pedantic -lm
+
+interest-example: interest.c interest.h main.c
+    $(CC) $(CFLAGS) -o interest-example interest.c main.c
+-->
+
+\normalsize
+
+You can't tell by looking, but I put 4 spaces instead of a tab before the `$(CC)` command
+
+# Makefiles
+
+\footnotesize
+
+<!---cppmd-shell
+make %SKIP%--no-print-directory %SKIP%interest-example
+-->
+
+\normalsize
+
+"`missing separator`" usually means you used spaces instead of tab
+
+`emacs` *should* notice you're editing a `Makefile` and use tabs where appropriate; you can force `emacs` to use tab with `Ctrl-q <tab>`
+
+# Makefile tutorials
+
+[`mrbook.org/blog/tutorials/make/`](http://mrbook.org/blog/tutorials/make/)
+
+* Uses `g++`/`.cpp` instead of `gcc`/`.c`, but ideas are the same
+
+[`www.cs.bu.edu/teaching/cpp/writing-makefiles/`](http://www.cs.bu.edu/teaching/cpp/writing-makefiles/)
+
+* Uses `g++`/`.cpp` instead of `gcc`/`.c`, but ideas are the same
+
+[`cslibrary.stanford.edu/107/UnixProgrammingTools.pdf`](http://cslibrary.stanford.edu/107/UnixProgrammingTools.pdf)
+
+* Section 2
