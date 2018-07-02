@@ -1,0 +1,8 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+Makefile
+interest-example
