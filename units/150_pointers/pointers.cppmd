@@ -57,14 +57,6 @@ Pointer can be assigned *the address of* a non-pointer (using `&`)
 
 # Pointers
 
-\centerline{\includegraphics[width=4.5in]{../images/direct_indirect.jpg}}
-
-# Pointers
-
-\centerline{\includegraphics[width=3in]{../images/pointers.png}}
-
-# Pointers
-
 `&` adds a layer of *indirection*
 
 * `&a` is the address of (pointer to) `a`
@@ -80,6 +72,44 @@ int counter = 7;                 // variable
 int *counter_ptr = &counter;     // = counter's address
 int counter_copy = *counter_ptr; // = copy of counter
 ```
+
+# Pointers
+
+We can represent code like this:
+
+```c
+int counter = 7;                 // variable
+int *counter_ptr = &counter;     // = counter's address
+int counter_copy = *counter_ptr; // = copy of counter
+```
+
+By drawing a diagram like this:
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=3in]{../images/pointer_diag.png}}
+
+# Pointers
+
+For normal variables, we write their value in a box labled with their name
+
+For pointers, we draw an arrow to the variable pointed to 
+
+\vspace{6mm}
+
+\centerline{\includegraphics[width=3in]{../images/pointer_diag.png}}
+
+# Pointers
+
+Pointers live at addresses in memory just like normal variables
+
+On modern (64-bit) computers, pointers occupy 8 bytes each
+
+Memory layout for previous program might look like this:
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=4in]{../images/pointer_mem.png}}
 
 # Pointers
 
@@ -159,6 +189,14 @@ gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
 
 # Pointers
 
+When in doubt, draw a diagram:
+
+\vspace{2mm}
+
+\centerline{\includegraphics[width=2.75in]{../images/swap.png}}
+
+# Pointers
+
 What's wrong here?
 
 \footnotesize
@@ -187,8 +225,6 @@ gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
 gcc -o %PREVBASE% %PREVBASE%.o
 ./%PREVBASE%
 -->
-
-# Pointers
 
 Forgot to make `left` and `right` be `int *`
 
@@ -428,77 +464,3 @@ gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
 `int * const p` - the *pointer* can't be modified
 
 `const int * const p` - *neither* can be modified
-
-# Pointers
-
-Pointers and arrays are closely related.  Say we have array `int a[]`.
-
-* `a[0]` and `*a` are equivalent
-* `[`...`]` is a combination of dereferencing and pointer addition
-    * `*(a + 3)` is a synonym for `a[3]`
-    * `(a + 3)` is a synonym for `&a[3]`
-
-# Pointers
-
-One of the few times you'll notice a difference between an array and a pointer is when using `sizeof`
-
-\footnotesize
-
-<!---cppmd-file ptr_sizeof_eg1.c
-#include <stdio.h>
-int main() {
-    int a[] = {0, 1, 2, 3, 4, 5};
-    int *a_ptr = a;
-    printf("sizeof(a)=%d, sizeof(a_ptr)=%d\n",
-           (int)sizeof(a), (int)sizeof(a_ptr));
-    return 0;
-}
--->
-
-<!---cppmd-shell
-gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
-gcc -o %PREVBASE% %PREVBASE%.o
-./%PREVBASE%
--->
-
-# Pointers
-
-Passing array as argument *converts it to a pointer*, losing any information about how long it is.  This is called "decay".
-
-# Pointers
-
-\footnotesize
-
-<!---cppmd-file decay1.c
-#include <stdio.h>
-
-void f1(int arg[10]) { printf("f1: %lu\n", sizeof(arg)); }
-void f2(int arg[])   { printf("f2: %lu\n", sizeof(arg)); }
-void f3(int *arg)    { printf("f3: %lu\n", sizeof(arg)); }
-
-int main() {
-    int one_thru_ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    printf("main: %lu\n", sizeof(one_thru_ten));
-    f1(one_thru_ten);
-    f2(one_thru_ten);
-    f3(one_thru_ten);
-    return 0;
-}
--->
-
-# Pointers
-
-\tiny
-
-<!---cppmd-shell
-gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
-./%PREVBASE%
--->
-
-\normalsize
-
-Compiler warns you
-
-# Pointers
-
-This fits with what we learned: that passing an array is "pass by pointer" -- arrays turn into pointers when you pass them -- which is also why we can modify the array in the callee and the changes are visible in the caller
