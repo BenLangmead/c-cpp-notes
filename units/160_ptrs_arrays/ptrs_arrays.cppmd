@@ -1,0 +1,109 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Pointers & arrays
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Pointers & arrays
+
+Pointers and arrays are closely related
+
+Say we have array `int a[]`.
+
+* `a[0]` and `*a` are equivalent
+* `[`...`]` is a combination of dereferencing and pointer addition
+    * `*(a + 3)` is a synonym for `a[3]`
+    * `(a + 3)` is a synonym for `&a[3]`
+
+# Pointers & arrays
+
+You'll notice the differences between arrays and pointers when using `sizeof`
+
+\footnotesize
+
+<!---cppmd-file ptr_sizeof_eg1.c
+#include <stdio.h>
+int main() {
+    int a[] = {0, 1, 2, 3, 4, 5};
+    int *a_ptr = a;
+    printf("sizeof(a)=%d, sizeof(a_ptr)=%d\n",
+           (int)sizeof(a), (int)sizeof(a_ptr));
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Pointers & arrays
+
+Passing array as argument *converts it to a pointer*, losing any information about how long it is
+
+* Sometimes called ``array decaying''
+
+# Pointers & arrays
+
+\footnotesize
+
+<!---cppmd-file decay1.c
+#include <stdio.h>
+
+void f1(int arg[10]) { printf("f1: %lu\n", sizeof(arg)); }
+void f2(int arg[])   { printf("f2: %lu\n", sizeof(arg)); }
+void f3(int *arg)    { printf("f3: %lu\n", sizeof(arg)); }
+
+int main() {
+    int one_thru_ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    printf("main: %lu\n", sizeof(one_thru_ten));
+    f1(one_thru_ten);
+    f2(one_thru_ten);
+    f3(one_thru_ten);
+    return 0;
+}
+-->
+
+# Pointers & arrays
+
+\tiny
+
+<!---cppmd-shell
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+\normalsize
+
+Compiler warns you
+
+# Pointers & arrays
+
+This fits with what we know
+
+* Passing an array is "pass by pointer," since arrays decay into pointers when passed
+* This is also why we can modify an array in the callee and see the changes in the caller

@@ -1,0 +1,9 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+Makefile
+decay1
+ptr_sizeof_eg1
