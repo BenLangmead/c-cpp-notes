@@ -37,6 +37,11 @@ Each variable has an ``address'' in memory, like a house address
 
 \centerline{\includegraphics[width=3in]{../images/houses.png}}
 
+\centering
+\tiny
+
+[commons.wikimedia.org/wiki/File:South-Los-Angeles-subdivision-houses-near-Darby-Park-Aerial-view-from-north-August-2014.jpg](https://commons.wikimedia.org/wiki/File:South-Los-Angeles-subdivision-houses-near-Darby-Park-Aerial-view-from-north-August-2014.jpg)
+
 # Memory
 
 Or like a post-office box:
@@ -44,6 +49,11 @@ Or like a post-office box:
 \vspace{5mm}
 
 \centerline{\includegraphics[width=3in]{../images/mailboxes.jpg}}
+
+\centering
+\scriptsize
+
+[mailbox-planet.com](http://mailbox-planet.com)
 
 # Memory
 
@@ -130,3 +140,12 @@ Two unfamiliar things here:
 * `0x` at beginning indicates it's base-16, or *hexadecimal*
 * In base-16, digits `0` -- `9` aren't enough so use `a` -- `f` as well
 * This number is 140,726,058,298,828 in decimal
+
+# Pointers
+
+\centerline{\includegraphics[width=2.75in]{../images/pointers_xkcd.png}}
+
+\centering
+\scriptsize
+
+[xkcd.com/138/](https://xkcd.com/138/)
