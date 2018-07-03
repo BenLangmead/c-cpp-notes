@@ -1,0 +1,504 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Pointers
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Pointers
+
+*All problems in computer science can be solved by another level of indirection...*
+
+# Pointers
+
+*...except of course for the problem of too many indirections.*
+
+-- David Wheeler
+
+# Pointers
+
+A pointer is a variable that holds *the address of* (*pointer to*) a value
+
+* `int *counter_ptr` is a *pointer to* an integer
+* `char *welcome_message` is a *pointer to* a character
+
+# Pointers
+
+Pointer can be assigned *the address of* a non-pointer (using `&`)
+
+```c
+    int counter = 0;             // regular variable
+    int *counter_ptr = &counter; // pointer variable
+```
+
+`counter_ptr` gets the address of `counter`
+
+# Pointers
+
+\centerline{\includegraphics[width=4.5in]{../images/direct_indirect.jpg}}
+
+# Pointers
+
+\centerline{\includegraphics[width=3in]{../images/pointers.png}}
+
+# Pointers
+
+`&` adds a layer of *indirection*
+
+* `&a` is the address of (pointer to) `a`
+
+`*` *removes* a layer of indirection
+
+* `b` is a pointer, `*b` is the variable it points to
+
+\vspace{6mm}
+
+```c
+int counter = 7;                 // variable
+int *counter_ptr = &counter;     // = counter's address
+int counter_copy = *counter_ptr; // = copy of counter
+```
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file ptr_eg0.c
+#include <stdio.h>
+
+int main() {
+    int a = 40;
+    int b = *&a; // reference-then-dereference
+    printf("%d\n", b);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Pointers
+
+A dereferenced pointer is something *you can assign to*
+
+* Sometimes called an *lvalue*
+
+\footnotesize
+
+<!---cppmd-file ptr_eg1.c
+#include <stdio.h>
+
+int main() {
+    int counter = 7;             // variable
+    int *counter_ptr = &counter; // = counter's address
+    *counter_ptr = 10;           // this is OK!
+    printf("counter=%d\n", counter);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+# Pointers
+
+Pointers enable "pass by pointer", allowing us to modify variables in caller
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file swap1.c
+#include <stdio.h>
+
+void swap(int *left, int *right) {
+    int tmp = *left;
+    *left = *right;
+    *right = tmp;
+}
+
+int main() {
+    int a = 1, b = 2;
+    swap(&a, &b);
+    printf("a=%d, b=%d\n", a, b);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+# Pointers
+
+What's wrong here?
+
+\footnotesize
+
+<!---cppmd-file swap2.c
+#include <stdio.h>
+
+void swap(int left, int right) {
+    int tmp = left;
+    left = right;
+    right = tmp;
+}
+
+int main() {
+    int a = 1, b = 2;
+    swap(a, b);
+    printf("a=%d, b=%d\n", a, b);
+    return 0;
+}
+-->
+
+# Pointers
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Pointers
+
+Forgot to make `left` and `right` be `int *`
+
+Forgot to pass by pointer: `swap(&a, &b)` 
+
+# Pointers
+
+A value of `NULL` indicates an "empty" / "invalid" pointer
+
+So what happens here?
+
+\footnotesize
+
+```c
+  char *null_ptr = NULL;
+  printf("address %p = %s\n", (void*)null_ptr, null_ptr);
+```
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file ptr_null_eg2.c
+#include <stdio.h>
+
+int main() {
+    char *null_ptr = NULL;
+    printf("address %p = %s\n", (void*)null_ptr, null_ptr);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Passing `NULL` as `%s` argument yields undefined behavior.  `printf` is nice enough to print `(null)` and not crash, but we can't count on such forgiveness.
+
+# Pointers
+
+What happens?
+
+\footnotesize
+
+```c
+    char *null_ptr = NULL;
+    printf("address %p = %c\n", (void*)null_ptr, *null_ptr);
+    //                   ^^                      ^^^^^^^^^
+```
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file ptr_null_eg3.c
+#include <stdio.h>
+
+int main() {
+    char *null_ptr = NULL;
+    printf("address %p = %c\n", (void*)null_ptr, *null_ptr);
+    //                   ^^                      ^^^^^^^^^
+    return 0;
+}
+-->
+
+\normalsize
+
+This straight up crashes
+
+\footnotesize
+
+```
+$ gcc -o ptr_null_eg3 ptr_null_eg3.c -std=c99 -pedantic -Wall -Wextra
+$ ./ptr_null_eg3
+Segmentation fault
+```
+
+# Pointers
+
+Dereferencing a pointer to memory that doesn't "belong" to you usually results in a segmentation fault or other crash
+
+Dereferencing `NULL` is a particularly common mistake
+
+* Always check return values for `NULL` errors (e.g. `fopen`)
+
+# Pointers
+
+```c
+    int a = 7;
+    int *p = &a;
+    (*p)++;
+```
+
+Does this modify `p`, `a`, or both?
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file ptr_eg4.c
+#include <stdio.h>
+
+int main() {
+    int a = 7;
+    int *p = &a;
+    printf("%p %d\n", (void*)p, a);
+    (*p)++;
+    printf("%p %d\n", (void*)p, a);
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Answer: modifies `a`
+
+# Pointers
+
+```c
+    int a = 7;
+    int *p = &a;
+    p++; // used to be (*p)++
+```
+
+Does this modify `p`, `a`, or both?
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file ptr_eg5.c
+#include <stdio.h>
+
+int main() {
+    int a = 7;
+    int *p = &a;
+    printf("%p %d\n", (void*)p, a);
+    p++;
+    printf("%p %d\n", (void*)p, a);
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Answer: modifies `p`
+
+# Pointers
+
+Pointer *arithmetic* is possible
+
+* Pointer can be operand in addition and subtraction, causing pointer to "seek" forward and backward across memory slots
+
+<!---cppmd-shell
+./%PREVBASE%
+-->
+
+Here the pointer advanced by 4 bytes
+
+* It's an `int *` and `int` is 4 bytes long
+* We advanced by 1 slot (`p++`), so that's 4 bytes
+
+# Pointers
+
+`ptr1 = ptr2` - assignment between same-type pointers works
+
+`ptr1 == ptr2` - true if `ptr1` and `ptr2` point to same place
+
+`ptr1 == NULL` - asks if `ptr1` is `NULL` (equals 0)
+
+# Pointers
+
+* You can print a pointer, e.g. `printf("%p", ptr)`
+* A pointer is just an (unsigned) integer
+* `NULL` equals 0; usually indicates "empty" or "invalid" pointer
+* Dereferencing a pointer to memory that doesn't "belong" to you will result in a crash
+* Pointers can be operated on by `+`, `-`, `+=`, `++`, `=`, `==`
+
+# Pointers
+
+We saw that these differ in terms of whether `p` or `a` is changed:
+
+```
+    int a = 7;
+    int *p = &a;
+    p++; // changes p
+```
+
+```
+    int a = 7;
+    int *p = &a;
+    (*p)++; // changes a
+```
+
+Related question: what does it mean for a pointer to be `const`?
+
+# Pointers
+
+Putting `const` before the pointer type means the variable *pointed to* can't be modified
+
+\footnotesize
+
+<!---cppmd-file ptr_const_eg1.c
+#include <stdio.h>
+
+int main() {
+    int a = 7;
+    const int *p = &a;
+    printf("%p %d\n", (void*)p, a);
+    (*p)++;
+    printf("%p %d\n", (void*)p, a);
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+-->
+
+# Pointers
+
+`const int *p` - variable *pointed to* can't be modified
+
+`int * const p` - the *pointer* can't be modified
+
+`const int * const p` - *neither* can be modified
+
+# Pointers
+
+Pointers and arrays are closely related.  Say we have array `int a[]`.
+
+* `a[0]` and `*a` are equivalent
+* `[`...`]` is a combination of dereferencing and pointer addition
+    * `*(a + 3)` is a synonym for `a[3]`
+    * `(a + 3)` is a synonym for `&a[3]`
+
+# Pointers
+
+One of the few times you'll notice a difference between an array and a pointer is when using `sizeof`
+
+\footnotesize
+
+<!---cppmd-file ptr_sizeof_eg1.c
+#include <stdio.h>
+int main() {
+    int a[] = {0, 1, 2, 3, 4, 5};
+    int *a_ptr = a;
+    printf("sizeof(a)=%d, sizeof(a_ptr)=%d\n",
+           (int)sizeof(a), (int)sizeof(a_ptr));
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Pointers
+
+Passing array as argument *converts it to a pointer*, losing any information about how long it is.  This is called "decay".
+
+# Pointers
+
+\footnotesize
+
+<!---cppmd-file decay1.c
+#include <stdio.h>
+
+void f1(int arg[10]) { printf("f1: %lu\n", sizeof(arg)); }
+void f2(int arg[])   { printf("f2: %lu\n", sizeof(arg)); }
+void f3(int *arg)    { printf("f3: %lu\n", sizeof(arg)); }
+
+int main() {
+    int one_thru_ten[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    printf("main: %lu\n", sizeof(one_thru_ten));
+    f1(one_thru_ten);
+    f2(one_thru_ten);
+    f3(one_thru_ten);
+    return 0;
+}
+-->
+
+# Pointers
+
+\tiny
+
+<!---cppmd-shell
+gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+\normalsize
+
+Compiler warns you
+
+# Pointers
+
+This fits with what we learned: that passing an array is "pass by pointer" -- arrays turn into pointers when you pass them -- which is also why we can modify the array in the callee and the changes are visible in the caller

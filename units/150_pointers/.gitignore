@@ -1,0 +1,13 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+swap?
+ptr_eg?
+decay1
+ptr_null_eg2
+ptr_sizeof_eg1
+Makefile
+interest-example
