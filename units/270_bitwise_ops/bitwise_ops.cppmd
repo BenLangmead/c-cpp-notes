@@ -1,0 +1,236 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Bitwise operators
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Bitwise operators
+
+We saw that integers can be used as *boolean* values with 0 = false and non-0 = true
+
+Also saw logical operators for combining booleans
+
+\scriptsize
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{clcr}
+\hline
+Operator & Function & Example & Result \\
+\hline
+\texttt{\&\&} & Both true (\textit{AND}) & \texttt{1 \&\& 0} & false (0) \\
+\texttt{||} & Either true (\textit{OR}) & \texttt{1 || 0} & true (non-0) \\
+\texttt{!} & Opposite (\textit{NOT}) & \texttt{!(1 || 0)} & false (0) \\
+\hline
+\end{tabular}
+\end{table}
+
+# Bitwise operators
+
+Saw that integer types consist of bits
+
+*Each* bit could be considered a boolean true/false value
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=3in]{../images/binary_to_dec.png}}
+
+# Bitwise operators
+
+Bitwise operators performs a function across all bits in integer operands, treating them as boolean true/false values
+
+Bitwise AND (`&`) performs logical AND (`&&`) across all bits:
+
+```
+12 = 00001100 (In Binary)
+25 = 00011001 (In Binary)
+
+Bit Operation of 12 and 25
+  00001100
+& 00011001
+  ________
+  00001000  = 8 (In decimal)
+```
+
+# Bitwise operators
+
+<!---cppmd-file bitwise_and.c
+#include <stdio.h>
+int main() {
+    int a = 12;
+    int b = 25;
+    printf("%d & %d = %d", a, b, a & b);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Bitwise operators
+
+Since `int`s are 32-bit (4-byte) values, this is a more accurate picture:
+
+```
+  00000000000000000000000000001100  = 12
+& 00000000000000000000000000011001  = 25
+  ________________________________
+  00000000000000000000000000001000  = 8 (In decimal)
+```
+
+# Bitwise operators
+
+Bitwise OR (`|`) performs logical OR (`||`):
+
+```
+12 = 00001100 (In Binary)
+25 = 00011001 (In Binary)
+
+Bitwise OR Operation of 12 and 25
+  00001100
+| 00011001
+  ________
+  00011101  = 29 (In decimal)
+```
+
+# Bitwise operators
+
+<!---cppmd-file bitwise_or.c
+#include <stdio.h>
+int main() {
+    int a = 12;
+    int b = 25;
+    printf("%d | %d = %d", a, b, a | b);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Bitwise operators
+
+`x << n` shifts bits of `x` the left `N` positions
+
+`N` 0s are "shifted in" at right-hand side
+
+`N` bits "fall off" left-hand side
+
+```
+25 = 00011001 (In Binary)
+
+Bitwise left-shift of 25 by 5 positions (25 << 5)
+     11001
+      << 5
+__________
+1100100000 = 800 (In decimal)
+```
+
+# Bitwise operators
+
+\footnotesize
+
+<!---cppmd-file bitwise_lshift.c
+#include <stdio.h>
+int main() {
+    int a = 25;
+    int b = 5;
+    printf("%d << %d = %d", a, b, a << b);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Bitwise operators
+
+Similar for bitwise right shift (`>>`)
+
+```
+25 = 00011001 (In Binary)
+
+Bitwise right-shift of 25 by 4 positions (25 >> 4)
+  00011001
+      >> 4
+  ________
+  00000001  = 1
+```
+
+# Bitwise operators
+
+\footnotesize
+
+<!---cppmd-file bitwise_rshift.c
+#include <stdio.h>
+int main() {
+    int a = 25;
+    int b = 4;
+    printf("%d >> %d = %d", a, b, a >> b);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Bitwise operators
+
+\scriptsize
+
+<!---cppmd-file bitwise_convert.c
+#include <stdio.h>
+int main() {
+    int num = 53;
+    char bin_str[33] = {'\0'};
+    int tmp = num;
+    for(int i = 0; i < 32; i++) {
+        if((tmp & 1) != 0) {     // least significant bit set?
+            bin_str[31-i] = '1'; // prepend 1
+        } else {
+            bin_str[31-i] = '0'; // prepend 0
+        }
+        tmp >>= 1;               // shift right by 1
+    }
+    printf("%d in binary: %s\n", num, bin_str);
+    return 0;
+}
+-->
+
+# Bitwise operators
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
