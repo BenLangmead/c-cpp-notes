@@ -1,0 +1,216 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Beyond 1D arrays
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Arrays of strings
+
+We've already seen `char* argv[]`: an array of strings
+
+\footnotesize
+
+<!---cppmd-file args_eg_1.c
+#include <stdio.h>
+
+int main(int argc, char* argv[]) {
+    printf("argc = : %d\n", argc);
+    for(int i = 0; i < argc; i++) {
+        printf("argv[%d] = %s\n", i, argv[i]);
+    }
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out rosebud
+-->
+
+# Arrays of strings
+
+\footnotesize
+
+<!---cppmd-file array_of_strs.c
+#include <stdio.h>
+
+void print_list(char **message, const int num) {
+    for(int i = 0; i < num; i++) {
+        printf("%s ", message[i]);
+    }
+    putchar('\n');
+}
+
+int main() {
+    char *message1[] = { "Hello", "world!" };
+    char *message2[] = { "Have", "a", "nice", "day" };
+    print_list(message1, 2);
+    print_list(message2, 4);
+    return 0;
+}
+-->
+
+# Arrays of strings
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Arrays of strings
+
+```c
+    char *message1[] = { "Hello", "world!" };
+    char *message2[] = { "Have", "a", "nice", "day" };
+```
+
+\vspace{6mm}
+
+\centerline{\includegraphics[width=3in]{../images/arr_string.png}}
+
+# Two-dimensional arrays
+
+Say we want to represent a tic tac toe board
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=1.4in]{../images/tictactoe.png}}
+
+An array seems appropriate, but we want a *two-dimensional* array
+
+For each element, we'll use a `char`: (`'X'`, `'O'` or `'-''`)
+
+# Two-dimensional arrays
+
+Option 1:
+
+```c
+    char board[9];
+```
+
+`board` is a *one-dimensional* array with 9 elements, but we use it to represent a 3x3 board
+
+To access element at row `i`, column `j`, use `board[i * 3 + j]`
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=2.75in]{../images/rowcol.png}}
+
+This is *row-major* order; it is common in practice
+
+# Two-dimensional arrays
+
+\scriptsize
+
+<!---cppmd-file ttt_ex.c
+#include <stdio.h>
+
+void print_board(char board[]) {
+    for(int i = 0; i < 3; i++) {      // rows
+        for(int j = 0; j < 3; j++) {  // columns
+            printf("%c ", board[i * 3 + j]);
+        }
+        putchar('\n');
+    }
+}
+
+int main() {
+    char board[9] = {'O', 'O', 'X',
+                     '-', 'O', '-',
+                     'X', '-', 'X'};
+    print_board(board);
+    return 0;
+}
+-->
+
+# Two-dimensional arrays
+
+\footnotesize
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Two-dimensional arrays
+
+Option 2:
+
+```c
+    char board[3][3];
+```
+
+`board` is a *two-dimensional* array with 3 rows and 3 columns
+
+C "understands" the rows and columns; to access element at row `i`, column `j`, use `board[i][j]`
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=2.75in]{../images/rowcol2.png}}
+
+# Two-dimensional arrays
+
+\scriptsize
+
+<!---cppmd-file ttt_ex_2.c
+#include <stdio.h>
+
+void print_board(char board[][3]) {
+    for(int i = 0; i < 3; i++) {      // rows
+        for(int j = 0; j < 3; j++) {  // columns
+            printf("%c ", board[i][j]);
+        }
+        putchar('\n');
+    }
+}
+
+int main() {
+    char board[3][3] = {{'O', 'O', 'X'},
+                        {'-', 'O', '-'},
+                        {'X', '-', 'X'}};
+    print_board(board);
+    return 0;
+}
+-->
+
+# Two-dimensional arrays
+
+\footnotesize
+
+<!---cppmd-shell
+gcc %PREV% -std=c99 -pedantic -Wall -Wextra
+./a.out
+-->
+
+# Two-dimensional arrays
+
+Type of the array parameter is important; we *must* specify the parameter type along with 
+
+```c
+    void print_board(char board[][3]) {
+        // ...
+    }
+```
