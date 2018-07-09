@@ -1,0 +1,141 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Numeric types
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Bits and binary
+
+In computers, all data are stored in binary
+
+Binary is the number system where each digit is a power of 2
+
+We are used to powers of 10 (decimal)
+
+\vspace{5mm}
+
+\centerline{\includegraphics[width=3in]{../images/binary-finger-numbers.png}}
+
+\centering
+\tiny
+
+https://biscitmx.com/category/unplugged/
+
+# Bits and binary
+
+If we used our fingers to count in binary, we could count to $2^{10}-1 = 1023$
+
+\vspace{5mm}
+
+\centerline{\includegraphics[width=3in]{../images/binary-finger-numbers-blank.png}}
+
+\centering
+\tiny
+
+https://biscitmx.com/category/unplugged/
+
+# Bits and binary
+
+\vspace{3mm}
+
+\centerline{\includegraphics[width=4in]{../images/binary_to_dec.png}}
+
+Digits correspond to powers of 2; value is the sum
+
+Integer is like an array of bits, but we can't use `[]` for individual bits
+
+* Instead, we need *bitwise operators*, discussed later
+
+# Bits and binary
+
+C integers use "two's complement" representation for signed integers.  Illustration with 4 bits:
+
+\vspace{3mm}
+
+\centerline{\includegraphics[width=2in]{../images/twos_comp.png}}
+
+\centering
+\tiny
+
+http://www.bogotobogo.com/cplusplus/quiz_bit_manipulation.php
+
+\vspace{3mm}
+
+\normalsize
+\raggedright
+
+When a two's complement number overflows, it wraps around to a negative number
+
+# Bits and binary
+
+\footnotesize
+
+<!---cppmd-file overflow.c
+#include <stdio.h>
+
+int main() {
+    int i = 2147483647;
+    int i_plus_1 = i + 1;
+    printf("i = %d, i+1 = %d\n", i, i_plus_1);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Bits and binary
+
+Floating point numbers use their bits to store a few different things:
+
+* Sign: 1 bit, positive or negative
+* Exponent
+* Mantissa
+
+\vspace{5mm}
+
+\centerline{\includegraphics[width=2.6in]{../images/float.png}}
+
+\centering
+\tiny
+
+https://aha.betterexplained.com/t/8bit-floating-point-representation/1121
+
+# Bits and binary
+
+Integer and floating-point representations differ:
+
+* Integers have limited range, but integers in the range can be represented precisely.  Floating point have limited range and can only approximate most numbers in the range.
+* Integers use all available bits for two's-complement representation.  Floating point have separate sets of bits for sign, exponent and mantissa.
+
+# Bits and binary
+
+`float a = 1` or `int i = 3.0`, it's not as simple as copying bits
+
+When going from integer types to to `float` (or `double`), we are getting an approximation, not the exact integer
