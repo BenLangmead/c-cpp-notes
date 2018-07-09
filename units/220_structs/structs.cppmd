@@ -1,0 +1,780 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Structures
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Structures
+
+A collection of related variables, bundled into one
+
+```c
+    struct card {
+        char rank;
+        char suit;
+    };
+```
+
+# Structures
+
+Variables in a `struct` are *fields*
+
+```c
+    struct cc_receipt {
+        float amount;
+        char cc_number[16];
+    };
+```
+
+Two fields: `float` named `amount`, and `char[16]` named `number`
+
+# Structures
+
+Say we're programming a checkers game.
+
+We want a `struct` describing everything about a game piece
+
+```c
+    struct checkers_piece {
+        // ???
+    };
+```
+
+\centerline{\includegraphics[width=2in]{../images/checkers.jpg}}
+
+# Structures
+
+```c
+struct checkers_piece {
+    int x; // horizontal offset
+    int y; // vertical offset
+    int black; // 0 = white, non-0 = black
+};
+```
+
+# Structures
+
+\footnotesize
+
+<!---cppmd-file struct_eg1.c
+#include <stdio.h>
+
+struct date {
+    int year;
+    int month;
+    int day;
+};
+
+int main() {
+    struct date today; // like 3 variables in 1!
+    today.year = 2016; // use . to refer to fields
+    today.month = 2;
+    today.day = 26;
+    printf("Today's date: %d/%d/%d\n",
+           today.month, today.day, today.year);
+    return 0;
+}
+-->
+
+# Structures
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+The `struct name { ... };` syntax defines a new struct
+
+```c
+    struct date {
+        int year;
+        int month;
+        int day;
+    };
+```
+
+```c
+    // declare variable 'today' with type 'struct date'
+    struct date today;
+```
+
+# Structures
+
+`struct` variable can be initialized in similar way to an array:
+
+```c
+    struct date {
+        int year;
+        int month;
+        int day;
+    };
+
+    ...
+
+    struct date today = {2016, 2, 26};
+```
+
+# Structures
+
+`struct` fields can be other `struct`s
+
+```c
+struct date {
+    int year;
+    int month;
+    int day;
+};
+
+struct cc_transaction {
+    // struct within a struct is fine!
+    struct date purchase_date;
+    float amount;
+    char cc_number[16];
+};
+```
+
+# Structures
+
+`struct` fields can be pointers
+
+```c
+struct player {
+    int home_runs;
+    int strikeouts;
+    int walks;
+};
+
+struct team {
+    struct player *catcher;
+    struct player *first_baseman;
+    struct player *second_baseman;
+    ...
+};
+```
+
+# Structures
+
+`sizeof(struct player)` returns total size of all fields
+
+* With a caveat we'll see later
+
+```c
+    struct date {
+        int year;
+        int month;
+        int day;
+    };
+```
+
+\vspace{8mm}
+
+What is `sizeof(struct date)`?
+
+# Structures
+
+\footnotesize
+
+<!---cppmd-file struct_sizeof.c
+#include <stdio.h>
+
+struct date {
+    int year;  // 4 bytes
+    int month; // 4 bytes
+    int day;   // 4 bytes
+};
+
+int main() {
+    printf("%d\n", (int)sizeof(struct date));
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+A `struct` can be a function parameter and/or return type
+
+```c
+struct date next_day(struct date d) {
+    if((++d.day) > 30) { // assume 30-day months
+        d.day = 1;
+        if((++d.month) > 12) {
+            d.month = 1;
+            d.year++;
+        }
+    }
+    return d;
+}
+```
+
+# Structures
+
+What if it were a `void` function, without `return d` at the end?
+
+```c
+void next_day(struct date d) {
+    if((++d.day) > 30) { // assume 30-day months
+        d.day = 1;
+        if((++d.month) > 12) {
+            d.month = 1;
+            d.year++;
+        }
+    }
+}
+```
+
+# Structures
+
+`struct`s are passed by value
+
+* `next_day` on previous slide has no effect
+* Alternative 1: return a new `struct`
+* Alternative 2: pass *pointer* to `struct`
+
+# Structures
+
+```c
+void next_day_in_place(struct date *d) {
+    if((++(*d).day) > 30) {
+        (*d).day = 1;
+        if((++(*d).month) > 12) {
+            (*d).month = 1;
+            (*d).year++;
+        }
+    }
+}
+```
+
+# Structures
+
+`d->day` is a synonym for `(*d).day`
+
+```c
+void next_day_in_place(struct date *d) {
+    if((++d->day) > 30) {
+        d->day = 1;
+        if((++d->month) > 12) {
+            d->month = 1;
+            d->year++;
+        }
+    }
+}
+```
+
+# Structures
+
+\tiny
+
+<!---cppmd-file no-echo date.h
+struct date {
+    int year;  // 4 bytes
+    int month; // 4 bytes
+    int day;   // 4 bytes
+};
+-->
+
+<!---cppmd-file struct_next_day_1.c
+#include <stdio.h>
+#include "date.h" // "struct date" defined here
+
+struct date next_day(struct date d) {
+    if(++d.day > 30) {
+        d.day = 1;
+        if(++d.month > 12) {
+            d.month = 1;
+            d.year++;
+        }
+    }
+    return d;
+}
+
+int main() {
+    struct date today = {2016, 2, 26};
+    struct date tomorrow = next_day(today);
+    printf("Tomorrow's date: %d/%d/%d\n",
+           tomorrow.month, tomorrow.day, tomorrow.year);
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+\tiny
+
+<!---cppmd-file struct_next_day_2.c
+#include <stdio.h>
+#include "date.h" // "struct date" defined here
+
+void next_day_in_place(struct date *d) {
+    if((++d->day) > 30) {
+        d->day = 1;
+        if((++d->month) > 12) {
+            d->month = 1;
+            d->year++;
+        }
+    }
+}
+
+int main() {
+    struct date today = {2016, 12, 30};
+    next_day_in_place(&today);
+    printf("Tomorrow's date: %d/%d/%d\n",
+           today.month, today.day, today.year);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+You can have an array of `struct`s
+
+\footnotesize
+
+```c
+struct album {
+    const char *name;
+    const char *artist;
+    double length;
+};
+
+struct album music_collection[99999];
+music_collection[0].name = "The Next Day";
+music_collection[0].artist = "David Bowie";
+music_collection[0].length = 41.9;
+music_collection[1].name = "Hunky Dory";
+...
+```
+
+<!---cppmd-file no-echo struct_array.c
+#include <stdio.h>
+
+struct album {
+    const char *name;
+    const char *artist;
+    double length;
+};
+
+int main() {
+    struct album music_collection[99999];
+    music_collection[0].name = "The Next Day";
+    music_collection[0].artist = "David Bowie";
+    music_collection[0].length = 41.9;
+    music_collection[1].name = "Hunky Dory";
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+What is `sizeof(struct album)`?
+
+```c
+struct album {
+    const char *name;
+    const char *artist;
+    double length; // 8 bytes
+};
+```
+
+<!---cppmd-file no-echo struct_sizeof_album.c
+#include <stdio.h>
+
+struct album {
+    const char *name;
+    const char *artist;
+    double length; // 8 bytes
+};
+
+int main() {
+    printf("sizeof(struct album) = %d\n", (int)sizeof(struct album));
+    return 0;
+}
+-->
+
+# Structures
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+24 bytes
+
+* `const char *`s are just (8-byte) pointers
+* Strings themselves not stored in the `struct`
+
+# Structures
+
+You can have a `struct` with an array in it:
+
+```c
+    struct cc_receipt {
+        float amount;
+        char cc_number[16];
+    };
+```
+
+# Structures
+
+What is `sizeof(struct cc_receipt)`?
+
+```c
+    struct cc_receipt {
+        float amount; // 4 bytes
+        char cc_number[16];
+    };
+```
+
+<!---cppmd-file no-echo sizeof_receipt.c
+#include <stdio.h>
+
+struct cc_receipt {
+    float amount; // 4 bytes
+    char cc_number[16];
+};
+
+int main() {
+    printf("sizeof(struct cc_receipt) = %d\n", (int)sizeof(struct cc_receipt));
+    return 0;
+}
+-->
+
+# Structures
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Answer: 20 bytes.  `char cc_number[16]` is inside the struct, taking up 16 bytes.
+
+# Structures
+
+\tiny
+
+<!---cppmd-file struct_sizeof_receipt.c
+#include <stdio.h>
+
+struct ten_ints {
+    int ints[10];
+};
+
+void func1(struct ten_ints ints) {
+    printf("func1 sizeof(ints)=%d\n", (int)sizeof(ints));
+}
+
+void func2(int *ints) {
+    printf("func2 sizeof(ints)=%d\n", (int)sizeof(ints));
+}
+
+int main() {
+    struct ten_ints ints;
+    func1(ints);
+    func2(ints.ints);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+When a `struct` is passed to a function, everything inside is copied, including arrays
+
+This means an array wrapped in a `struct` is actually passed by value!
+
+* In contast to normal arrays, which are passed by pointer
+
+# Structures
+
+We might get tired of writing `struct` over and over:
+
+```c
+    struct cc_receipt {
+        float amount;
+        char cc_number[16];
+    };
+
+    struct cc_receipt lunch_receipt;
+    struct cc_receipt dinner_receipt;
+```
+
+# Structures
+
+We can use `typedef` to make the type name shorter:
+
+```c
+    typedef struct { // no name here
+        float amount;
+        char cc_number[16];
+    } cc_receipt;    // name down here
+
+    cc_receipt lunch_receipt;
+    cc_receipt dinner_receipt;
+```
+
+Now the type simply `cc_receipt` instead of `struct cc_receipt`
+
+<!--
+
+# Structures
+
+Say we have these definitions in `tennis.h`:
+
+-->
+
+<!---cppmd-file no-echo tennis.h
+typedef struct { // career statistics
+    const char *name;
+    int winners;
+    int aces;
+    int double_faults;
+} player;
+
+typedef struct {
+    player *male;
+    player *female;
+} mixed_doubles_team;
+-->
+
+<!--
+
+# Structures
+
+Why might we do this:
+
+\footnotesize
+
+```c
+typedef struct {
+    player *male;
+    player *female;
+} mixed_doubles_team;
+```
+
+\normalsize
+
+Instead of this?
+
+\footnotesize
+
+```c
+typedef struct {
+    player male;
+    player female;
+} mixed_doubles_team;
+```
+
+\normalsize
+
+Take first case (using pointers)...
+
+# Structures
+
+<!---cppmd-file no-echo tennis.h
+typedef struct { // career statistics
+    const char *name;
+    int winners;
+    int aces;
+    int double_faults;
+} player;
+
+typedef struct {
+    player *male;
+    player *female;
+} mixed_doubles_team;
+-->
+
+\scriptsize
+
+-->
+
+<!---cppmd-file no-echo tennis.c
+#include <stdio.h>
+#include "tennis.h"
+
+int main() {
+    player bob_bryan;
+    player victoria_azarenka;
+    player samantha_stosur;
+
+    mixed_doubles_team french_open_2008 =
+        {&bob_bryan, &victoria_azarenka};
+
+    mixed_doubles_team wimbledon_2008 =
+        {&bob_bryan, &samantha_stosur};
+
+    // updates "propagate" to team structs!
+    bob_bryan.double_faults++;
+    samantha_stosur.winners++;
+    // ...
+}
+-->
+
+<!---cppmd-shell no-echo
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Structures
+
+Size of `struct` is *at least* the sum of the sizes of its fields
+
+It can be bigger if the compiler decides to add "padding"
+
+```c
+    struct plane {
+        int passengers;
+        double cargo_weight;
+    };
+```
+
+\footnotesize
+
+<!---cppmd-file no-echo sizeof_plane.c
+#include <stdio.h>
+
+struct plane {
+    int passengers;      // int:    4 bytes
+    double cargo_weight; // double: 8 bytes
+};
+
+int main() {
+    printf("sizeof(struct plane) = %d\n", (int)sizeof(struct plane));
+    return 0;
+}
+-->
+
+# Structures
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+For obscure efficiency reasons, the compiler put 4 bytes of "spacer" between the `int` & `double`, making total size = 16
+
+# Structures
+
+Structures can be defined in a nested way:
+
+\scriptsize
+
+```c
+    typedef struct {
+        struct {    // this struct type doesn't have a name;
+            int r;  // it's just used once to declare a
+            int b;  // field named color
+            int g;
+        } color;
+        struct {    // again, no name
+            int x;
+            int y;
+        } position;
+    } pixel;
+
+    pixel p;
+    p.color.r = 255;
+    p.position.x = 40;
+    p.position.y = 50;
+```
+
+<!---cppmd-file no-echo nested_struct.c
+#include <stdio.h>
+
+typedef struct {
+    struct {    // this struct type doesn't have a name;
+        int r;  // it's just used once to declare a
+        int b;  // field named color
+        int g;
+    } color;
+    struct {    // again, no name
+        int x;
+        int y;
+    } position;
+} pixel;
+
+int main() {
+    pixel p;
+    p.color.r = p.color.g = p.color.b = 255;
+    p.position.x = 40;
+    p.position.y = 50;
+    printf("[%d, %d, %d] at (%d, %d)\n",
+           p.color.r, p.color.g, p.color.b,
+           p.position.x, p.position.y);
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->

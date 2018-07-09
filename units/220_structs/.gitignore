@@ -1,0 +1,17 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+nested_struct
+sizeof_plane
+sizeof_receipt
+struct_array
+struct_eg1
+struct_next_day_1
+struct_next_day_2
+struct_sizeof
+struct_sizeof_album
+struct_sizeof_receipt
+tennis
