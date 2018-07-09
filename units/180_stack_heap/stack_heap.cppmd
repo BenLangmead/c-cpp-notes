@@ -1,0 +1,128 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Stack & heap
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+
+# Stack
+
+We think of scope and lifetime in the context of *the stack* (or the *call stack*), which grows upwards as:
+
+* New local variables are declared
+* Functions call other functions
+
+The bottom of the call stack is always `main` and its local variables
+
+# Stack
+
+\centerline{\includegraphics[width=4in]{../images/call_stack1.png}}
+
+Upon function call, caller saves a "bookmark" for where to return to when callee finishes.  Then room is made on the stack for the callee and its variables.
+
+# Stack
+
+When functions return or when scopes are exited, stack shrinks
+
+*Stack overflow* is when the stack grows so large it exhausts available memory
+
+* E.g. because of a recursive function that never returns
+
+# Stack
+
+Explains why a function can't return a locally-declared array:
+
+\centerline{\includegraphics[width=4in]{../images/call_stack2.png}}
+
+# Stack arrays
+
+When we declare an array, its size must be a "compile-time constant"
+
+\vspace{3mm}
+
+```c
+    int array[400]; // we can do this
+```
+
+\vspace{1mm}
+
+```c
+    #define ARRAY_SIZE 400
+    int array[ARRAY_SIZE]; // this is also fine
+```
+
+\vspace{3mm}
+
+`#define X Y` just means that everytime `X` appears in the program, it should be replaced with `Y`.  It's a "macro" rather than a variable because the substitution happens in the "preprocessing" step, prior to compilation.
+
+# Stack arrays
+
+
+```c
+    int n = get_length_of_array();
+    int array[n]; // we shouldn't do this
+```
+
+\vspace{7mm}
+
+C99 lets you do this, but earlier versions of C don't
+
+It's considered bad style because it's easy to accidentally overflow the stack
+
+* This is the only time you'll see it in these slides
+
+# Dynamic memory allocation
+
+We're about to discuss dynamic memory allocation, where many of these issues are addressed:
+
+* Flexible lifetime; we decide when allocated memory is allocated and deallocated (reclaimed)
+* Allocated memory is *not* on the stack, can't cause stack overflow
+* Allocation size need not be known at compile time
+    * Can be a function of variables in the program
+
+# Stack vs. heap
+
+So far, our variables and functions have used *the stack* to store data
+
+We will soon be using a different area called *the heap*
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=3.5in]{../images/stack_heap.png}}
+
+# Stack vs. heap
+
+Stack: We declare variables; lifetime same as scope
+
+* C takes care of allocating/deallocating memory as variables enter/exit scope 
+
+Heap: Lifetime is under our control
+
+* We explicitly allocate and deallocate
+
+    * E.g. with `malloc` and `free`, discussed later
+
+* Operating System is places variables in memory in a non-overlapping way
