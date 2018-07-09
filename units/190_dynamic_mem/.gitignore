@@ -1,0 +1,9 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+realloc_eg1
+scale_dynamic
+sizeof_all
