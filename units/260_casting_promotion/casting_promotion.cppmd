@@ -1,0 +1,499 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Casting, promotion and narrowing
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Casting & numeric types
+
+The type for an *integer literal* (e.g. `88`, `-1000000000`) is determined based on its value
+
+Specifically: the smallest integer type that can store it without overflowing
+
+# Casting & numeric types
+
+\footnotesize
+
+<!---cppmd-file int_literal.c
+#include <stdio.h>
+
+int main() {
+    int a = 1;
+    int b = -3000;
+    long c = 10000000000; // too big for an int
+    printf("%d, %d, %ld\n", a, b, c);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting & numeric types
+
+Compiler can warn us when an integer literal is too big
+
+\scriptsize
+
+<!---cppmd-file int_literal2.c
+#include <stdio.h>
+
+int main() {
+    int a = 10000000000;  // too big for an int
+    // a will "overflow" and "wrap around" to some other number
+    printf("%d\n", a);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting & numeric types
+
+*Floating-point literal* (e.g. `3.14`, `-.7`, `-1.1e-12`) has type `double`
+
+You can force it to be `float` by adding `f` suffix
+
+\footnotesize
+
+<!---cppmd-file float_literal.c
+#include <stdio.h>
+
+int main() {
+    float a = 3.14f;
+    double b = 33.33, c = -1.1e-12;
+    printf("%f, %f, %e\n", a, b, c);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting & numeric types
+
+Again, compiler will warn if literal doesn't fit
+
+\footnotesize
+
+<!---cppmd-file float_literal2.c
+#include <stdio.h>
+
+int main() {
+    float a =  2e128f; // too big; max float exponent is 127
+    double b = 2e1024; // too big; max double exponent is 1023
+    printf("%f, %f\n", a, b);
+    return 0;
+}
+-->
+
+# Casting & numeric types
+
+\scriptsize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Promotion
+
+C can automatically convert between types "behind the scenes"
+
+This is called *promotion* or *automatic conversion*
+
+```c
+    float ten = 10;
+    // float <- int
+```
+
+# Promotion
+
+\footnotesize
+
+<!---cppmd-file promotion_1.c
+#include <stdio.h>
+
+int main() {
+    int a = 1;
+    float f = a * 1.5f;
+    printf("%f\n", f);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Promotion
+
+```c
+    int a = 1;
+    float f = a * 1.5f;
+```
+
+Note operands types: `a` is `int`, `1.5f` is `float`
+
+When operand types don't match, "smaller" type is promoted to "larger" before applying operator
+
+\centering
+
+`char` < `int` < `unsigned` < `long` < `float` < `double`
+
+# Promotion
+
+`char` < `int` < `unsigned` < `long` < `float` < `double`
+
+\vspace{5mm}
+
+E.g. `1 + 1.0`: `int` `1` is converted *directly* to `double` before addition; types "in between" (`unsigned`, `long`, `float`) aren't involved 
+
+# Promotion
+
+<!---cppmd-file promotion_2.c
+#include <stdio.h>
+
+int main() {
+    int a = 3;
+    float f = a / 2;
+    printf("%f\n", f);
+    return 0;
+}
+-->
+
+# Promotion
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Promotion
+
+```c
+    int a = 3;
+    float f = a / 2;
+```
+
+No promotion here, since operands `a` and `2` are same type: `int`
+
+# Narrowing
+
+Type conversions that are *not* promotions (e.g. `double` -> `float` or `long` -> `int`) can happen automatically too
+
+Sometimes called *narrowing* conversions
+
+\footnotesize
+
+<!---cppmd-file narrow_1.c
+#include <stdio.h>
+
+int main() {
+    unsigned long a = 1000;
+    int b = a; // automatic *narrowing* conversion
+    double c = 3.14;
+    float d = c; // automatic *narrowing* conversion
+    printf("b=%d, d=%f\n", b, d);
+    return 0;
+}
+-->
+
+# Narrowing
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+No warnings
+
+# Narrowing
+
+\footnotesize
+
+<!---cppmd-file narrow_2.c
+#include <stdio.h>
+
+int square(int num) {
+    return num * num;
+}
+
+int main() {
+    printf("square(2.5)=%d\n", square(2.5));
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+2.5 becomes 2 when passed to `square`.  No compiler warning.
+
+# Narrowing
+
+A value's type is narrowed *automatically* and *without a compiler warning* when: (a) assigning to a variable of narrower type, and (b) passing an argument into a parameter of narrower type. 
+
+Other automatic narrowing situations typically yield compiler warnings
+
+# Narrowing
+
+\footnotesize
+
+<!---cppmd-file casting_1.c
+#include <stdio.h>
+
+int main() {
+    printf("sizeof(long)=%d\n", sizeof(long));
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting
+
+Some types just can't be used for certain things.  E.g. a `float` can't be an array index:
+
+\footnotesize
+
+<!---cppmd-file casting_2.c
+#include <stdio.h>
+
+int main() {
+    int array[] = {2, 4, 6, 8};
+    float f = 3.0f;
+    printf("array[0]=%d, array[%f]=%d\n", array[0], f, array[f]);
+    return 0;
+}
+-->
+
+# Casting
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+-->
+
+# Casting
+
+*Casting* gives you control over when promotion or narrowing happen in your program
+
+Casting is sometimes the only way to avoid compiler errors and warnings 
+
+Even when conversion would happen automatically, making it explicit with casting can make your code clearer
+
+# Casting
+
+\footnotesize
+
+<!---cppmd-file casting_3.c
+#include <stdio.h>
+
+int main() {
+    int a = 3;
+    float f = (float)a / 2;
+    //        ^^^^^^^
+    // a gets *cast* to float, therefore
+    // 2 gets *promoted* to float before division
+    printf("%f\n", f);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting
+
+\footnotesize
+
+<!---cppmd-file casting_4.c
+#include <stdio.h>
+
+int main() {
+    printf("sizeof(long)=%d\n", (int)sizeof(long));
+    //                          ^^^^^
+    return 0;
+}
+-->
+
+\scriptsize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting
+
+\footnotesize
+
+<!---cppmd-file casting_5.c
+#include <stdio.h>
+
+int main() {
+    int array[] = {2, 4, 6, 8};
+    float f = 3.0f;
+    printf("array[0]=%d, array[%d]=%d\n",
+           array[0], (int)f, array[(int)f]);
+    //                             ^^^^^
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o -lm
+./%PREVBASE%
+-->
+
+# Casting
+
+Pointers can get automatically converted too:
+
+```c
+    int *buf = malloc(400 * sizeof(int)); 
+    //      ^^^ void * -> int *
+    
+    fread(buf, sizeof(int), 400, file); 
+    //    ^^^ int * -> void *
+```
+
+# Casting
+
+You can cast pointers.  Cast might be necessary to avoid a warning:
+
+\footnotesize
+
+<!---cppmd-file ptr_eg3.c
+#include <stdio.h>
+
+int main() {
+    int n = 40;
+    printf("address %p = %d\n", (void*)&n, n);
+    //                          ^^^^^^^
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Casting
+
+Different types are represented differently in memory, so casting from one type of pointer to the other is almost never OK: 
+
+\footnotesize
+
+<!---cppmd-file ptr_cast.c
+#include <stdio.h>
+
+int main() {
+    int hello[] = {'h', 'e', 'l', 'l', 'o', '\0'};
+    printf("%s\n", (char*)hello);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+
+# Type mystery
+
+\scriptsize
+
+<!---cppmd-file casting_6.c
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    float p = 2000.0, r = 0.10;
+    float ci_1 = p * pow(1 + r, 10);
+    float ci_2 = p * pow(1.0f + r, 10);
+    float ci_3 = p * pow(1.0 + r, 10);
+    printf("%.3f\n%.3f\n%.3f\n", ci_1, ci_2, ci_3);
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o -lm
+./%PREVBASE%
+-->
+
+# Type mystery: solved
+
+Prototype for `pow`: `double pow(double, double);`
+
+Type promotions are happening both because of the addition and because of the call to `pow`
+
+* `ci_1`: `1` converted to `float`, then added to `r`, then result is converted to `double`
+* `ci_2`: `1.0f + r` converted to `double`
+* `ci_3`: `r` converted to `double`, then added to `1.0` (already a `double`)
+
+`(float)1` and `(double)1` are not the same.  `ci_1` and `ci_2` use `(float)1`, `ci_3` uses `(double)1`.
