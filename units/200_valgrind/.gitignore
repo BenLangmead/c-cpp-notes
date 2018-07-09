@@ -1,0 +1,9 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+buggy_strcpy
+fixed_strcpy
+valgrind_eg1
