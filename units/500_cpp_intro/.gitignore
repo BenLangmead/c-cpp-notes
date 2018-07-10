@@ -1,0 +1,10 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+hello_world
+hello_world.cpp
+hello_world_2.cpp
+ll_insert
