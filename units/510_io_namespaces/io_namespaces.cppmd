@@ -7,7 +7,7 @@ header-includes: |
     \lstset{backgroundcolor=\color{lstgrey}}
 ---
 
-# C++ I/O
+# C++ I/O and namespaces
 
 \centering
 
@@ -69,7 +69,7 @@ Note: `argc` and `argv` work just like in C
     #include <iostream>
 ```
 
-# C++: I/O
+# C++: namespaces
 
 ```c
 using std::cout;
@@ -81,7 +81,7 @@ C++ has *namespaces*.
 * In C, when two things have the same name, we get errors (from compiler or linker) and confusing situations ("shadowing")
 * In C++, items with same name can safely be placed in distinct "namespaces", similar to Java packages / Python modules
 
-# C++: I/O
+# C++: namespaces
 
 Most C++ functionality lives in namespace called `std`
 
@@ -98,7 +98,7 @@ at the top, then we would have to write the fully qualified name each time:
     std::cout << "Hello world" << std::endl;
 ```
 
-# C++: I/O
+# C++: namespaces
 
 **Do not use `using` in a header file**
 
@@ -109,7 +109,7 @@ Doing so affects all the source files that include that header, even indirectly,
 
 Use fully qualified names (e.g. `std::endl`) in headers
 
-# C++: I/O
+# C++: namespaces
 
 **Do not use `using namespace <id>`**
 
