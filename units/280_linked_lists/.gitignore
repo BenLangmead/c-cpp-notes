@@ -1,0 +1,13 @@
+*.c
+*.h
+*.o
+a.out
+*.pdf
+*.md
+ll1
+ll_insert
+ll_insert_head
+ll_ordered
+music_collection
+music_collection_2
+music_collection_dyn
