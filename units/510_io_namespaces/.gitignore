@@ -1,0 +1,12 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+cpp_io_1
+cpp_io_2
+cpp_io_3
+hello_world_2
+smallest_word
+uppercase_cpp
