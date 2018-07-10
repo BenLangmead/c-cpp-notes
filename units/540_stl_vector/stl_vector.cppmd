@@ -1,0 +1,167 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++: `vector`
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: `vector`
+
+`vector` is an array that automatically grows/shrinks as you need more/less room
+
+* Use `[x]` or `.at(x)` to access an element, like `std::string`
+    * `.at(x)` does bounds check, like `std::string`
+* Allocation, resizing, deallocation handled by C++
+* Like Java's `java.util.ArrayList` or Python's `list` type
+
+`#include <vector>` to use it
+
+`std::string` is like (but not same as) `std::vector<char>`
+
+# C++: `vector`
+
+Declare a `vector`:
+
+\footnotesize
+
+```c
+    using std::vector;
+    vector<std::string> names;
+```
+
+\normalsize
+
+Add elements to `vector` (at the back):
+
+\footnotesize
+
+```c
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+```
+
+\normalsize
+
+Print number of items in `vector`, and first and last items:
+
+\footnotesize
+
+```c
+    cout << "Size=" << names.size()
+         << ", first=" << names.front()
+         << ", last=" << names.back() << endl;
+```
+
+# C++: `vector`
+
+`vector` handles memory for you
+
+Behind the scenes, dynamic memory allocations are needed both to create `string`s and to add them to the growing `vector`:
+
+\footnotesize
+
+```c
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+```
+
+\normalsize
+
+Allocations happen automatically; everything (`vector` & `string`s) is deallocated when `names` goes out of scope
+
+# C++: `vector`
+
+\scriptsize
+
+<!---cppmd-file names_1.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::vector; using std::string;
+using std::cin;    using std::cout;
+using std::endl;
+
+int main() {
+    vector<string> names;
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+
+    cout << "First name was " << names.front() << endl;
+    cout << "Last name was " << names.back() << endl;
+    // names.front() is like names[0]
+    // names.back() is like names[names.size()-1]
+
+    return 0;
+} // names goes out of scope and memory is freed
+-->
+
+# C++: `vector`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: `vector`
+
+Two ways to print all elements of a `vector`.  With indexing:
+
+\footnotesize
+
+```c
+    for(size_t i = 0; i < names.size(); i++) {
+        cout << names[i] << endl;
+    }
+```
+
+\normalsize
+
+With an *iterator*:
+
+\footnotesize
+
+```c
+    for(vector<string>::iterator it = names.begin();
+        it != names.end();
+        ++it)
+    {
+        cout << *it << endl;
+    }
+```
+
+# C++: `vector`
+
+Iterators are "clever pointers" that know how to move over the components of a data structure
+
+Structure could be simple (linked list) or complicated (tree)
+
+They are safer & less error-prone than pointers; pointers cannot generally be used with STL containers
