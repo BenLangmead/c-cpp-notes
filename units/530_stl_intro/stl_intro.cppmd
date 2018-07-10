@@ -1,0 +1,168 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++ STL Introduction
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: STL
+
+Standard Template Library (STL) is C++'s library of useful data structures & algorithms
+
+* Like `java.util`/`java.lang`
+* Like Python sets, dictionaries, `collections`
+
+Templates are covered in detail later in the course; we'll give them a quick look now
+
+# C++: Templates
+
+Templates are a way of writing an object (`Node`) or function (`print_list`) to work with *any* type
+
+You simultaneously define a *family* of related objects/functions
+
+# C++: Templates
+
+\footnotesize
+
+```c
+struct Node {
+    T payload;  // 'T' is placeholder for a type
+    Node *next;
+};
+
+void print_list(Node *head) {
+    Node *cur = head;
+    while(cur != NULL) {
+        cout << cur->payload << " ";
+        cur = cur->next;
+    }
+    cout << endl;
+}
+```
+
+\normalsize
+
+We could replace `T` with `int`, `float`, `char`, or `std::string` and this would compile & work
+
+# C++: Templates
+
+\scriptsize
+
+```c
+template<typename T>
+struct Node {
+    T payload;
+    Node *next;
+};
+
+template<typename T>
+void print_list(Node<T> *head) {
+    Node<T> *cur = head;
+    while(cur != NULL) {
+        cout << cur->payload << " ";
+        cur = cur->next;
+    }
+    cout << endl;
+}
+```
+
+\normalsize
+
+Same example, using templates
+
+One `struct`/function, works for (almost) *any* type `T`
+
+# C++: Template primer
+
+\footnotesize
+
+```c
+int main(void) {
+    Node<float> f3 = {95.1f, NULL}; // float payload
+    Node<float> f2 = {48.7f, &f3};  // float payload
+    Node<float> f1 = {24.3f, &f2};  // float payload
+    print_list(&f1);
+
+    Node<int> i2 = {239, NULL};     // int payload
+    Node<int> i1 = {114, &i2};      // int payload
+    print_list(&i1);
+
+    return 0;
+}
+```
+
+<!---cppmd-file no-echo ll_template_cpp.cpp
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+template<typename T>
+struct Node {
+    T payload;
+    Node *next;
+};
+
+template<typename T>
+void print_list(Node<T> *head) {
+    Node<T> *cur = head;
+    while(cur != NULL) {
+        cout << cur->payload << " ";
+        cur = cur->next;
+    }
+    cout << endl;
+}
+
+int main(void) {
+    Node<float> f3 = {95.1f, NULL};
+    Node<float> f2 = {48.7f, &f3};
+    Node<float> f1 = {24.3f, &f2};
+    print_list(&f1);
+
+    Node<int> i2 = {239, NULL};
+    Node<int> i1 = {114, &i2};
+    print_list(&i1);
+
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: STL
+
+With STL we use types like `vector<string>`
+
+We read that type as "a vector *of* strings"
+
+* `vector<string>` -- a vector of `std::string`s
+* `vector<float>` -- a vector of `float`s
+* `map<string, int>` -- a structure that maps `std::string`s to `int`s
+
+Similar to Java generics
