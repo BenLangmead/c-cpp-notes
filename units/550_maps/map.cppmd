@@ -1,0 +1,220 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++: `map`
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: `map`
+
+Collection of *keys*, each with an associated *value*
+
+* Like Java's `java.util.HashMap` or `TreeMap`
+* Like Python's `dict` (dictionary) type
+
+Value can be any type you wish (even another container)
+
+Key can be any type where `<` can be used to compare values
+
+* All numeric types, `char`, `std::string`, etc
+
+# C++: `map`
+
+Declare a map:
+
+\footnotesize
+
+```c
+    map<int, string> jhed_to_name;
+```
+
+\normalsize
+
+Add a key + value to a map:
+
+\footnotesize
+
+```c
+    jhed_to_name[92394] = "Alex Hamilton";
+```
+
+\normalsize
+
+Print a key and associated value:
+
+\footnotesize
+
+```c
+    const int k = 92394;
+    cout << "Key=" << k << ", Value=" << jhed_to_name[k] << endl;
+```
+
+# C++: `map`
+
+A map can only associate 1 value with a key
+
+\footnotesize
+
+```c
+    const int k = 92394;
+    jhed_to_name[k] = "Alex Hamilton";
+    jhed_to_name[k] = "George Washington"; // Alex is replaced
+    cout << k << ": " << jhed_to_name[k] << endl;
+```
+
+<!---cppmd-file no-echo jhed_map_0.cpp
+#include <iostream>
+#include <map>
+#include <string>
+
+using std::cout;
+using std::endl;
+using std::string;
+using std::map;
+
+int main() {
+    map<int, string> jhed_to_name;
+    const int k = 92394;
+    jhed_to_name[k] = "Alex Hamilton";
+    jhed_to_name[k] = "George Washington";
+    cout << k << ": " << jhed_to_name[k] << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: `map`
+
+Get number of keys:
+
+\footnotesize
+
+```c
+  jhed_to_name.size();
+```
+
+\normalsize
+
+Check if `map` contains (has a value for) a given key:
+
+\footnotesize
+
+```c
+  if(jhed_to_name.find(92394) != jhed_to_name.end()) {
+      cout << "Found it" << endl;
+  } else {
+      cout << "Didn't find it" << endl;
+  }
+```
+# C++: `vector`
+
+To get all the elements of the map, use an *iterator*:
+
+\footnotesize
+
+```c
+    for(map<int, string>::iterator it = jhed_to_name.begin();
+        it != jhed_to_name.end();
+        ++it)
+    {
+        cout << "  " << it->first << ": " << it->second << endl;
+    }
+```
+
+\normalsize
+
+Iterator type: `map<int, string>::iterator`
+
+Loop is similar to the loop for `vector`
+
+Keys iterated over *in ascending order* (increasing id in this case)
+
+# C++: `vector`
+
+Looking at the body:
+
+\footnotesize
+
+```c
+    cout << "  " << it->first << ": " << it->second << endl;
+```
+
+\normalsize
+
+Dereferenced `map` iterator type is `std::pair<key_type, value_type>`
+
+* `it->first` is the key (`int` here)
+* `it->second` is the value (`string` here)
+
+More on `pair` later
+
+# C++: `map`
+
+\scriptsize
+
+<!---cppmd-file jhed_map.cpp
+#include <iostream>
+#include <map>
+#include <string>
+using std::cout;   using std::endl;
+using std::string; using std::map;
+
+int main() {
+    map<int, string> jhed_to_name;
+    jhed_to_name[92394] = "Alex Hamilton";
+    jhed_to_name[13522] = "Ben Franklin";
+    jhed_to_name[42345] = "George Washington";
+    cout << "size of jhed_to_name " << jhed_to_name.size() << endl;
+    cout << "jhed_to_name[92394] " << jhed_to_name[92394] << endl;
+    for(map<int, string>::iterator it = jhed_to_name.begin();
+        it != jhed_to_name.end();
+        ++it)
+    {
+        cout << "  " << it->first << ": " << it->second << endl;
+    }
+    return 0;
+}
+-->
+
+# C++: `map`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Note again: the keys are printed *in ascending order*
+
+Can use `reverse_iterator`, `.rbegin()` and `.rend()` to get keys in *descending* order
