@@ -1,0 +1,326 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++: `vector` & iterators
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: `vector`
+
+`vector` is an array that automatically grows/shrinks as you need more/less room
+
+* Use `[x]` or `.at(x)` to access an element, like `std::string`
+    * `.at(x)` does bounds check, like `std::string`
+* Allocation, resizing, deallocation handled by C++
+* Like Java's `java.util.ArrayList` or Python's `list` type
+
+`#include <vector>` to use it
+
+`std::string` is like (but not same as) `std::vector<char>`
+
+# C++: `vector`
+
+Declare a `vector`:
+
+\footnotesize
+
+```c
+    using std::vector;
+    vector<std::string> names;
+```
+
+\normalsize
+
+Add elements to `vector` (at the back):
+
+\footnotesize
+
+```c
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+```
+
+\normalsize
+
+Print number of items in `vector`, and first and last items:
+
+\footnotesize
+
+```c
+    cout << "Size=" << names.size()
+         << ", first=" << names.front()
+         << ", last=" << names.back() << endl;
+```
+
+# C++: `vector`
+
+`vector` handles memory for you
+
+Behind the scenes, dynamic memory allocations are needed both to create `string`s and to add them to the growing `vector`:
+
+\footnotesize
+
+```c
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+```
+
+\normalsize
+
+Allocations happen automatically; everything (`vector` & `string`s) is deallocated when `names` goes out of scope
+
+# C++: `vector`
+
+\scriptsize
+
+<!---cppmd-file names_1.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::vector; using std::string;
+using std::cin;    using std::cout;
+using std::endl;
+
+int main() {
+    vector<string> names;
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+
+    cout << "First name was " << names.front() << endl;
+    cout << "Last name was " << names.back() << endl;
+    // names.front() is like names[0]
+    // names.back() is like names[names.size()-1]
+
+    return 0;
+} // names goes out of scope and memory is freed
+-->
+
+# C++: `vector`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: `vector`
+
+Two ways to print all elements of a `vector`.  With indexing:
+
+\footnotesize
+
+```c
+    for(size_t i = 0; i < names.size(); i++) {
+        cout << names[i] << endl;
+    }
+```
+
+\normalsize
+
+With an *iterator*:
+
+\footnotesize
+
+```c
+    for(vector<string>::iterator it = names.begin();
+        it != names.end();
+        ++it)
+    {
+        cout << *it << endl;
+    }
+```
+
+# C++: `vector`
+
+Iterators are "clever pointers" that know how to move over the components of a data structure
+
+Structure could be simple (linked list) or complicated (tree)
+
+They are safer & less error-prone than pointers; pointers cannot generally be used with STL containers
+
+# C++: iterators
+
+For STL container of type `T`, iterator has type `T::iterator`
+
+\footnotesize
+
+```c
+    for(vector<string>::iterator it = names.begin();
+        it != names.end();
+        ++it)
+    {
+        cout << *it << endl;
+    }
+    cout << endl;
+```
+
+\normalsize
+
+Here, iterator type is `vector<string>::iterator`
+
+# C++: iterators
+
+Looking harder at the loop:
+
+\footnotesize
+
+```c
+    for(vector<string>::iterator it = names.begin();
+        it != names.end();
+        ++it)
+```
+
+\normalsize
+
+First line: declares `it`, sets it to point to first element initially
+
+Second: stops loop when iterator has moved past `vector` end
+
+Third: tells iterator to advance by 1 each iteration
+
+* `++it` isn't really pointer arithmetic; `++` is "overloaded" to move forward 1 element *like* a pointer
+
+# C++: iterators
+
+Looking harder at the body:
+
+\footnotesize
+
+```c
+    cout << *it << endl;
+```
+
+\normalsize
+
+`*it` is *like* dereferencing; `*` is "overloaded" to get the element currently pointed to by the iterator
+
+For `vector`, `*it`'s type equals the element type, `string` in this case
+
+# C++: `vector`
+
+\scriptsize
+
+<!---cppmd-file names_2.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::vector; using std::string;
+using std::cin;    using std::cout;
+using std::endl;
+
+int main() {
+    vector<string> names;
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+    for(vector<string>::iterator it = names.begin();
+        it != names.end();
+        ++it)
+    {
+        cout << *it << endl;
+    }
+    return 0;
+}
+-->
+
+# C++: `vector`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: `vector`
+
+Iterate in *reverse* order by using `T::reverse_iterator`, `.rbegin()` and `.rend()` instead:
+
+\footnotesize
+
+```c
+    for(vector<string>::reverse_iterator it = names.rbegin();
+        it != names.rend();
+        ++it)
+    {
+        cout << *it << endl;
+    }
+```
+
+\vspace{3mm}
+
+<!---cppmd-file no-echo names_3.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::vector; using std::string;
+using std::cin;    using std::cout;
+using std::endl;
+
+int main() {
+    vector<string> names;
+    names.push_back("Alex Hamilton");
+    names.push_back("Ben Franklin");
+    names.push_back("George Washington");
+    for(vector<string>::reverse_iterator it = names.rbegin();
+        it != names.rend();
+        ++it)
+    {
+        cout << *it << endl;
+    }
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: `vector`
+
+See C++ reference for more `vector` functionality
+
+* [www.cplusplus.com/reference/vector/vector/](http://www.cplusplus.com/reference/vector/vector/)
+
+Don't miss:
+
+* [`front` -- get firstelement](http://www.cplusplus.com/reference/vector/vector/front/)
+* [`back` -- get last element](http://www.cplusplus.com/reference/vector/vector/back/)
+* [`pop_back` -- return and delete final element](http://www.cplusplus.com/reference/vector/vector/pop_back/)
+* [`begin`/`end` -- iterators for beginning/end](http://www.cplusplus.com/reference/vector/vector/begin/)
+* [`cbegin`/`cend` -- `const_iterator`s for beginning/end](http://www.cplusplus.com/reference/vector/vector/cbegin/)
+* [`rbegin`/`rend` -- `reverse_iterator`s for beginning/end](http://www.cplusplus.com/reference/vector/vector/rbegin/)
+* `erase`, `insert`, `clear`, `at`, `empty` -- just like `string`
