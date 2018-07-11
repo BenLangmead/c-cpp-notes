@@ -1,0 +1,227 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++: More on iterators
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: `pair`
+
+We want a function that takes integers `a` & `b` and returns both `a/b` (quotient) and `a%b` (remainder)
+
+* `divmod(10, 5)` returns `2`, `0`
+* `divmod(10, 3)` returns `3`, `1`
+
+Functions only return *one* thing
+
+# C++: `pair`
+
+One solution: pass-by-pointer arguments:
+
+\footnotesize
+
+```c
+    void divmod(int a, int b, int *quo, int *rem) {
+        *quo = a / b;
+        *rem = a % b;
+    }
+```
+
+\normalsize
+
+Another: define `struct` for `divmod`'s return type:
+
+\footnotesize
+
+```c
+    struct quo_rem {
+        int quotient;
+        int remainder;
+    };
+
+    quo_rem divmod(int a, int b) { ... }
+```
+
+\tiny
+
+<!---cppmd-file no-echo quo_rem_2.cpp
+#include <iostream>
+
+using namespace std;
+
+struct quo_rem {
+    int quotient;
+    int remainder;
+};
+
+quo_rem divmod(int a, int b) {
+    quo_rem result = {a/b, a%b};
+    return result;
+}
+
+int main() {
+    quo_rem qr_10_5 = divmod(10, 5);
+    quo_rem qr_10_3 = divmod(10, 3);
+    cout << "10/5 quotient=" << qr_10_5.quotient
+         << ", remainder=" << qr_10_5.remainder << endl;
+    cout << "10/3 quotient=" << qr_10_3.quotient
+         << ", remainder=" << qr_10_3.remainder << endl;
+    return 0;
+}
+-->
+
+# C++: `pair`
+
+STL solution: return `pair<int, int>`, a pair with items of types `int` & `int`:
+
+\scriptsize
+
+```c
+    pair<int, int> divmod(int a, int b) {
+        return make_pair(a/b, a%b);
+    }
+
+    int main() {
+        pair<int, int> qr_10_5 = divmod(10, 5);
+        pair<int, int> qr_10_3 = divmod(10, 3);
+        cout << "10/5 quotient=" << qr_10_5.first
+             << ", remainder=" << qr_10_5.second << endl;
+        cout << "10/3 quotient=" << qr_10_3.first
+             << ", remainder=" << qr_10_3.second << endl;
+        return 0;
+    }
+```
+
+\tiny
+
+<!---cppmd-file no-echo quo_rem_3.cpp
+#include <iostream>
+#include <utility> // where pair and make_pair are defined
+
+using std::pair;
+using std::make_pair;
+using std::cout;
+using std::endl;
+
+pair<int, int> divmod(int a, int b) {
+    return make_pair(a/b, a%b);
+}
+
+int main() {
+    pair<int, int> qr_10_5 = divmod(10, 5);
+    pair<int, int> qr_10_3 = divmod(10, 3);
+    cout << "10/5 quotient=" << qr_10_5.first
+         << ", remainder=" << qr_10_5.second << endl;
+    cout << "10/3 quotient=" << qr_10_3.first
+         << ", remainder=" << qr_10_3.second << endl;
+    return 0;
+}
+-->
+
+# C++: `pair`
+
+We've used `pair` already; dereferenced `map` iterator is a pair:
+
+\footnotesize
+
+```c
+    for(map<int, string>::iterator it = jhed_to_name.begin();
+        it != jhed_to_name.end();
+        ++it)
+    {
+        // it->first has type int
+        // it->second has type string
+        cout << "  " << it->first << ": " << it->second << endl;
+    }
+```
+
+# C++: `pair`
+
+Relational operators for `pair` work as expected:
+
+* Compares first field first...
+* ...if there's a tie, compares second field
+
+`make_pair(2, 3) < make_pair(3, 2)` is true
+
+# C++: `tuple`
+
+`tuple` is like `pair` but with as many fields as you like
+
+\footnotesize
+
+```c
+    #include <tuple>
+    using std::tuple; using std::make_tuple;
+
+    tuple<int, int, float> divmod(int a, int b) {
+        return make_tuple(a/b, a%b, (float)a/b);
+    }
+```
+
+\normalsize
+
+`std::get<N>(tup)` gets the Nth field of `tuple` called `tup`:
+
+\footnotesize
+
+```c
+    using std::get;
+    tuple<int, int, float> tup = divmod(10, 3);
+    cout << "10/3 quotient="      << get<0>(tup)
+         << ", remainder="        << get<1>(tup)
+         << ", decimal quotient=" << get<2>(tup) << endl;
+```
+
+# C++: `tuple`
+
+\footnotesize
+
+<!---cppmd-file no-echo quo_rem_tuple.cpp
+#include <iostream>
+#include <tuple>
+
+using std::cout;  using std::endl;
+using std::tuple; using std::make_tuple;
+using std::get;
+
+tuple<int, int, float> divmod(int a, int b) {
+    return make_tuple(a/b, a%b, (float)a/b);
+}
+
+int main() {
+    tuple<int, int, float> qr_10_3 = divmod(10, 3);
+    cout << "10/3 quotient="      << get<0>(qr_10_3)
+         << ", remainder="        << get<1>(qr_10_3)
+         << ", decimal quotient=" << get<2>(qr_10_3) << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->

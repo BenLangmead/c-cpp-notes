@@ -1,0 +1,8 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+quo_rem_tuple
+prefix_sum_iter
