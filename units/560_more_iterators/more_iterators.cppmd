@@ -1,0 +1,175 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++: More on iterators
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: More on iterators
+
+Consider these `map` iterator types:
+
+* `map<int, string>::iterator` -- iterator over a `map`
+* `map<string, map<string, int> >::iterator` -- iterator over a `map` *where the values are themselves `map`s*
+
+`typedef` can help by:
+
+* Reducing clutter
+* Bringing related type declarations closer together in your code:
+
+```c
+    typedef map<int, string> TMap;   // map type
+    typedef TMap::iterator TMapItr;  // map iterator type
+```
+
+# C++: Iterators
+
+With `iterator` (or `reverse_iterator`) you can modify the data structure via the dereferenced iterator:
+
+\scriptsize
+
+```c
+    typedef vector<int>::iterator TItr;
+
+    void prefix_sum(TItr begin, TItr end) {
+        int sum = 0;
+        for(TItr it = begin; it != end; ++it) {
+            *it += sum;
+            sum += *it;
+        }
+    }
+```
+
+<!---cppmd-file no-echo prefix_sum_iter.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::cout;   using std::endl;
+using std::vector; using std::string;
+
+typedef vector<int>::iterator TItr;
+typedef vector<int>::const_iterator TConstItr;
+
+void prefix_sum(TItr begin, TItr end) {
+    int sum = 0;
+    for(TItr it = begin; it != end; ++it) {
+        *it += sum;
+        sum += *it;
+    }
+}
+
+int main() {
+    vector<int> ones = {1, 1, 1, 1};
+    cout << "Before: ";
+    for(TConstItr it = ones.cbegin(); it != ones.cend(); ++it) {
+        cout << *it << ' ';
+    }
+    prefix_sum(ones.begin(), ones.end());
+    cout << endl << "After: ";
+    for(TConstItr it = ones.cbegin(); it != ones.cend(); ++it) {
+        cout << *it << ' ';
+    }
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: Iterators
+
+`const_iterator` *does not* allow modifications
+
+\scriptsize
+
+```c
+    typedef vector<int>::const_iterator TItr;
+    //                   ^^^^^
+
+    void prefix_sum(TItr begin, TItr end) {
+        int sum = 0;
+        for(TItr it = begin; it != end; ++it) {
+            *it += sum;
+            sum += *it;
+        }
+    }
+```
+
+<!---cppmd-file no-echo prefix_sum_iter.cpp
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::cout;   using std::endl;
+using std::vector; using std::string;
+
+typedef vector<int>::const_iterator TItr;
+
+void prefix_sum(TItr begin, TItr end) {
+    int sum = 0;
+    for(TItr it = begin; it != end; ++it) {
+        *it += sum;
+        sum += *it;
+    }
+}
+
+int main() {
+    vector<int> ones = {1, 1, 1, 1};
+    cout << "Before: ";
+    for(TItr it = ones.cbegin(); it != ones.cend(); ++it) {
+        cout << *it << ' ';
+    }
+    prefix_sum(ones.begin(), ones.end());
+    cout << endl << "After: ";
+    for(TItr it = ones.cbegin(); it != ones.cend(); ++it) {
+        cout << *it << ' ';
+    }
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+
+# C++: Iterators
+
+\scriptsize
+
+| Type                     | `++it`   | `--it`   | Get with               | *it type |
+| ------------------------ |:--------:| --------:| ----------------------:|---------:|
+| `iterator`               | forward  | back     | `.begin()`/`end()`     | -        |
+| `const_iterator`         | forward  | back     | `.cbegin()`/`cend()`   | `const`  |
+| `reverse_iterator`       | back     | forward  | `.rbegin()`/`rend()`   | -        |
+| `const_reverse_iterator` | back     | forward  | `.crbegin()`/`crend()` | `const`  |
+
+\normalsize
+
+Reminder: When using a variant of `.begin()`/`.end()`, always initialize the the iterator with `.begin()` and stop as soon as it `== .end()`.  Don't switch the two, even if you're *trying* to go backwards.  Use the `reverse_` version instead.

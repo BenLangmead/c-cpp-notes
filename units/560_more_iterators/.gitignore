@@ -1,0 +1,9 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+prefix_sum_iter
+jhed_map
+jhed_map_0
