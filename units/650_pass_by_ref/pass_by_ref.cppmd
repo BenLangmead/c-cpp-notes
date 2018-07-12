@@ -1,0 +1,65 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Passing by reference
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Passing by reference
+
+We've seen pass-by-reference versus pass-by-value
+
+In C++, when passing objects (`class` or `struct` variables), we usually choose to pass by reference
+
+* `const` reference if modification is not permitted
+* Normal reference otherwise
+
+# Passing by reference
+
+What's the difference?
+
+\vspace{3mm}
+
+```c
+    int sum(vector<int> vec) { ... };
+
+    int sum(const vector<int>& vec) { ... };
+```
+
+# Passing by reference
+
+```c
+    // Creates a copy of vec
+    int sum(vector<int> vec) { ... };
+
+    // *Does not* create a copy of vec
+    int sum(const vector<int>& vec) { ... };
+```
+
+\vspace{3mm}
+
+Second form avoids making a (potentially expensive) copy
+
+We also pass by reference for *dynamic binding*, as we'll discuss later
