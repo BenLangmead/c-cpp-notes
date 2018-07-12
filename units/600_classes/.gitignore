@@ -1,0 +1,8 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+rect_class
+rectangle1
