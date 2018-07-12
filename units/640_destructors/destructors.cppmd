@@ -1,0 +1,241 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Destructors
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Destructors
+
+\scriptsize
+
+<!---cppmd-file sequence.h
+#include <cassert>
+
+// What does this class do?  Anything wrong with it?
+class Sequence {
+public:
+    Sequence(int sz) : array(new int[sz]), size(sz) {
+        for(int i = 0; i < sz; i++) {
+            array[i] = i;
+        }
+    }
+
+    int at(int i) {
+        assert(i < size);
+        return array[i];
+    }
+private:
+    int *array;
+    int size;
+};
+-->
+
+# Destructors
+
+\scriptsize
+
+<!---cppmd-file sequence_main.cpp
+#include <iostream>
+#include "sequence.h"
+
+using std::cout;  using std::endl;
+
+int main() {
+    Sequence seq(10);
+    for(int i = 0; i < 10; i++) {
+        cout << seq.at(i) << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra -g
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Destructors
+
+
+<!--
+`valgrind` finds a leak!
+
+\tiny
+
+```
+==12306== HEAP SUMMARY:
+==12306==     in use at exit: 40,185 bytes in 431 blocks
+==12306==   total heap usage: 510 allocs, 79 frees, 46,345 bytes allocated
+==12306==
+==12306== 40 bytes in 1 blocks are definitely lost in loss record 29 of 83
+==12306==    at 0x100009EAB: malloc (in /Users/langmead/git/homebrew/Cellar/valgrind/3.11.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+==12306==    by 0x10004E43D: operator new(unsigned long) (in /usr/lib/libc++.1.dylib)
+==12306==    by 0x10000130A: Sequence::Sequence(int) (in ./sequence_main)
+==12306==    by 0x10000111A: Sequence::Sequence(int) (in ./sequence_main)
+==12306==    by 0x10000107C: main (in ./sequence_main)
+==12306==
+==12306== LEAK SUMMARY:
+==12306==    definitely lost: 40 bytes in 1 blocks
+==12306==    indirectly lost: 0 bytes in 0 blocks
+==12306==      possibly lost: 0 bytes in 0 blocks
+==12306==    still reachable: 4,096 bytes in 1 blocks
+==12306==         suppressed: 36,049 bytes in 429 blocks
+==12306== Reachable blocks (those to which a pointer was found) are not shown.
+==12306== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+```
+-->
+
+\tiny
+
+<!---cppmd-shell
+valgrind --leak-check=full ./%PREVBASE%
+-->
+
+# Destructors
+
+Allocates `new int[sz]` in constructor, but never `delete[]`s it
+
+It's common for a constructor to obtain a resource (allocate memory, open a file, etc) that should be released when object is destroyed
+
+*Destructor* is a function called by C++ when the object goes out of scope or is otherwise deallocated (i.e. with `delete`)
+
+# Destructors
+
+\scriptsize
+
+<!---cppmd-file sequence.h
+#include <cassert>
+
+class Sequence {
+public:
+    Sequence(int sz) : array(new int[sz]), size(sz) {
+        for(int i = 0; i < sz; i++) {
+            array[i] = i;
+        }
+    }
+
+    // *** Destructor (name starts with tilde) ****
+    ~Sequence() { delete[] array; }
+
+    int at(int i) {
+        assert(i < size);
+        return array[i];
+    }
+private:
+    int *array;
+    int size;
+};
+-->
+
+# Destructors
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra -g
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=2.75in]{../images/tilde.jpg}}
+
+# Destructors
+
+<!--
+\scriptsize
+
+```
+==12568== HEAP SUMMARY:
+==12568==     in use at exit: 40,121 bytes in 429 blocks
+==12568==   total heap usage: 509 allocs, 80 frees, 46,321 bytes allocated
+==12568==
+==12568== LEAK SUMMARY:
+==12568==    definitely lost: 0 bytes in 0 blocks
+==12568==    indirectly lost: 0 bytes in 0 blocks
+==12568==      possibly lost: 0 bytes in 0 blocks
+==12568==    still reachable: 4,096 bytes in 1 blocks
+==12568==         suppressed: 36,025 bytes in 428 blocks
+==12568== Reachable blocks (those to which a pointer was found) are not shown.
+==12568== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+```
+-->
+
+\scriptsize
+
+<!---cppmd-shell
+valgrind --leak-check=full ./%PREVBASE%
+-->
+
+# Destructors
+
+Destructors are better than having a special member function for releasing resources; e.g.:
+
+\footnotesize
+
+<!---cppmd-file sequence.h
+#include <cassert>
+
+class Sequence {
+public:
+    ...
+    // User must call clean_up when finished with Sequence
+    void clean_up() { delete[] array; }
+    ...
+};
+-->
+
+# Destructors
+
+Here, user forgets to call `clean_up`:
+
+\footnotesize
+
+```c
+    {
+        Sequence s(40);
+        // ... (no call to s.clean_up())
+    } // s goes out of scope and memory is leaked
+```
+
+\normalsize
+
+More subtly:
+
+\footnotesize
+
+```c
+    {
+        Sequence s(40);
+        if(some_condition) {
+            return 0; // memory leaked!
+        }
+        s.clean_up();
+    }
+```
