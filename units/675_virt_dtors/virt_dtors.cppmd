@@ -1,0 +1,147 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Virtual destructors
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Virtual destructors
+
+\scriptsize
+
+<!---cppmd-file virt_dtor.h
+class Base {
+public:
+    Base() : base_memory(new char[1000]) { }
+
+    ~Base() { delete[] base_memory; }
+
+private:
+    char *base_memory;
+};
+
+class Derived : public Base {
+public:
+    Derived() : Base(), derived_memory(new char[1000]) { }
+
+    ~Derived() { delete[] derived_memory; }
+
+private:
+    char *derived_memory;
+};
+-->
+
+# Virtual destructors
+
+<!---cppmd-file virt_dtor.cpp
+#include "virt_dtor.h"
+
+int main() {
+    // Note use of base-class pointer
+    Base *obj = new Derived();
+    delete obj; // calls what destructor(s)?
+    return 0;
+}
+-->
+
+`new Derived()` calls `Derived` default constructor, which in turn calls `Base` default constructor; that's good
+
+Which destructor is called?
+
+* Destructor is not `virtual`
+* Does that mean `~Base` is called but not `~Derived`?
+
+# Virtual destructors
+
+\tiny
+
+<!---cppmd-shell
+g++ -o %PREVBASE% %PREV%
+valgrind ./%PREVBASE%
+-->
+
+\normalsize
+
+`~Derived` is *not* called; `derived_memory` is leaked
+
+# Virtual destructors
+
+\scriptsize
+
+<!---cppmd-file virt_dtor2.h
+class Base {
+public:
+    Base() : base_memory(new char[1000]) { }
+
+    // Now *** virtual ***
+    virtual ~Base() { delete[] base_memory; }
+
+private:
+    char *base_memory;
+};
+
+class Derived : public Base {
+public:
+    Derived() : Base(), derived_memory(new char[1000]) { }
+
+    // Now *** virtual ***
+    virtual ~Derived() { delete[] derived_memory; }
+
+private:
+    char *derived_memory;
+};
+-->
+
+# Virtual destructors
+
+<!---cppmd-file virt_dtor2.cpp
+#include "virt_dtor2.h"
+
+int main() {
+    // Note use of base-class pointer
+    Base *obj = new Derived();
+    delete obj; // calls what destructor(s)?
+    return 0;
+}
+-->
+
+# Virtual destructors
+
+\tiny
+
+<!---cppmd-shell
+g++ -o %PREVBASE% %PREV%
+valgrind ./%PREVBASE%
+-->
+
+\normalsize
+
+Fixed; thanks to dynamic binding, `delete obj` calls `~Derived`, which in turn calls `~Base`
+
+Derived-class destructor always implicitly calls base-class destructor at the end
+
+# Virtual destructors
+
+To avoid this in general: *Any `class` with virtual member functions* should also have a `virtual` destructor, even if the destructor does nothing
