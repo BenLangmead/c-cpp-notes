@@ -1,0 +1,9 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+card_int
+cards
+enum_1

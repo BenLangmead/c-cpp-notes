@@ -1,0 +1,226 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++ `enum class`
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# `enum class`
+
+We have often used integers to describe *categorical* data
+
+```c
+#include <stdlib.h>
+
+int main() {
+    void *memory = malloc(1000000);
+    if(memory == NULL) {
+        return 1; // failure
+    }
+    // do something with memory
+    return 0; // success
+}
+```
+
+Returning 0 means "success", 1 means "failure"
+
+# `enum class`
+
+```c
+  struct Card {
+      int rank; // 1=ace, 2=two, ..., 10=ten
+                // 11=jack, 12=queen, 13=king
+      int suit; // 0=heart, 1=club, 2=diamond, 3=spade
+
+      Card(int r, int s) : rank(r), suit(s) { }
+  };
+```
+
+`int` has advantages; e.g. we can compare ranks with `<`
+
+Also has disadvantages:
+
+* Mapping between `int`s and suits is arbitrary
+* If we mix up `rank` and `suit` -- e.g. `Card c(3, 13)` -- compiler can't catch it
+
+<!---cppmd-file no-echo card_int.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+struct Card {
+    int rank; // 1=ace, 2=two, ..., 10=ten
+              // 11=jack, 12=queen, 13=king
+    int suit; // 0=heart, 1=club, 2=diamond, 3=spade
+
+    Card(int r, int s) : rank(r), suit(s) { }
+};
+
+int main() {
+    Card c(3, 13);
+    cout << c.rank << ", " << c.suit << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# `enum class`
+
+`enum class` creates a *categorical* type
+
+(C & C++ have an older mechanism called simply `enum` that we won't discuss here)
+
+# `enum class`
+
+\scriptsize
+
+<!---cppmd-file enum_1.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+enum class Suit {
+    HEART, CLUB, DIAMOND, SPADE
+};
+
+struct Card {
+    int rank; // 1=ace, 11=jack, 12=queen, 13=king
+    Suit suit;
+
+    Card(int r, Suit s) : rank(r), suit(s) { }
+};
+
+int main() {
+    Card c(1, Suit::CLUB); // ace of clubs
+    cout << "c.suit = " << (int)c.suit << endl;
+    return 0;
+}
+-->
+
+# `enum class`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Behind the scenes, an `enum class` is really an `int`
+
+* Starts at 0, so `HEART=0`, `CLUB=1`, `DIAMOND=2`, `SPADE=3`
+
+C++ will refuse to implicitly convert between `enum class` and `int`; we had to explicitly cast for `cout`
+
+\footnotesize
+
+```c
+    cout << "c.suit = " << (int)c.suit << endl;
+```
+
+# `enum class`
+
+\footnotesize
+
+<!---cppmd-file cards.h
+// *** cards.h ***
+
+enum class Suit { HEART, CLUB, DIAMOND, SPADE };
+
+enum class Rank {
+    // "= 1" to start numbering at 1 instead of 0
+    ACE = 1, TWO, THREE, FOUR, FIVE, SIX, SEVEN,
+    EIGHT, NINE, TEN, JACK, QUEEN, KING
+};
+
+struct Card {
+    Rank rank;
+    Suit suit;
+
+    Card(Rank r, Suit s) : rank(r), suit(s) { }
+};
+-->
+
+# `enum class`
+
+\scriptsize
+
+<!---cppmd-file cards.cpp
+// *** cards.cpp ***
+
+#include <iostream>
+#include "cards.h"
+
+using std::cout;  using std::endl;
+
+int main() {
+    Card c1(Rank::SEVEN, Suit::HEART);
+    Card c2((Rank)10, Suit::DIAMOND);
+    cout << "c1=" << (int)c1.rank << ", s=" << (int)c1.suit << endl;
+    cout << "c2=" << (int)c2.rank << ", s=" << (int)c2.suit << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# `enum class`
+
+We get a compiler error if we mix up rank & suit
+
+\footnotesize
+
+<!---cppmd-file cards_error.cpp
+#include <iostream>
+#include "cards.h"
+
+using std::cout;  using std::endl;
+
+int main() {
+    Card c1(Suit::HEART, Rank::SEVEN); // oops!
+    cout << "c1=" << (int)c1.rank << ", s=" << (int)c1.suit << endl;
+    return 0;
+}
+-->
+
+# `enum class`
+
+\scriptsize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
