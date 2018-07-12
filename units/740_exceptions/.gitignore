@@ -1,0 +1,15 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+card_game_main1
+card_game_main2
+card_game_main3
+exc_spec
+except_unwind
+except_unwind2
+exceptions1
+exceptions2
+exceptions3
