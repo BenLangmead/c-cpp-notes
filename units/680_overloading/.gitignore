@@ -1,0 +1,12 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+complex
+complex2
+compound
+hello_world
+insertion_eg2
+print_type

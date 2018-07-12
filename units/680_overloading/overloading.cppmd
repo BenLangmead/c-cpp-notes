@@ -1,0 +1,602 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Overloading & operator overloading
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Overloading
+
+C++ compiler can distinguish functions with same name but different parameters
+
+\footnotesize
+
+<!---cppmd-file print_type.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+void output_type(int)   { cout << "int" << endl; }
+void output_type(float) { cout << "float" << endl; }
+
+int main() {
+    output_type(1);   // int argument
+    output_type(1.f); // float argument
+    return 0;
+}
+-->
+
+# Overloading
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+But it *cannot* distinguish functions with same name & parameters but different return types
+
+# Overloading
+
+\footnotesize
+
+<!---cppmd-file print_type.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+int   get_one() { return 1; }
+float get_one() { return 1.0f; }
+
+int main() {
+    int i = get_one();
+    float f = get_one();
+    cout << i << ' ' << f << endl;
+    return 0;
+}
+-->
+
+# Overloading
+
+\scriptsize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# Operator overloading
+
+Operators like `+` and `<<` are like functions
+
+`a + b` is like `plus(a, b)` or `a.plus(b)`
+
+`a + b + c` is like `plus(plus(a, b), c)`
+
+# Operator overloading
+
+`class`es override member functions to customize their behavior
+
+*Operator overloading* is when we do something similar for *operators*
+
+We've been using it:
+
+\footnotesize
+
+```c
+    string msg("Hello"), name;
+    cin >> name;                  // >> is an operator
+    cout << msg << ", ";          // << is an operator
+    cout << (name + '!') << endl; // << and + are operators
+```
+
+<!---cppmd-file no-echo hello_world.cpp
+#include <iostream>
+#include <string>
+
+using std::cout;
+using std::cin;
+using std::endl;
+using std::string;
+
+int main() {
+    string msg("Hello"), name;
+    cin >> name;                  // >> is an operator
+    cout << msg << ", ";          // << is an operator
+    cout << (name + '!') << endl; // << and + are operators
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+echo "Ben" | ./%PREVBASE%
+-->
+
+# Operator overloading
+
+`cout <<` works with many types, but not all:
+
+\footnotesize
+
+<!---cppmd-file insertion_eg1.cpp
+#include <iostream>
+#include <vector>
+
+using std::cout;  using std::endl;
+using std::vector;
+
+int main() {
+    vector<int> vec = {1, 2, 3};
+    cout << vec << endl;
+    return 0;
+}
+-->
+
+# Operator overloading
+
+\tiny
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# Operator overloading
+
+We can make it work by defining the appropriate operator overload:
+
+\tiny
+
+<!---cppmd-file insertion_eg2.cpp
+#include <iostream>
+#include <vector>
+
+using std::cout;   using std::endl;
+using std::vector;
+
+std::ostream& operator<<(std::ostream& os, const vector<int>& vec) {
+    for(vector<int>::const_iterator it = vec.cbegin();
+        it != vec.cend(); ++it)
+    {
+        os << *it << ' ';
+    }
+    return os;
+}
+
+int main() {
+    const vector<int> vec = {1, 2, 3};
+    cout << vec << endl; // now this will work!
+    return 0;
+}
+-->
+
+# Operator overloading
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Operator overloading
+
+`std::ostream` is a C++ *output stream*
+
+Can write to it, can't read from it
+
+It is `cout`'s type
+
+* `cout` can be passed as parameter of type `std::ostream& os`
+* `const std::ostream&` won't work, since it disallows writing
+
+# Operator overloading
+
+When we see this:
+
+\footnotesize
+
+```c
+    cout << "Hello " << 1 << ' ' << 2;
+```
+
+\normalsize
+
+This is what really happens:
+
+\footnotesize
+
+```c
+    operator<<(
+        operator<<(
+            operator<<(
+                operator<<(cout, "Hello"), 1), ' '), 2)
+```
+
+\normalsize
+
+* First,  we `cout << "Hello"`
+* That *returns* `cout`, which becomes the new left operand
+* Then we `cout << 1`, returning `cout` as new left operand
+* Then we `cout << ' '`, returning `cout`
+* ...
+
+# Operator overloading
+
+\footnotesize
+
+```c
+std::ostream& operator<<(std::ostream& os, const vector<int>& vec) {
+    for(vector<int>::const_iterator it = vec.cbegin();
+        it != vec.cend(); ++it)
+    {
+        os << *it << ' ';
+    }
+    return os;
+}
+```
+
+\normalsize
+
+Allows `vector<int>` to appear in a typical `cout <<` chain
+
+* Taking `std::ostream& os` in 1st parameter & returning `os` enables chaining
+* Taking `const vector<int>&` as 2nd parameter allows `vector<int>` to appear as ight operand in `operator<<` call
+* Passing by `const` reference avoids needless copying
+
+# Operator overloading
+
+Can also overload operator with a member function
+
+\footnotesize
+
+```c
+class Complex {
+public:
+    Complex(double r, double i) : real(r), imaginary(i) { }
+
+    Complex operator+(const Complex& rhs) const {
+        // left operand is the current object ("myself")
+        // right operand is rhs
+        // return value is a new Complex
+        Complex result(real + rhs.real, imaginary + rhs.imaginary);
+        return result; // Note: return type can't be `Complex&`
+    }
+
+private:
+    double real, imaginary;
+};
+```
+
+<!---cppmd-file no-echo complex.cpp
+#include <iostream>
+#include <vector>
+
+using std::cout;   using std::endl;
+using std::vector;
+
+class Complex {
+public:
+    Complex(double r, double i) : real(r), imaginary(i) { }
+
+    Complex operator+(const Complex& rhs) {
+        Complex result(real + rhs.real, imaginary + rhs.imaginary);
+        return result;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, Complex c);
+
+private:
+    double real, imaginary;
+};
+
+std::ostream& operator<<(std::ostream& os, Complex c) {
+    os << c.real << " + " << c.imaginary << 'i';
+    return os;
+}
+
+int main() {
+    Complex c{1.0, 1.0}, d{2.0, 2.0};
+    cout << c + d << endl; // now this will work!
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Operator overloading
+
+Say we want to be able to print a `Complex` with `cout <<`
+
+\footnotesize
+
+```c
+    class Complex {
+    public:
+        ...
+    private:
+        double real, imaginary;
+    };
+```
+
+\normalsize
+
+Would this work?
+
+\footnotesize
+
+```c
+    std::ostream& operator<<(std::ostream& os, const Complex& d) {
+        os << d.real << " + " << d.imaginary + "i";
+        return os;
+    }
+```
+
+# Operator overloading
+
+No, because `real` & `imaginary` are private
+
+Can we make `operator<<` be a member function for `Complex`?
+
+No; `operator<<` takes `std::ostream` as left operand, but a member function has to take the *object itself* as left operand
+
+# Operator overloading
+
+Can't be a member, but also needs access to private members??
+
+Solution: a `friend` function:
+
+\scriptsize
+
+```c
+    class Complex {
+    public:
+        ...
+
+        friend std::ostream& operator<<(std::ostream& os, Complex c);
+
+    private:
+        double real, imaginary;
+    };
+
+    std::ostream& operator<<(std::ostream& os, Complex c) {
+        os << c.real << " + " << c.imaginary << 'i';
+        return os;
+    }
+```
+
+# Operator overloading
+
+`operator<<` is a separate, non-member function
+
+It is also a `friend` of `Complex`, as declared here:
+
+\footnotesize
+
+```c
+    class Complex {
+    public:
+        ...
+        friend std::ostream& operator<<(std::ostream& os, Complex c);
+        ...
+    };
+```
+
+\normalsize
+
+A `friend` of a class can access its private members
+
+* Like a "backstage pass"
+
+# Operator overloading
+
+\footnotesize
+
+| Access modifier | Any function | Derived-class members  | Same-class members **& `friend`s** |
+|:--------------- | ------------:| --------------:| -----------:|
+| `public`        |          Yes |            Yes |         Yes |
+| `protected`     |           No |            Yes |         Yes |
+| `private`       |           No |             No |         Yes |
+
+\normalsize
+
+Often, `friend` is to be avoided, and signals bad design
+
+A common exception is when `operator<<` must access private fields
+
+# Operator overloading
+
+When using a member function to overload an operator, sometimes the return value is "myself"
+
+E.g. consider the `+=` compound operator
+
+```c
+    int c = 0;
+    c += (c += 2);
+```
+
+Recall that the result of an assignment (including compound assignment) is the value assigned
+
+Here, `(c += 2)` both sets `c` to 2 and evaluates to 2
+
+Then outer `c += (...)` sets `c` to 4
+
+<!---cppmd-file no-echo compound.cpp
+#include <iostream>
+
+using std::cout;   using std::endl;
+
+int main() {
+    int c = 0;
+    c += (c += 2);
+    cout << "c = " << c << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Operator overloading
+
+Now for `Complex`:
+
+```c
+    Complex c(0.0, 0.0);
+    c += (c += Complex(2.0, 2.0));
+```
+
+# Operator overloading
+
+Can return "myself" by returning `*this` from `operator+=` as below
+
+Member functions have implicit pointer argument `this`: a pointer to "myself," the current object
+
+\footnotesize
+
+```c
+    class Complex {
+    public:
+        ...
+        Complex operator+=(const Complex& rhs) {
+            real += rhs.real;
+            imaginary += rhs.imaginary;
+            return *this;
+        }
+        ...
+    };
+```
+
+<!---cppmd-file no-echo complex2.cpp
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
+class Complex {
+public:
+    Complex(double r, double i) : real(r), imaginary(i) { }
+
+    Complex operator+(const Complex& rhs) {
+        Complex result(real + rhs.real, imaginary + rhs.imaginary);
+        return result;
+    }
+
+    Complex operator+=(const Complex& rhs) {
+        real += rhs.real;
+        imaginary += rhs.imaginary;
+        return *this;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, Complex c);
+
+private:
+    double real, imaginary;
+};
+
+std::ostream& operator<<(std::ostream& os, Complex c) {
+    os << c.real << " + " << c.imaginary << 'i';
+    return os;
+}
+
+int main() {
+    Complex c(0.0, 0.0);
+    c += (c += Complex(2.0, 2.0));
+    cout << c << endl; // now this will work!
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Operator overloading
+
+Operators we can overload:
+
+```
+    +	-	*	/	%	^	&	|	~
+    !	->	=	<	>	<=	>=	++	--
+    <<	>>	==	!=	&&	||	+=	-=	/=
+    %=	^=	&=	|=	*=	<<=	>>=	[]	()
+```
+
+These are common:
+
+* `+`, `-`, `+=`, `-=` (e.g. `Complex`)
+* `*`, `->` (e.g. iterators)
+* `[` `]` (e.g. `vector`)
+* `=` (most things that can be copied)
+* `==`, `<`, `>`, `<=`, `>=` (things that can be compared)
+
+# Operator overloading
+
+Overloading allowed only when one or both operands are a user-defined type, like a `class`
+
+This won't work (thank goodness):
+
+```c
+    int operator+(int a, int b) {
+        return a - b;
+    }
+```
+
+Can't change operator's precedence, associativity, or # operands
+
+# Operator overloading
+
+To allow `Date` to work with `std::sort`, we only have to add `operator<`:
+
+\footnotesize
+
+```c
+    class Date {
+    public:
+        ...
+        bool operator<(const Date& rhs) const {
+            if(year < rhs.year) return true;
+            if(year > rhs.year) return false;
+            if(month < rhs.month) return true;
+            if(month > rhs.month) return false;
+            return day < rhs.day;
+        }
+        ...
+    };
+```
