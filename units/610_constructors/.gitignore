@@ -1,0 +1,8 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+def_ctor_1
+grade_list_2
