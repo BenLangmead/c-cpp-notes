@@ -1,0 +1,10 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+complex_main
+image_fixed
+image_main
+image_main2

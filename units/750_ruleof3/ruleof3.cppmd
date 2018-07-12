@@ -1,0 +1,417 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Copying, assignment and the Rule of 3
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Copying, assignment and the Rule of 3
+
+We know there is a difference between `==` and `=`
+
+But there are two kinds of `=`:
+
+* `=` in a declaration, like `int a = 4;` (initialization)
+* `=` elsewhere, like `a = 4;` (assignment)
+
+\footnotesize
+
+<!---cppmd-file no-echo complex.h
+#include <iostream>
+
+class Complex {
+public:
+    Complex() : Complex(0.0, 0.0) {
+        std::cout << "Default" << std::endl;
+    }
+
+    Complex(double r, double i) : real(r), imaginary(i) {
+        std::cout << "Non-default" << std::endl;
+    }
+
+    // Copy constructor
+    Complex(const Complex& c) : real(c.real), imaginary(c.imaginary) {
+        std::cout << "Copy" << std::endl;
+    }
+
+    Complex operator+(const Complex& rhs) const {
+        Complex result(real + rhs.real, imaginary + rhs.imaginary);
+        return result;
+    }
+
+    Complex& operator=(const Complex& rhs) {
+        std::cout << "Assign" << std::endl;
+        real = rhs.real;
+        imaginary = rhs.imaginary;
+        return *this;
+    }
+
+    double get_real() const { return real; }
+    double get_imaginary() const { return imaginary; }
+
+private:
+    double real, imaginary;
+};
+-->
+
+<!---cppmd-file no-echo complex_main.cpp
+#include <iostream>
+#include "complex.h"
+
+using std::cout;  using std::endl;
+
+int main() {
+    Complex c = {3.0, 2.0};    // = in declaration: *initialization*
+    Complex c2 = c;            // (same)
+    c = Complex(4.0, 5.0);     // = outside declaration: *assignment*
+    if(c2.get_real() == 3.0) { // == is *equality testing*
+        cout << "Real is 4.0" << endl;
+    }
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -o %PREVBASE% %PREV%
+./%PREVBASE%
+-->
+
+```c
+Complex c = {3.0, 2.0};    // = in declaration: *initialization*
+Complex c2 = c;            // (same)
+c = Complex(4.0, 5.0);     // = outside declaration: *assignment*
+if(c2.get_real() == 3.0) { // == is *equality testing*
+    // ...
+}
+```
+
+# `image.h`
+
+`Image` has resources managed by the constructor & destructor:
+
+\tiny
+
+<!---cppmd-file image.h
+class Image {
+  public:
+      Image(const char *orig, int r, int c) : nrow(r), ncol(c) {
+          image = new char[r*c];
+          for(int i = 0; i < nrow * ncol; i++) {
+              image[i] = orig[i];
+          }
+      }
+
+      ~Image() { delete[] image; }
+
+      const char *get_image() const { return image; }
+      int get_nrow() const { return nrow; }
+      int get_ncol() const { return ncol; }
+
+      void set_pixel(char pix, int row, int col) {
+          image[row * ncol + col] = pix;
+      }
+  private:
+      char *image;    // image data
+      int nrow, ncol; // # rows and columns
+};
+
+std::ostream& operator<<(std::ostream&, const Image&);
+-->
+
+# `image.cpp`
+
+\footnotesize
+
+<!---cppmd-file image.cpp
+#include <iostream>
+#include "image.h"
+
+using std::endl;
+using std::ostream;
+
+ostream& operator<<(ostream& os, const Image& image) {
+    for(int i = 0; i < image.get_nrow(); i++) {
+        for(int j = 0; j < image.get_ncol(); j++) {
+            os << image.get_image()[i*image.get_ncol()+j] << ' ';
+        }
+        os << endl;
+    }
+    return os;
+}
+-->
+
+# `image_main.cpp`
+
+\footnotesize
+
+<!---cppmd-file image_main.cpp
+#include <iostream>
+#include "image.h"
+using std::cout;  using std::endl;
+
+int main() {
+    Image x_wins("X-O-XO--X", 3, 3);
+    cout << x_wins << "** X wins! **" << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -o %PREVBASE% %PREV% image.cpp
+./%PREVBASE%
+-->
+
+# `image_main2.cpp`
+
+\footnotesize
+
+<!---cppmd-file image_main2.cpp
+#include <iostream>
+#include "image.h"
+
+using std::cout;  using std::endl;
+
+int main() {
+    Image x_wins("X-O-XO--X", 3, 3);
+    Image o_wins = x_wins;
+    o_wins.set_pixel('O', 2, 2); // set bottom right to 'O'
+    cout << x_wins << "** X wins! **" << endl << endl;
+    cout << o_wins << "** O wins! **" << endl;
+    return 0;
+}
+-->
+
+# `image_main2.cpp`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -o %PREVBASE% %PREV% image.cpp
+./%PREVBASE%
+-->
+
+\normalsize
+
+Oops, both have `O` in bottom right corner
+
+`o_wins.set_pixel(...)` affected both `x_wins` & `o_wins`!
+
+# `image_main2.cpp`
+
+Also: destructor `delete[]`s the same pointer twice
+
+\tiny
+
+<!---cppmd-shell
+valgrind ./%PREVBASE% > /dev/null
+-->
+
+# Initialization & assignment
+
+`Image o_wins = x_wins;` does *shallow copy*
+
+* Copies `x_wins.image` pointer directly into `o_wins.image`, so both are using same heap array
+* Instead, we want *deep copy*; `o_wins` should be a new buffer, with contents of `x_wins` copied over
+* Want this both for initialization and for assignment
+
+```c
+Image x_wins("X-O-XO--X", 3, 3);
+Image o_wins = x_wins;
+```
+
+# Rule of 3
+
+`Image` is an example of a class that manages resources, and therefore has a *non-trivial destructor*
+
+*Rule of 3*: If you have to manage how an object is destroyed, you should also manage how it's copied
+
+*Rule of 3* (technical version): If you have a non-trivial destructor, you should also define a *copy constructor* and *`operator=`*
+
+Case in point: `Image` should be deep copied
+
+# Rule of 3
+
+*Copy constructor* initializes a `class` variable as a copy of another
+
+*`operator=`* is called when one object is assigned to another
+
+\footnotesize
+
+```c
+Complex c = {3.0, 2.0}; // non-default constructor
+Complex c2 = c;         // copy constructor
+c = Complex(4.0, 5.0);  // non-default ctor for right-hand side
+                        // operator= to copy into left-hand side
+```
+
+# Copy constructor
+
+Copy constructor is called when:
+
+* Initializing:
+    * `Image o_wins = x_wins;`
+    * `Image o_wins(x_wins);` (same meaning as above)
+* Passing by value
+* Returning by value
+
+# Copy constructor
+
+Copy constructor for `Image`:
+
+\footnotesize
+
+```c
+    Image(const Image& o) : nrow(o.nrow), ncol(o.ncol) {
+        // Do a *deep copy*, similarly to the
+        // non-default constructor
+        image = new char[nrow * ncol];
+        for(int i = 0; i < nrow * ncol; i++) {
+            image[i] = o.image[i];
+        }
+    }
+```
+
+# `operator=`
+
+`operator=` is called when assigning one `class` variable to another
+
+* Except for initialization; copy constructor handles that
+
+\footnotesize
+
+```c
+    Image& operator=(const Image& o) {
+        delete[] image;  // deallocate previous image memory
+        nrow = o.nrow;
+        ncol = o.ncol;
+        image = new char[nrow * ncol];
+        for(int i = 0; i < nrow * ncol; i++) {
+            image[i] = o.image[i];
+        }
+        return *this; // for chaining
+    }
+```
+
+\normalsize
+
+It's a normal member function, not a constructor, so we can't use initializer list syntax
+
+# Rule of 3
+
+If you don't specify copy constructor or `operator=`, compiler adds *implicit* version that *shallow copies*
+
+* Simply the contents of the fields
+* `class` fields will have their corresponding copy constructors or `operator=` functions called
+* Pointers to heap memory will simply be copied, without the heap memory itself being copied
+
+Another way of stating the Rule of 3: if your class has a non-trivial destructor, you probably *don't* want shallow copying
+
+# Rule of 3
+
+When we add the copy constructor and `operator=` defined above, we get the expected behavior:
+
+\footnotesize
+
+<!---cppmd-file no-echo image_fixed.h
+class Image {
+  public:
+      Image(const char *orig, int r, int c) : nrow(r), ncol(c) {
+          image = new char[r*c];
+          for(int i = 0; i < nrow * ncol; i++) {
+              image[i] = orig[i];
+          }
+      }
+
+      // ** Copy constructor **
+      Image(const Image& o) : nrow(o.nrow), ncol(o.ncol) {
+          // Do a *deep copy*, similarly to the
+          // non-default constructor
+          image = new char[nrow * ncol];
+          for(int i = 0; i < nrow * ncol; i++) {
+              image[i] = o.image[i];
+          }
+      }
+
+      // ** operator= **
+      Image& operator=(const Image& o) {
+          delete[] image;  // deallocate previous image memory
+          nrow = o.nrow;
+          ncol = o.ncol;
+          image = new char[nrow * ncol];
+          for(int i = 0; i < nrow * ncol; i++) {
+              image[i] = o.image[i];
+          }
+          return *this; // for chaining
+      }
+
+      ~Image() { delete[] image; }
+
+      const char *get_image() const { return image; }
+      int get_nrow() const { return nrow; }
+      int get_ncol() const { return ncol; }
+
+      void set_pixel(char pix, int row, int col) {
+          image[row * ncol + col] = pix;
+      }
+  private:
+      char *image;    // image data
+      int nrow, ncol; // # rows and columns
+};
+
+std::ostream& operator<<(std::ostream&, const Image&);
+-->
+
+<!---cppmd-file no-echo image_fixed.cpp
+#include <iostream>
+#include "image_fixed.h"
+
+using std::cout;  using std::endl;
+
+int main() {
+    Image x_wins("X-O-XO--X", 3, 3);
+    Image o_wins = x_wins;
+    o_wins.set_pixel('O', 2, 2); // set bottom right to 'O'
+    cout << x_wins << "** X wins! **" << endl << endl;
+    cout << o_wins << "** O wins! **" << endl;
+    return 0;
+}
+-->
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -o %PREVBASE% %PREV% image.cpp
+./%PREVBASE%
+-->
+
+# Rule of 3
+
+And no complaints from `valgrind`:
+
+\tiny
+
+<!---cppmd-shell
+valgrind ./%PREVBASE% > /dev/null
+-->
