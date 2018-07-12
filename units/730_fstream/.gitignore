@@ -1,0 +1,11 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+hello.txt
+hello2.txt
+ifs1
+ofs1
+seek
