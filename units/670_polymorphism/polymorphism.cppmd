@@ -1,0 +1,716 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Polymorphism
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Polymorphism
+
+\scriptsize
+
+```c
+class Account {
+public:
+    ...
+    std::string type() const { return "Account"; }
+    ...
+};
+
+class CheckingAccount : public Account {
+public:
+    ...
+    std::string type() const { return "CheckingAccount"; }
+    ...
+};
+
+class SavingsAccount : public Account {
+public:
+    ...
+    std::string type() const { return "SavingsAccount"; }
+    ...
+};
+```
+
+<!---cppmd-file no-echo account2.h
+#include <string>
+
+class Account {
+public:
+    Account() : balance(0.0) { }
+    Account(double initial) : balance(initial) { }
+
+    void credit(double amt)    { balance += amt; }
+    void debit(double amt)     { balance -= amt; }
+    double get_balance() const { return balance; }
+    std::string type() const { return "Account"; }
+private:
+    double balance;
+};
+
+class CheckingAccount : public Account {
+public:
+    CheckingAccount(double initial, double atm) :
+        Account(initial), total_fees(0.0), atm_fee(atm) { }
+
+    void cash_withdrawal(double amt) {
+        total_fees += atm_fee;
+        debit(amt + atm_fee);
+    }
+
+    double get_total_fees() const { return total_fees; }
+
+    std::string type() const { return "CheckingAccount"; }
+
+private:
+    double total_fees;
+    double atm_fee;
+};
+
+class SavingsAccount : public Account {
+public:
+    SavingsAccount(double initial, double rate) :
+        Account(initial), annual_rate(rate) { }
+
+    // Not implemented here; usual compound interest calc
+    double total_after_years(int years);
+
+    std::string type() const { return "SavingsAccount"; }
+
+private:
+    double annual_rate;
+};
+-->
+
+# Polymorphism
+
+\scriptsize
+
+<!---cppmd-file account_main3.cpp
+#include <iostream>
+#include "account2.h"
+
+using std::cout;  using std::endl;
+
+void print_account_type(const Account& acct) {
+    cout << acct.type() << endl;
+}
+
+int main() {
+    Account acct(1000.0);
+    CheckingAccount checking(1000.0, 2.00);
+    SavingsAccount saving(1000.0, 0.05);
+
+    print_account_type(acct);
+    print_account_type(checking);
+    print_account_type(saving);
+
+    return 0;
+}
+-->
+
+# Polymorphism
+
+Note the types:
+
+```c
+void print_account_type(const Account& acct) {
+    cout << acct.type() << endl;
+}
+
+int main() {
+    ...
+    CheckingAccount checking(1000.0, 2.00);
+    ...
+    print_account_type(checking);
+    ...
+}
+```
+
+# Polymorphism
+
+In `main`, `checking_acct` has type `CheckingAccount`
+
+Passed to `print_account_type` as `const Account&`; you may use a variable of a derived type *as though it has the base type*
+
+* Makes sense: `CheckingAccount` *is a* `Account`
+
+# Polymorphism
+
+\footnotesize
+
+```c
+    int main() {
+        vector<Account> my_accounts;
+
+        // this is OK; CheckingAccount is
+        // derived from Account
+        my_accounts.push_back(CheckingAccount(2000.0));
+
+        cout << my_accounts.back().type() << endl;
+        return 0;
+    }
+```
+
+# Polymorphism
+
+\footnotesize
+
+```c
+    void print_account_type(const Account& acct) {
+        cout << acct.type() << endl;
+    }
+
+    int main() {
+        ...
+        CheckingAccount checking(1000.0, 2.00);
+        ...
+        print_account_type(checking_acct);
+        ...
+    }
+```
+
+\normalsize
+
+Does `acct.type()` call:
+
+* `Account::type()` -- the parameter's type?
+* `CheckingAccount::type()` -- `checking`'s declared type?
+
+# Polymorphism
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+It calls `Account::type()`
+
+What if we want the call the member corresponding to the *original declared* type of the variable (`CheckingAccount`) rather than the base type we happen to be using for it right now (`Account`)?
+
+This requires *dynamic binding*
+
+* Declare relevant member functions as *virtual*:
+
+# Polymorphism
+
+\scriptsize
+
+```c
+class Account {
+public:
+    ...
+    virtual std::string type() const { return "Account"; }
+    ...
+};
+
+class CheckingAccount : public Account {
+public:
+    ...
+    virtual std::string type() const { return "CheckingAccount"; }
+    ...
+};
+
+class SavingsAccount : public Account {
+public:
+    ...
+    virtual std::string type() const { return "SavingsAccount"; }
+    ...
+};
+```
+
+# Polymorphism
+
+\scriptsize
+
+<!---cppmd-file no-echo account3.h
+#include <string>
+
+class Account {
+public:
+    Account() : balance(0.0) { }
+    Account(double initial) : balance(initial) { }
+
+    void credit(double amt)    { balance += amt; }
+    void debit(double amt)     { balance -= amt; }
+    double get_balance() const { return balance; }
+    virtual std::string type() const { return "Account"; }
+private:
+    double balance;
+};
+
+class CheckingAccount : public Account {
+public:
+    CheckingAccount(double initial, double atm) :
+        Account(initial), total_fees(0.0), atm_fee(atm) { }
+
+    void cash_withdrawal(double amt) {
+        total_fees += atm_fee;
+        debit(amt + atm_fee);
+    }
+
+    double get_total_fees() const { return total_fees; }
+
+    virtual std::string type() const { return "CheckingAccount"; }
+
+private:
+    double total_fees;
+    double atm_fee;
+};
+
+class SavingsAccount : public Account {
+public:
+    SavingsAccount(double initial, double rate) :
+        Account(initial), annual_rate(rate) { }
+
+    // Not implemented here; usual compound interest calc
+    double total_after_years(int years);
+
+    virtual std::string type() const { return "SavingsAccount"; }
+
+private:
+    double annual_rate;
+};
+-->
+
+<!---cppmd-file account_main4.cpp
+#include <iostream>
+#include "account3.h"  // now with *virtual* `type` member functions
+using namespace std;
+
+void print_account_type(const Account& acct) {
+    cout << acct.type() << endl;
+}
+
+int main() {
+    Account acct(1000.0);
+    CheckingAccount checking(1000.0, 2.00);
+    SavingsAccount saving(1000.0, 0.05);
+
+    print_account_type(acct);
+    print_account_type(checking);
+    print_account_type(saving);
+
+    return 0;
+}
+-->
+
+# Polymorphism
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Dynamic binding / `virtual` functions enable C++ *polymorphism*
+
+* In Java & Python *all methods are virtual*; you have no choice
+
+A `class` object can look "on the surface" like the base class while behaving like the derived class
+
+# Polymorphism
+
+\scriptsize
+
+<!---cppmd-file no-echo account3.h
+#include <string>
+
+class Account {
+public:
+    Account() : balance(0.0) { }
+    Account(double initial) : balance(initial) { }
+
+    void credit(double amt)    { balance += amt; }
+    void debit(double amt)     { balance -= amt; }
+    double get_balance() const { return balance; }
+    virtual std::string type() const { return "Account"; }
+private:
+    double balance;
+};
+
+class CheckingAccount : public Account {
+public:
+    CheckingAccount(double initial, double atm) :
+        Account(initial), total_fees(0.0), atm_fee(atm) { }
+
+    void cash_withdrawal(double amt) {
+        total_fees += atm_fee;
+        debit(amt + atm_fee);
+    }
+
+    double get_total_fees() const { return total_fees; }
+
+    virtual std::string type() const { return "CheckingAccount"; }
+
+private:
+    double total_fees;
+    double atm_fee;
+};
+
+class SavingsAccount : public Account {
+public:
+    SavingsAccount(double initial, double rate) :
+        Account(initial), annual_rate(rate) { }
+
+    // Not implemented here; usual compound interest calc
+    double total_after_years(int years);
+
+    virtual std::string type() const { return "SavingsAccount"; }
+
+private:
+    double annual_rate;
+};
+-->
+
+<!---cppmd-file account_main5.cpp
+#include <iostream>
+#include "account3.h"  // still with *virtual* `type` member functions
+using namespace std;
+
+// !!! *** Pass by value this time *** !!!
+void print_account_type(Account acct) {
+    cout << acct.type() << endl;
+}
+
+int main() {
+    Account acct(1000.0);
+    CheckingAccount checking(1000.0, 2.00);
+    SavingsAccount saving(1000.0, 0.05);
+    print_account_type(acct);
+    print_account_type(checking);
+    print_account_type(saving);
+    return 0;
+}
+-->
+
+# Polymorphism
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Fields only in the derived class are simply not copied when passed by value using the base type
+
+* This is *object slicing*
+
+Passing by reference doesn't cause slicing and preserves our ability to call virtual functions in the derived class; another reason to prefer passing `class` variables by reference
+
+# Polymorphism
+
+\vspace{2mm}
+
+\centerline{\includegraphics[width=3.5in]{../images/slicing.jpg}}
+
+\centering
+\scriptsize
+
+https://www.completelydelicious.com/cut-cake-even-layers/
+
+# Polymorphism
+
+\footnotesize
+
+```c
+class Base {                   class Derived : public Base {
+public:                        public:
+    void         normal();         void         normal();
+    virtual void virt();           virtual void virt();
+};                             };
+```
+
+\vspace{2mm}
+
+\normalsize
+
+Say we declare `Derived o` and later pass `o` to a function.  The member functions called with `.normal()` and `.vert()` depend on the parameter type.
+
+<!--
+| Declaration   | Current type | `o.normal()`        | `o.virt()`        | Note               |
+|:------------- | ------------:| -------------------:| -----------------:| ------------------ |
+| `Derived o`   | `Derived`    | `Derived::normal()` | `Derived::virt()` | Copied, not sliced |
+| `Derived o`   | `Derived&`   | `Derived::normal()` | `Derived::virt()` | Reference          |
+| `Derived o`   | `Base`       | `Base::normal()`    | `Base::virt()`    | Copied & sliced    |
+| `Derived o`   | `Base&`      | `Base::normal()`    | `Derived::virt()` | Reference          |
+-->
+
+\footnotesize
+
+| Param type   | `a.normal()`        | `a.virt()`        | What happens?      |
+| ------------:| -------------------:| -----------------:| ------------------ |
+| `Derived& a` | `Derived::normal()` | `Derived::virt()` | Passed by ref      |
+| `Derived a`  | `Derived::normal()` | `Derived::virt()` | Copied, not sliced |
+| `Base& a`    | `Base::normal()`    | `Derived::virt()` | Passed by ref      |
+| `Base a`     | `Base::normal()`    | `Base::virt()`    | Sliced & copied    |
+
+# Polymorphism
+
+Same reasoning applies when converting between related types implicitly or using casting:
+
+\footnotesize
+
+```c
+    int main() {
+        Derived original;
+
+        // sliced; b.virt() -> Base::virt()
+        Base b        = (Base)original;
+
+        // reference; bref.virt() -> Derived::virt()
+        Base& bref    = original;
+
+        Derived d     = original;  // simple copy
+        Derived& dref = original;  // simple reference
+
+        return 0;
+    }
+```
+
+<!---cppmd-file no-echo casting_poly.cpp
+#include <iostream>
+
+using namespace std;
+
+class Base {
+public:
+    void         normal()  { cout << "Base::normal" << endl; }
+    virtual void virt()    { cout << "Base::virt"   << endl; }
+};
+
+class Derived : public Base {
+public:
+    void         normal()  { cout << "Derived::normal" << endl; }
+    virtual void virt()    { cout << "Derived::virt"   << endl; }
+};
+
+int main() {
+    Derived original;
+
+    // sliced; b.virt() -> Base::virt()
+    Base b        = (Base)original;
+
+    // reference; bref.virt() -> Derived::virt()
+    Base& bref    = original;
+
+    Derived d     = original;  // simple copy
+    Derived& dref = original;  // simple reference
+
+    cout << "Normal:" << endl;
+    original.normal();
+    b.normal();
+    bref.normal();
+    d.normal();
+    dref.normal();
+
+    cout << "Virt:" << endl;
+    original.virt();
+    b.virt();
+    bref.virt();
+    d.virt();
+    dref.virt();
+
+    return 0;
+}
+-->
+
+<!---no-echo cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Polymorphism
+
+Virtual functions allow a `class` variable to remember and act like its declared type even when temporarily taking the base type
+
+* ...but *how* do they remember?
+
+When a class has a virtual member function, it also gets a hidden *virtual function table* or *vtable*
+
+* Points to declared-type implementation
+
+Table adds 1 pointer (8 bytes) to size of `class`, regardless of number of virtual functions
+
+# Polymorphism
+
+Blue-highlighted items take memory in `class` variables.  Memory is also needed for function code and virtual-function tables (`vtbl`s), but those aren't per-object, and `sizeof` won't include them.
+
+\vspace{4mm}
+
+\centerline{\includegraphics[width=3.75in]{../images/vtbl.png}}
+
+# Polymorphism
+
+Sometimes the base class is too generic to be useful as much more than a "guide" for derived classes
+
+\tiny
+
+```c
+class Shape {
+public:
+    virtual double area() const { } // NO SENSIBLE IMPLEMENTATION FOR THIS
+};
+
+class Rectangle : public Shape {
+public:
+    ...
+    virtual double area() const { return width * height; }
+    ...
+private:
+    double width, height;
+};
+
+class Circle : public Shape {
+public:
+    ...
+    virtual double area() const { return PI * radius * radius; }
+    ...
+private:
+    double radius;
+};
+```
+
+# Polymorphism
+
+We use *pure virtual* functions to flag member functions that *cannot* be usefully implemented in the base class and *must* be overridden and implemented in a derived class
+
+\footnotesize
+
+```c
+class Shape {
+public:
+    virtual double area() const = 0; // pure virtual
+};
+```
+
+\normalsize
+
+A class with any *pure virtual* functions is an *abstract base class*
+
+* You may not instantiate an abstract base class
+* E.g. `Shape s;` is not allowed; use derived type(s) instead
+
+# Polymorphism
+
+\tiny
+
+<!---cppmd-file shapes.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+class Shape {
+public:
+    virtual double area() const = 0;
+};
+
+class Rectangle : public Shape {
+public:
+    Rectangle(double w, double h) : width(w), height(h) { }
+    virtual double area() const { return width * height; }
+private:
+    double width, height;
+};
+
+int main() {
+    Shape s;
+    Rectangle r = {10.0, 5.0};
+    cout << "r area = " << r.area() << endl;
+    return 0;
+}
+-->
+
+# Polymorphism
+
+\scriptsize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# Polymorphism
+
+\tiny
+
+<!---cppmd-file shapes.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+class Shape {
+public:
+    virtual double area() const = 0;
+};
+
+class Rectangle : public Shape {
+public:
+    Rectangle(double w, double h) : width(w), height(h) { }
+    virtual double area() const { return width * height; }
+private:
+    double width, height;
+};
+
+int main() {
+    // Shape s;  // **** got rid of this *****
+    Rectangle r = {10.0, 5.0};
+    cout << "r area = " << r.area() << endl;
+    return 0;
+}
+-->
+
+# Polymorphism
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Polymorphism
+
+`virtual` syntax details:
+
+* Omit `virtual` keyword when defining a `virtual` member function outside a `class` definition
+* When declaring a `virtual` member function that overrides one in the parent class, you *may* omit the `virtual` keyword
+* When you declare a `virtual` member function that should override one in the base class, use the `override` keyword
+
+    * Helps catch mistakes where you intended to override but failed to due to a minor difference in function signature
