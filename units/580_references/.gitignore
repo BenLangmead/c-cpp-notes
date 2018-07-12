@@ -1,0 +1,13 @@
+*.cpp
+*.h
+*.o
+a.out
+*.pdf
+*.md
+divmod_ref
+ref_addr
+ref_min
+ref_ptr_1
+ref_ptr_2
+ref_reset
+ref_swap

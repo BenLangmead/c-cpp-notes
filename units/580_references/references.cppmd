@@ -1,0 +1,477 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++: References
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++: References
+
+Like iterators, references provide pointer-like functionality without many of the pointer drawbacks
+
+*Reference variable* is an *alias*, another name for an existing variable
+
+Restrictions make them safer than pointers:
+
+* Can't be NULL
+* Must be initialized immediately
+* Once set to alias a variable, cannot later alias a different variable
+
+Because of these, it's harder (though still possible) to access memory that doesn't belong to you via reference
+
+# C++: References
+
+A *reference* to variable of type `int` has type `int&`
+
+* `&` is *part of the type*
+* Reminds us of "address of" operator `&`
+
+# C++: References
+
+Example with pointer:
+
+\scriptsize
+
+<!---cppmd-file ref_ptr_1.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int i = 1;
+    int *j = &i;
+    cout << "i=" << i << ", *j=" << *j << endl;
+
+    *j = 9;
+    cout << "i=" << i << ", *j=" << *j << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: References
+
+Same example with reference:
+
+\scriptsize
+
+<!---cppmd-file ref_ptr_2.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int i = 1;
+    int& j = i; // j is an alias (another name) for i
+    cout << "i=" << i << ", j=" << j << endl;
+
+    j = 9; // no dereference (*) needed
+    cout << "i=" << i << ", j=" << j << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: References
+
+You can get the address of a reference variable with `&`; it has the same address as the variable it aliases
+
+\footnotesize
+
+<!---cppmd-file ref_addr.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int a = 5;
+    int& b = a;
+    cout << "&a=" << &a << endl << "&b=" << &b << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: References
+
+Function parameters with reference type are passed "by reference"
+
+\footnotesize
+
+```c
+    // if you have int a = 1, b = 2;
+    // then call like this: swap(a, b) -- no &s!
+    void swap(int& a, int& b) {
+        int tmp = a;
+        a = b;
+        b = tmp;
+    }
+```
+
+\normalsize
+
+Passing by reference is like passing by pointer
+
+* Callee can modify variable in caller
+* Large data structures can be passed without copying
+
+# C++: References
+
+\scriptsize
+
+<!---cppmd-file ref_swap.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+void swap(int& a, int& b) {
+    int tmp = a;
+    a = b;
+    b = tmp;
+}
+
+int main() {
+    int a = 1, b = 9;
+    swap(a, b);
+    cout << "a=" << a << ", b=" << b << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: References
+
+Recall this example; `ch` passed by reference to `cin.get(char&)`
+
+\footnotesize
+
+<!---cppmd-file uppercase_cpp.cpp
+#include <iostream>
+#include <cctype>
+using std::cout;  using std::endl;
+
+int main() {
+    char ch;
+    // read standard input char by char
+    while(cin.get(ch)) { // pass ch by reference!
+        cout << toupper(ch);
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+# C++: References
+
+C++ has *both* pass-by-value (non-reference parameters) *and* pass-by-reference (reference parameters)
+
+Function can have a mix of pass-by-value and pass-by-reference parameters
+
+# C++: References
+
+\scriptsize
+
+<!---cppmd-file divmod_ref.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+// `int a` and `int b` are passed *by value*
+// `int& quo` and `int& rem` are passed *by reference*
+void divmod(int a, int b, int& quo, int& rem) {
+    quo = a / b;
+    rem = a % b;
+}
+
+int main() {
+    int a = 10, b = 3, quo, rem;
+    divmod(a, b, quo, rem);
+    cout << "a=" << a << ", b=" << b
+         << ", quo=" << quo << ", rem=" << rem << endl;
+    return 0;
+}
+-->
+
+# C++: References
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: References
+
+Looking at the function call doesn't tell you which parameters are passed by value or by reference:
+
+```c
+    divmod(a, b, quo, rem); // ???
+```
+
+You have to look at the callee's parameter types:
+
+```c
+    void divmod(int a, int b, int& quo, int& rem) {
+        ...
+    }
+```
+
+# C++: References
+
+We can return a reference
+
+\scriptsize
+
+<!---cppmd-file ref_min.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int& minref(int& a, int& b) {
+    if(a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int main() {
+    int a = 5, b = 10;
+    int& min = minref(a, b);
+    min = 12;
+    cout << "a=" << a << ", b=" << b << ", min=" << min << endl;
+    return 0;
+}
+-->
+
+# C++: References
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+`minref` returns a reference to `a`
+
+`min = 12` modifies both `min` and `a`
+
+What if we make `minref`'s arguments non-references?
+
+# C++: References
+
+\scriptsize
+
+<!---cppmd-file ref_min_2.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int& minref(int a, int b) {
+    if(a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+int main() {
+    int a = 5, b = 10;
+    int& min = minref(a, b);
+    min = 6;
+    cout << "a=" << a << ", b=" << b << ", min=" << min << endl;
+    return 0;
+}
+-->
+
+# C++: References
+
+\scriptsize
+
+```
+$ g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+ref_min_2.cpp: In function 'int& minref(int, int)':
+ref_min_2.cpp:4:17: warning: reference to local variable 'a' returned
+  int& minref(int a, int b) {
+                  ^
+ref_min_2.cpp:4:24: warning: reference to local variable 'b' returned
+ int& minref(int a, int b) {
+                        ^
+```
+
+# C++: References
+
+Returning a reference to a local variable is just as bad as returning a pointer to one.  In our original `minref` function, this was OK because the parameters themselves were references.
+
+```c
+int& minref(int& a, int& b) {
+    if(a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+```
+
+# C++: References
+
+Once a reference is set to alias a variable, it cannot later be set to alias another variable
+
+Example...
+
+# C++: References
+
+\scriptsize
+
+<!---cppmd-file ref_reset.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int a = 5, b = 10;
+    int& c = a;
+    cout << "a=" << a << ", c=" << c << endl;
+    c = b; // this *doesn't* change c to alias b
+           // instead, sets c (and a) to 10
+    cout << "a=" << a << ", c=" << c << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# C++: References
+
+A reference variable must be initialized immediately
+
+\scriptsize
+
+<!---cppmd-file ref_delay.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int& a; // won't compile
+    int b = 10;
+    a = b;
+    cout << a << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# C++: References
+
+A reference cannot be NULL
+
+\footnotesize
+
+<!---cppmd-file ref_null.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int& a = NULL;
+    if(a == NULL) {
+        cout << "a is NULL" << endl;
+    }
+    return 0;
+}
+-->
+
+# C++: References
+
+\tiny
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# C++: References
+
+A reference can be `const`
+
+* `const` reference cannot be modified after initialization
+
+You may still be able to modify the original variable
+
+* ...if it's non-`const`, or
+* ...via a non-`const` reference to the same variable
+
+# C++: References
+
+\scriptsize
+
+<!---cppmd-file ref_const.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+int main() {
+    int a = 1;
+    int& b = a;
+    const int& c = a;
+    a = 2;
+    cout << "a=" << a << ", b=" << b << ", c=" << c << endl;
+    b = 3; // this is fine
+    cout << "a=" << a << ", b=" << b << ", c=" << c << endl;
+    c = 4; // *** not allowed ***
+    cout << "a=" << a << ", b=" << b << ", c=" << c << endl;
+    return 0;
+}
+-->
+
+# C++: References
+
+\scriptsize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
