@@ -1,0 +1,144 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# C++ dynamic memory allocation
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# C++ dynamic memory allocation
+
+`new` and `delete` are C++ versions of `malloc` and `free`
+
+Big difference: `new` allocates memory *and calls the appropriate constructor*
+
+Small difference: `new` and `delete` are "keywords" rather than functions, so we don't use `(...)` when calling them
+
+# C++ dynamic memory allocation
+
+\scriptsize
+
+<!---cppmd-file new_eg1.cpp
+#include <iostream>
+
+using std::cout;  using std::endl;
+
+class DefaultSeven {
+public:
+    DefaultSeven() : i(7) { }
+    int get_i() { return i; }
+private:
+    int i;
+};
+
+int main() {
+    DefaultSeven s;
+    DefaultSeven *sptr = new DefaultSeven(); // using new
+    cout << "s.get_i() = " << s.get_i() << endl;
+    cout << "sptr->get_i() = " << sptr->get_i() << endl;
+    return 0;
+}
+-->
+
+# C++ dynamic memory allocation
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+`new` called the default constructor for us in both cases
+
+# C++ dynamic memory allocation
+
+`delete` deletes something allocated with `new`
+
+```c
+int main() {
+    DefaultSeven *sptr = new DefaultSeven();
+    ... // use sptr
+    delete sptr;
+    // note: new and delete don't use parentheses,
+    // unlike malloc() / free()
+    return 0;
+}
+```
+
+# C++ dynamic memory allocation
+
+`T * fresh = new T[n]` allocates an array of `n` elements of type `T`
+
+Use `delete[] fresh` to deallocate -- always use `delete[]` (not `delete`) to deallocate a pointer returned by `new T[n]`
+
+\vspace{5mm}
+
+If `T` is a `class`, then `T`'s default constructor is called for *each* element allocated
+
+If `T` is a "built-in" type (`int`, `float`, `char`, etc), then the values are *not initialized*, like with `malloc`
+
+# C++ dynamic memory allocation
+
+\scriptsize
+
+<!---cppmd-file new_eg2.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+class DefaultSeven {
+public:
+    DefaultSeven() : i(7) { }
+    int get_i() { return i; }
+private:
+    int i;
+};
+
+int main() {
+    DefaultSeven *s_array = new DefaultSeven[10];
+    for(int i = 0; i < 10; i++) {
+        cout << s_array[i].get_i() << " ";
+    }
+    cout << endl;
+    delete[] s_array;
+    return 0;
+}
+-->
+
+# C++ dynamic memory allocation
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Default constructor was indeed called for all 10 elements
