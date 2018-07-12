@@ -1,0 +1,176 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# Non-default constructors
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# Non-default constructors
+
+Constructors can take parameters, giving the caller more control over how to initialize the object
+
+\footnotesize
+
+```c
+    // Uses non-default constructor to initialize s1 to a copy
+    // of the argument
+    string s1("hello");
+
+    // Same here
+    string s2 = "world";
+```
+
+# Non-default constructors
+
+\tiny
+
+<!---cppmd-file new_eg3.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+class DefaultSeven {
+public:
+    DefaultSeven() : i(7) {
+        cout << "In default constructor" << endl;
+    }
+
+    DefaultSeven(int initial) : i(initial) {
+        cout << "In non-default constructor" << endl;
+    }
+
+    int get_i() { return i; }
+private:
+    int i;
+};
+
+int main() {
+    DefaultSeven s = DefaultSeven(10); // definitely calls non-default ctor
+    DefaultSeven s2 = 20; // does this call non-default ctor?
+    DefaultSeven *sptr = new DefaultSeven(30); // non-default ctor
+    cout << "s.get_i() = " << s.get_i() << endl;
+    cout << "s2.get_i() = " << s2.get_i() << endl;
+    cout << "sptr->get_i() = " << sptr->get_i() << endl;
+    delete sptr;
+    return 0;
+}
+-->
+
+# Non-default constructors
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Even `DefaultSeven s2 = 20;` declaration calls non-default constructor
+
+# Non-default constructors
+
+If the only constructors provided are non-default, *no implicit default constructor is added* by the compiler
+
+Attempt to use default constructor will yield compiler error
+
+# Non-default constructors
+
+\scriptsize
+
+<!---cppmd-file no_default.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+class NoDefault {
+public:
+    NoDefault(int initial) : i(initial) { }
+
+    int get_i() { return i; }
+private:
+    int i;
+};
+
+int main() {
+    NoDefault s;
+    cout << "s.get_i() = " << s.get_i() << endl;
+    return 0;
+}
+-->
+
+# Non-default constructors
+
+\scriptsize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# Non-default constructors
+
+\footnotesize
+
+```c
+    int main() {
+        NoDefault *s = new NoDefault[10];
+        cout << "s[9].get_i() = " << s[9].get_i() << endl;
+        delete[] s;
+        return 0;
+    }
+```
+
+\normalsize
+
+This won't work either; `new` tries to call default constructor on each allocated `NoDefault`
+
+<!---cppmd-file no-echo no_default2.cpp
+#include <iostream>
+using std::cout;  using std::endl;
+
+class NoDefault {
+public:
+    NoDefault(int initial) : i(initial) { }
+
+    int get_i() { return i; }
+private:
+    int i;
+};
+
+int main() {
+    NoDefault *s = new NoDefault[10];
+    cout << "s[9].get_i() = " << s[9].get_i() << endl;
+    delete[] s;
+    return 0;
+}
+-->
+
+# Non-default constructors
+
+\scriptsize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
