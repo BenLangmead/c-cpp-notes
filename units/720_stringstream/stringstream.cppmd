@@ -1,0 +1,278 @@
+---
+urlcolor: blue
+header-includes: |
+    \usepackage[T1]{fontenc}
+    \usepackage{inconsolata}
+    \usepackage{listings}
+    \lstset{backgroundcolor=\color{lstgrey}}
+---
+
+# `stringstream`
+
+\centering
+
+\Large
+
+Ben Langmead
+
+ben.langmead@gmail.com
+
+www.langmead-lab.org
+
+\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
+
+\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
+
+\footnotesize
+
+Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
+
+# `stringstream`
+
+`std::stringstream` and its specialized cousins `std::istringstream` and `std::ostringstream` help you get data into and out of strings
+
+First, let's see an example of overloading the extraction (`>>`) operator
+
+# `stringstream`
+
+\footnotesize
+
+```c
+    std::istream& operator>>(std::istream& is, Complex& c) {
+        // Assume format "3.0 + 4.0 i"
+        string tmp;
+        is >> c.real;       // parse real coefficient
+        is >> tmp;          // skip the +
+        is >> c.imaginary;  // parse imaginary coefficient
+        is >> tmp;          // parse the i
+        assert(tmp == "i"); // sanity check
+        return is;
+    }
+```
+
+<!---cppmd-file no-echo extract.cpp
+#include <string>
+#include <iostream>
+#include <sstream>  // for std::stringstream
+#include <cassert>
+
+using std::cout;    using std::endl;
+using std::string;  using std::stringstream;
+
+class Complex {
+public:
+    Complex() : Complex(0.0, 0.0) { }
+    Complex(double r, double i) : real(r), imaginary(i) { }
+
+    Complex operator+(const Complex& rhs) {
+        Complex result(real + rhs.real, imaginary + rhs.imaginary);
+        return result;
+    }
+
+    friend std::istream& operator>>(std::istream& is, Complex& c);
+    friend std::ostream& operator<<(std::ostream& os, Complex c);
+
+private:
+    double real, imaginary;
+};
+
+std::istream& operator>>(std::istream& is, Complex& c) {
+    // Assume format "3.0 + 4.0 i"
+    string tmp;
+    is >> c.real;       // parse real coefficient
+    is >> tmp;          // skip the +
+    is >> c.imaginary;  // parse imaginary coefficient
+    is >> tmp;          // parse the i
+    assert(tmp == "i"); // sanity check
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, Complex c) {
+    // Assume format "3.0 + 4.0 i"
+    os << c.real << " + " << c.imaginary << " i";
+    return os;
+}
+
+int main() {
+    stringstream ss("3.0 + 4.0 i");
+    Complex c;
+    ss >> c;
+    cout << c << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Similar to `operator<<` but with `istream` instead of `ostream` and `>>` instead of `<<`
+
+Second argument must be non-`const` reference so we can modify
+
+# `stringstream`
+
+`std::stringstream` is a stream, like `std::cout` or `std::cin`
+
+Instead of reading or writing to console, it reads and writes to a temporary string ("buffer") stored inside
+
+The string buffer can be accessed with `.str()`
+
+\scriptsize
+
+<!---cppmd-file ss1.cpp
+#include <string>
+#include <iostream>
+#include <sstream>  // for std::stringstream
+
+using std::cout;    using std::endl;
+using std::string;  using std::stringstream;
+
+int main() {
+    stringstream ss;               // buffer is empty
+    ss << "Hello, world!" << endl; // write message to buffer
+    cout << ss.str();              // retrieve buffer with .str()
+    return 0;
+}
+-->
+
+# `stringstream`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Why not use `std::string` and `+` operator instead?
+
+`+` operator overload for `std::string` only handles `std::string` or `char` arguments; often we want other types too
+
+`stringstream` works with `operator<<` and `operator>>`; an operator overload for either will work with `stringstream` just as well as with `cin`/`cout`
+
+# `stringstream`
+
+\scriptsize
+
+<!---cppmd-file ss2.cpp
+#include <string>
+#include <iostream>
+#include <sstream>
+
+using std::cout;    using std::endl;
+using std::string;  using std::stringstream;
+
+int main() {
+    stringstream ss;
+    ss << "Hello" << ' ' << 35 << " world"; // mix string, char, int
+
+    string word1, word2;
+    int num;
+    ss >> word1 >> num >> word2;            // read them back out
+    cout << word1 << ", " << word2 << '!';
+    return 0;
+}
+-->
+
+# `stringstream`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# `stringstream`
+
+\scriptsize
+
+<!---cppmd-file ss2.cpp
+#include <string>
+#include <iostream>
+#include <sstream>
+#include <vector>
+
+using std::ostream; using std::istream;
+using std::cout;    using std::endl;
+using std::vector;  using std::stringstream;
+
+ostream& operator<<(ostream& os, const vector<int>& vec) {
+    for(int i : vec) { os << i << ' '; }
+    return os;
+}
+
+istream& operator>>(istream& is, vector<int>& vec) {
+    int i;
+    while(is >> i) {
+        vec.push_back(i);
+    }
+    return is;
+}
+-->
+
+# `stringstream`
+
+\footnotesize
+
+<!---cppmd-file append ss2.cpp
+int main() {
+    stringstream ss("1 2 3 4 5");
+    vector<int> vec;
+    ss >> vec;
+    cout << vec << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# `stringstream`
+
+Whoa!  What was that `for(int i : vec)` business?
+
+```c
+    for(int i : vec) { os << i << ' '; }
+```
+
+That's a "ranged `for`", a convenience added in C++11 that we will discuss more later
+
+# `stringstream`
+
+`stringstream` is an example of *multiple inheritance*
+
+Inherits from:
+
+* `istringstream`, which handles input and overloads extraction operator
+* `ostringstream`, which handles output and overloads insertion operator
+
+If you only need one or the other, you can use `istringstream` or `ostringstream`
+
+# `stringstream`
+
+`stringstream` can be especially useful for testing, especially if you have designed your code to handle input and output as streams
+
+Example like today's exercise:
+
+```c
+    // Only using for input
+    istringstream ss("Eight of Hearts "
+                     "Ten of Hearts "
+                     "Jack of Hearts "
+                     "Nine of Hearts "
+                     "Queen of Hearts");
+    assert(straight_flush(ss));
+```
