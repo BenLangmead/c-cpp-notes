@@ -1,0 +1,194 @@
+# `auto`
+
+Use `auto` in a place where you would otherwise have written a type:
+
+```c
+    for(auto it = vc.begin(); it != vc.end(); it++) {
+        ...
+    }
+```
+
+Doing so leaves type unspecified; up to the C++ compiler to *infer* appropriate type
+
+# `auto`
+
+Sometimes, this is an easy inference to make:
+
+```c
+    int a = 7;
+    auto b = a; // b clearly an int
+```
+
+Made slightly trickier by type promotion:
+
+```c
+    int c = 7;
+    double d = 11.1;
+    auto e = c * d; // e is a double
+```
+
+# `auto`
+
+`auto` variable must be initialized; compiler must be able to infer type immediately
+
+```c
+    auto x = 0;
+    // above is OK
+
+    auto y;
+    y = 7;
+    // compile error:
+    // declaration of ‘auto y’ has no initializer
+```
+
+# `auto`
+
+\footnotesize
+
+<!---cppmd-file auto1.cpp
+#include <iostream>
+
+using namespace std;
+
+int main(void) {
+    int a = 7;
+    auto b = a;
+    cout << "b=" << b << ", size=" << sizeof(b) << endl;
+
+    int c = 7;
+    double d = 11.1;
+    auto e = c * d; // e is a double
+    cout << "e=" << e << ", size=" << sizeof(e) << endl;
+
+    return 0;
+}
+-->
+
+# `auto`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# `auto`
+
+We saw `auto` in the context of iterators:
+
+```c
+int sum_every_other(const vector<int>& ls)
+{
+    int total = 0;
+    for(vector<int>::const_iterator it = ls.cbegin();
+        it != ls.cend(); it++)
+    {
+        total += *it;
+        if(++it == ls.cend()) { break; }
+    }
+    return total;
+}
+```
+
+# `auto`
+
+```c
+int sum_every_other(const vector<int>& ls)
+{
+    int total = 0;
+    // using auto instead
+    for(auto it = ls.cbegin(); it != ls.cend(); it++) {
+        total += *it;
+        if(++it == ls.cend()) { break; }
+    }
+    return total;
+}
+```
+
+# `auto`
+
+On the one hand, we obscured information about the types in our program
+
+On the other, we made it
+
+* More concise (no need to write out long types)
+* Easier to maintain
+    * Changes to types on right-hand side propagate to left:
+
+```c
+    int c = 7;
+    double d = 11.1;
+    // changing d to int would also change e to int!
+    auto e = c * d;
+```
+
+# `auto`
+
+E.g., changing parameter type from `vector<int>` to `list<int>` automatically propagates to iterator type:
+
+```c
+int sum_every_other(const list<int>& ls)
+{
+    int total = 0;
+    // it *was* vector<int>::const_iterator
+    // *now* it's list<int>::const_iterator
+    for(auto it = ls.cbegin(); it != ls.cend(); it++) {
+        total += *it;
+        if(++it == ls.cend()) { break; }
+    }
+    return total;
+}
+```
+
+# `auto`
+
+Caution: sometimes the type inferred by the compiler is not what you expect:
+
+```c
+    vector<int> vec = {1, 2, 3};
+    const vector<int>& vec_ref;
+    auto vec2 = vec_ref;
+```
+
+Is `vec2` a *copy* of `vec`?  Or another name for `vec`?
+
+# `auto`
+
+\footnotesize
+
+<!---cppmd-file auto2.cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+int main(void) {
+    vector<int> vec = {1, 2, 3};
+    const vector<int>& vec_ref = vec;
+    auto vec2 = vec_ref;
+
+    vec[0] = 10;
+    cout << "vec[0] = " << vec[0] << endl;
+    cout << "vec2[0] = " << vec2[0] << endl;
+
+    return 0;
+}
+-->
+
+# `auto`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+It's a copy
+
+Compiler inferred type `vector<int>` for `vec2`, *not* `const vector<int>&`
