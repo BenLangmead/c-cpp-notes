@@ -1,0 +1,231 @@
+# Abstract classes
+
+What does the `= 0` mean here?
+
+\footnotesize
+
+```c
+class Piece {
+public:
+    ...
+    virtual bool legal_move_shape(CharPair, CharPair) const = 0;
+    //                                                     ^^^^
+
+    virtual bool legal_capture_shape(CharPair start,
+                                     CharPair end) const
+    {
+        return legal_move_shape(start, end);
+    }
+    ...
+};
+```
+
+# Pure virtual functions
+
+Declaring a virtual member function and adding `= 0` makes it a *pure `virtual`* function
+
+When we declare a pure virtual function:
+
+* We do not give it an implementation
+* It makes the class it's declared in an *abstract class*
+
+    * We cannot create a new object with the type, though we may be able create an object with a derived *type*
+
+# Pure virtual functions
+
+\scriptsize
+
+```c
+class Shape {
+public:
+    virtual double size() const = 0;
+    ...
+};
+
+class Shape2D : public Shape {
+    ...
+};
+
+class Circle : public Shape2D {
+public:
+    virtual double size() const {
+        return 3.14 * r * r;
+    }
+    ...
+private:
+    double r;
+    ...
+};
+```
+
+# Pure virtual functions
+
+<!---cppmd-file no-echo shape_virt.cpp
+#include <iostream>
+#include <cmath>
+
+using std::cout;
+using std::endl;
+
+class Shape {
+public:
+    virtual double size() const = 0;
+};
+
+class Shape2D : public Shape { };
+
+class Circle : public Shape2D {
+public:
+    Circle(double radius) : Shape2D(), r(radius) { }
+
+    virtual double size() const {
+        return 3.14 * r * r;
+    }
+private:
+    double r;
+};
+-->
+
+<!---cppmd-file append shape_virt.cpp
+int main() {
+    Circle c(1.0 / sqrt(3.14));
+    cout << c.size() << endl;
+    return 0;
+}
+-->
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Pure virtual functions
+
+<!---cppmd-file no-echo shape_virt2.cpp
+#include <iostream>
+#include <cmath>
+
+using std::cout;
+using std::endl;
+
+class Shape {
+public:
+    virtual double size() const = 0;
+};
+
+class Shape2D : public Shape { };
+
+class Circle : public Shape2D {
+public:
+    Circle(double radius) : Shape2D(), r(radius) { }
+
+    virtual double size() const {
+        return 3.14 * r * r;
+    }
+private:
+    double r;
+};
+-->
+
+<!---cppmd-file append shape_virt2.cpp
+int main() {
+    Shape s;
+    return 0;
+}
+-->
+
+\tiny
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+<!---cppmd-file no-echo shape_virt3.cpp
+#include <iostream>
+#include <cmath>
+
+using std::cout;
+using std::endl;
+
+class Shape {
+public:
+    virtual double size() const = 0;
+};
+
+class Shape2D : public Shape { };
+
+class Circle : public Shape2D {
+public:
+    Circle(double radius) : Shape2D(), r(radius) { }
+
+    virtual double size() const {
+        return 3.14 * r * r;
+    }
+private:
+    double r;
+};
+-->
+
+# Pure virtual functions
+
+<!---cppmd-file append shape_virt3.cpp
+int main() {
+    Shape2D s2d;
+    return 0;
+}
+-->
+
+\tiny
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# Pure virtual functions
+
+"Cannot declare variable `s` to be of abstract type `Shape`"
+
+When a `class` has one or more pure virtual functions, it cannot be instantiated; it is *abstract*
+
+* Similar to `abstract class` and `interface` in Java
+
+The derived `Circle` class *can* be instantiated because it provides an implementation for the (only) pure virtual, `size()`
+
+# Abstract classes
+
+Another way to make a `class` abstract is give it only non-`public` constructors
+
+\footnotesize
+
+```c
+class Piece {
+public:
+    ...
+protected:
+	// This is the only constructor
+	Piece( bool is_white ) : _is_white( is_white ){ }
+    ...
+};
+```
+
+\normalsize
+
+Can't instantiate `Piece` because constructor can't be called from the outside
+
+# Abstract classes
+
+Derived class can still use `protected` constructor in base class:
+
+```c
+class Knight : public Piece {
+    ...
+  public:
+    // Knight constructor calls Piece constructor
+    // OK because it's protected
+	Knight( bool is_white ) : Piece( is_white ) {}
+	...
+};
+```
