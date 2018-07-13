@@ -8,7 +8,6 @@ Learn modern programming ecosystem
 * Compiler (`gcc`, `g++`)
 * Debugger (`gdb`)
 * Build system (`make`)
-* Source control (`git`)
 
 Learn basic principles of software design and engineering, in preparation for future coursework
 
@@ -124,7 +123,7 @@ Examples
 
 On efficiency, they approach C/C++
 
-But they do not approach C/C++ in maturity/ubiquity 
+But they do not approach C/C++ in maturity/ubiquity
 
 * Some, like Swift, are associated with (& tied to) particular companies
 
