@@ -1,0 +1,332 @@
+# Template functions
+
+Templates allow us to write function or class once:
+
+\footnotesize
+
+```c
+    template<typename T>
+    void print_array(const T* a, int count) { ... }
+```
+
+\normalsize
+
+but get a whole *family* of *overloaded specializations*:
+
+\footnotesize
+
+```c
+    void print_array(const int* a, int count) { ... }
+    void print_array(const float* a, int count) { ... }
+    void print_array(const char* a, int count) { ... }
+    void print_array(const linked_list_node* a, int count) { ... }
+    ...
+```
+
+<!--
+# Template functions
+
+Recall: two functions are overloaded if they have same name & return type, but different parameter types
+
+\footnotesize
+
+```c
+void print_array(const int* array, int count) {
+    //                 ^^^
+    for(int i = 0; i < count; i++) {
+        cout << array[i] << " ";
+    }
+}
+
+void print_array(const double* array, int count) {
+    //                 ^^^^^^
+    for(int i = 0; i < count; i++) {
+        cout << array[i] << " ";
+    }
+}
+```
+-->
+
+<!--
+# C/C++ design: function templates
+
+When should you consider using function templates?  When you find yourself writing functions with essentially the same body, but different types.
+-->
+
+# Template functions
+
+This function sums even-indexed elements in a list:
+
+\footnotesize
+
+```c
+    int sum_every_other(const vector<int>& ls) {
+        int total = 0;
+        for(vector<int>::const_iterator it = ls.cbegin();
+            it != ls.cend(); ++it)
+        {
+            total += *it;
+            ++it;
+        }
+        return total;
+    }
+```
+
+\normalsize
+
+Works for `const vector<int>&`, but similar code could be used for other containers
+
+# Template functions
+
+\tiny
+
+```c
+#include <iostream>
+#include <vector>
+#include <list>
+
+int sum_every_other_vector(const std::vector<int>& ls) {
+    //                                ^^^^^^
+    int total = 0;
+    for(std::vector<int>::const_iterator it = ls.cbegin(); it != ls.cend(); ++it) {
+    //       ^^^^^^
+        total += *it;
+        ++it;
+    }
+    return total;
+}
+
+int sum_every_other_list(const std::list<int>& ls) {
+    //                              ^^^^
+    int total = 0;
+    for(std::list<int>::const_iterator it = ls.cbegin(); it != ls.cend(); ++it) {
+    //       ^^^^
+        total += *it;
+        ++it;
+    }
+    return total;
+}
+```
+
+# Template functions
+
+\footnotesize
+
+<!---cppmd-file seo_vec_list_1.cpp
+#include <iostream>
+#include <vector>
+#include <list>
+
+using std::cout;  using std::endl;
+
+// g++ -o seo seo.cpp -std=c++11 -pedantic -Wall -Wextra
+
+int sum_every_other_vector(const std::vector<int>& ls) {
+    int total = 0;
+    for(std::vector<int>::const_iterator it = ls.cbegin();
+        it != ls.cend(); ++it)
+    {
+        total += *it;
+        ++it;
+    }
+    return total;
+}
+
+int sum_every_other_list(const std::list<int>& ls) {
+    int total = 0;
+    for(std::list<int>::const_iterator it = ls.cbegin();
+        it != ls.cend(); ++it)
+    {
+        total += *it;
+        ++it;
+    }
+    return total;
+}
+
+//%ST%
+int main() {
+    std::vector<int> vec = {10, 7, 10, 7, 10, 7};
+    int sum = sum_every_other_vector(vec);
+    cout << "sum of every-other (vector): " << sum << endl;
+
+    std::list<int> lis;
+    lis.assign(vec.begin(), vec.end());
+    sum = sum_every_other_list(lis);
+    cout << "sum of every-other (list): " << sum << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Template functions
+
+Repetitive code is a sign of bad design
+
+E.g. a correction for the `_vector` version also has to be made for the `_list` version (and any others we've made)
+
+In fact, can you spot the error in our `sum_every_other_vector`/`sum_every_other_list`?
+
+# Template functions
+
+Extra `++it` skips over `ls.cend()` when the container has odd # elements.  Need another check:
+
+\footnotesize
+
+```c
+int sum_every_other_vector(const vector<int>& ls) {
+    int total = 0;
+    for(vector<int>::const_iterator it = ls.cbegin();
+        it != ls.cend(); ++it)
+    {
+        total += *it;
+        // now we can't skip over ls.cend()
+        if(++it == ls.cend()) { break; } // that's better
+    }
+    return total;
+}
+```
+
+# Template functions
+
+*Template* function:
+
+\footnotesize
+
+```c
+template<typename T>
+int sum_every_other(const T& ls) {
+    int total = 0;
+    for(typename T::const_iterator it = ls.cbegin();
+        it != ls.cend(); ++it)
+    {
+        total += *it;
+        if(++it == ls.cend()) { break; }
+    }
+    return total;
+}
+```
+
+\normalsize
+
+If we pass `vector<int>`, compiler *instantiates* an appropriate function overload
+
+* Same if we pass `list<int>`, `vector<double>`, ...
+
+# Template functions
+
+\footnotesize
+
+<!---cppmd-file seo_vec_list_2.cpp
+#include <iostream>
+#include <vector>
+#include <list>
+
+using namespace std;
+
+template<typename T>
+int sum_every_other(const T& ls) {
+    int total = 0;
+    for(typename T::const_iterator it = ls.cbegin();
+        it != ls.cend(); ++it)
+    {
+        total += *it;
+        if(++it == ls.cend()) { break; }
+    }
+    return total;
+}
+
+//%ST%
+int main() {
+    vector<int> vec = {10, 7, 10, 7, 10, 7};
+
+    // ** calls template function with T=vector<int> **
+    int sum = sum_every_other(vec);
+
+    cout << "sum of every-other (vector): " << sum << endl;
+
+    list<int> lis;
+    lis.assign(vec.begin(), vec.end());
+
+    // ** calls template function with T=list<int> **
+    sum = sum_every_other(lis);
+
+    cout << "sum of every-other (list): " << sum << endl;
+    return 0;
+}
+-->
+
+# Template functions
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Template functions
+
+The reason for `typename` here is subtle
+
+```c
+    for(typename T::const_iterator it = ls.cbegin();
+    //  ^^^^^^^^
+        it != ls.cend(); ++it)
+```
+
+Without `typename`, compiler can't distinguish whether `T::const_iterator` is a type or a `static` field
+
+# Template functions
+
+Without `typename` before `T::const_iterator` we get an error:
+
+\tiny
+
+<!---cppmd-file no-echo seo_vec_list_3.cpp
+#include <iostream>
+#include <vector>
+#include <list>
+
+using namespace std;
+
+template<typename T>
+int sum_every_other(const T& ls) {
+    int total = 0;
+    for(T::const_iterator it = ls.cbegin();
+        it != ls.cend(); ++it)
+    {
+        total += *it;
+        if(++it == ls.cend()) { break; }
+    }
+    return total;
+}
+
+//%ST%
+int main() {
+    vector<int> vec = {10, 7, 10, 7, 10, 7};
+
+    // ** calls template function with T=vector<int> **
+    int sum = sum_every_other(vec);
+
+    cout << "sum of every-other (vector): " << sum << endl;
+
+    list<int> lis;
+    lis.assign(vec.begin(), vec.end());
+
+    // ** calls template function with T=list<int> **
+    sum = sum_every_other(lis);
+
+    cout << "sum of every-other (list): " << sum << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
