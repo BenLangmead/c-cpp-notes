@@ -274,7 +274,8 @@ private:
 <!---cppmd-file account_main4.cpp
 #include <iostream>
 #include "account3.h"  // now with *virtual* `type` member functions
-using namespace std;
+
+using std::cout; using std::endl;
 
 void print_account_type(const Account& acct) {
     cout << acct.type() << endl;
@@ -368,7 +369,8 @@ private:
 <!---cppmd-file account_main5.cpp
 #include <iostream>
 #include "account3.h"  // still with *virtual* `type` member functions
-using namespace std;
+
+using std::cout;  using std::endl;
 
 // !!! *** Pass by value this time *** !!!
 void print_account_type(Account acct) {
@@ -477,7 +479,7 @@ Same reasoning applies when converting between related types implicitly or using
 <!---cppmd-file no-echo casting_poly.cpp
 #include <iostream>
 
-using namespace std;
+using std::cout;  using std::endl;
 
 class Base {
 public:
