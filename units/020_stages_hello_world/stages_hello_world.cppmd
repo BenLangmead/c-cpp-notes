@@ -1,33 +1,4 @@
----
-urlcolor: blue
-header-includes: |
-    \usepackage[T1]{fontenc}
-    \usepackage{inconsolata}
-    \usepackage{listings}
-    \lstset{backgroundcolor=\color{lstgrey}}
----
-
 # Stages of compilation & Hello, world
-
-\centering
-
-\Large
-
-Ben Langmead
-
-ben.langmead@gmail.com
-
-www.langmead-lab.org
-
-\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
-
-\centerline{\includegraphics[width=1in]{../images/cc_by.png}}
-
-\footnotesize
-
-Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
-
-# Basic C/C++ programming workflow
 
 \centerline{\includegraphics[width=4in]{../images/compile_run.png}}
 

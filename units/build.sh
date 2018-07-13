@@ -6,7 +6,7 @@ d=`basename $d`
 cat >.build.sh <<EOF
 #!/bin/sh
 cd /app/$d
-make -f Makefile.slides
+make -f ../Makefile.slides
 EOF
 
 chmod a+x .build.sh

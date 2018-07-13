@@ -1,0 +1,840 @@
+# More linked lists
+
+Now that we've seen inserting and traversing, let's write a function that inserts a `Node` with `char` payload *while maintaining alphabetical order*
+
+* It's common to keep a list in order, since that makes it easier to look things up later
+* We can use `void insert_after(Node *before, char newPayload)`
+* We assume the list we're inserting into is already ordered
+
+# Linked lists
+
+\footnotesize
+
+```c
+void insert_in_order(Node *head, char newPayload) {
+    assert(head != NULL);
+    Node *cur = head;
+    ???
+    while(cur != NULL) {
+        ???
+        cur = cur->next;
+    }
+}
+```
+
+# Linked lists
+
+\tiny
+
+```c
+void insert_in_order(Node **head, char newPayload) {
+    assert(head != NULL);
+    Node *cur = *head;
+    assert(cur != NULL);
+    Node *prev = NULL;
+    int inserted = 0;
+    while(cur != NULL) {
+        // As soon as we find a Node with paylaod greater
+        // than ours, insert just before it
+        if(newPayload > cur->payload) {
+            if(prev != NULL) {
+                // inserting in the middle
+                insert_after(prev, newPayload);
+                inserted = 1;
+                break;
+            } else {
+                // inserting at the beginning
+                insertAtHead(head, newPayload);
+                inserted = 1;
+                break;
+            }
+        }
+        prev = cur;
+        cur = cur->next;
+    }
+    if(!inserted) {
+        insert_after(prev, newPayload);
+    }
+}
+```
+
+# Linked lists
+
+\scriptsize
+
+```c
+void insertAtHead(Node **head, char newPayload) {
+    Node *old_head = *head;
+    *head = malloc(sizeof(Node));
+    (*head)->payload = newPayload;
+    (*head)->next = old_head;
+}
+```
+
+# Linked lists
+
+\scriptsize
+
+<!---cppmd-file ll_ordered.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+#include <string.h>
+
+typedef struct _Node {
+    char payload;
+    struct _Node *next;
+} Node;
+
+void insert_after(Node *before, char newPayload) {
+    Node *newNode = malloc(sizeof(Node));
+    assert(newNode != NULL);
+    newNode->payload = newPayload;
+    newNode->next = before->next;
+    before->next = newNode;
+}
+
+void insertAtHead(Node **head, char newPayload) {
+    Node *old_head = *head;
+    *head = malloc(sizeof(Node));
+    (*head)->payload = newPayload;
+    (*head)->next = old_head;
+}
+-->
+
+# Linked lists
+
+\scriptsize
+
+<!---cppmd-file append ll_ordered.c
+void print_list(Node *cur) {
+    while(cur != NULL) {
+        printf("%c ", cur->payload);
+        cur = cur->next;
+    }
+    putchar('\n');
+}
+
+void free_list(Node *cur) {
+    while(cur != NULL) {
+        Node *next = cur->next; // *first* get `next`
+        free(cur);              // *then* free `cur`
+        cur = next;
+    }
+}
+-->
+
+# Linked lists
+
+\scriptsize
+
+<!---cppmd-file append ll_ordered.c
+void insert_in_order(Node **head, char newPayload) {
+    assert(head != NULL);
+    Node *cur = *head;
+    assert(cur != NULL);
+    Node *prev = NULL;
+    int inserted = 0;
+    while(cur != NULL) {
+        // As soon as we find a Node with paylaod greater
+        // than ours, insert just before it
+        if(newPayload < cur->payload) {
+            if(prev != NULL) {
+                // inserting in the middle
+                insert_after(prev, newPayload);
+                inserted = 1;
+                break;
+            } else {
+                // inserting at the beginning
+                insertAtHead(head, newPayload);
+                inserted = 1;
+                break;
+            }
+        }
+        prev = cur;
+        cur = cur->next;
+    }
+    if(!inserted) {
+        insert_after(prev, newPayload);
+    }
+}
+
+int main() {
+    const char *payloads = "CAGGCFBD";
+    Node *head = malloc(sizeof(Node));
+    head->payload = payloads[0];
+    head->next = NULL;
+    for(size_t i = 1; i < strlen(payloads); i++) {
+        insert_in_order(&head, payloads[i]);
+    }
+    print_list(head);
+    free_list(head);
+    return 0;
+}
+-->
+
+# Linked lists
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Linked lists: inserting
+
+Will this work?
+
+\scriptsize
+
+```c
+struct Node * insert_before_head(struct Node *head, char new_payload) {
+    struct Node *new_node = malloc(sizeof(struct Node));
+    assert(new_node != NULL);
+    new_node->payload = new_payload;
+    new_node->next = head;
+    return new_node;
+}
+```
+
+```c
+int main() {
+    struct Node *bnode = malloc(sizeof(struct Node));
+    bnode->payload = 'B';
+    bnode->next = NULL;
+    struct Node *anode = insert_at_head(head, 'A');
+    print_list(anode);
+    free(bnode); free(anode);
+}
+```
+
+# Linked lists: inserting
+
+<!---cppmd-file no-echo ll_insert_head.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+struct Node {
+    char payload;
+    struct Node *next;
+};
+
+struct Node * insert_before_head(struct Node *head, char new_payload) {
+    struct Node *new_node = malloc(sizeof(struct Node));
+    assert(new_node != NULL);
+    new_node->payload = new_payload;
+    new_node->next = head;
+    return new_node;
+}
+
+void print_list(struct Node *head) {
+    while(head != NULL) {
+        printf("%c ", head->payload);
+        head = head->next;
+    }
+    putchar('\n');
+}
+
+int main() {
+    struct Node *bnode = malloc(sizeof(struct Node));
+    bnode->payload = 'B';
+    bnode->next = NULL;
+    struct Node *anode = insert_before_head(bnode, 'A');
+    print_list(anode);
+    free(bnode); free(anode);
+}
+-->
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Linked lists: deleting
+
+How do we delete a node?
+
+# Linked lists: deleting
+
+Deletion steps:
+
+* Make predecessor's `->next` point to successor
+* Deallocate deleted node
+
+Special cases:
+
+* Inserting at the beginning...
+
+# Linked lists: deleting
+
+
+
+# Linked lists: traversing
+
+Given a list's head pointer, how to find its length?  (# nodes)
+
+# Linked lists: traversing
+
+```c
+    int list_length(struct Node *head) {
+        int length = 0;
+        struct Node *cur = head;
+        while(cur != NULL) {
+            length++;
+            cur = cur->next;
+        }
+        return length;
+    }
+```
+
+# Linked lists: traversing
+
+\tiny
+
+<!---cppmd-file ll1.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+struct Node {
+    char payload;
+    struct Node *next;
+};
+
+int list_length(struct Node *cur) {
+    int length = 0;
+    while(cur != NULL) { length++; cur = cur->next; }
+    return length;
+}
+
+int main() {
+    // Make a little list
+    struct Node *anode = malloc(sizeof(struct Node));
+    assert(anode != NULL); // using assert for brevity
+    anode->payload = 'A';
+    struct Node *bnode = anode->next = malloc(sizeof(struct Node));
+    assert(bnode != NULL);
+    bnode->payload = 'B';
+    bnode->next = NULL;
+    
+    printf("List length = %d\n", list_length(anode));
+    free(bnode); free(anode);
+    return 0;
+}
+-->
+
+# Linked lists: traversing
+
+We'll often write functions that look like this:
+
+\footnotesize
+
+```c
+??? do_something_with_list(struct Node *cur) {
+    while(cur != NULL) {
+        // do ???
+        cur = cur->next;
+    }
+    return ???;
+}
+```
+
+\normalsize
+
+Passed-in `cur` is usually the head pointer (but doesn't have to be)
+
+# `music_collection.h`
+
+<!---cppmd-file music_collection.h
+struct album {
+    const char *name;
+    const char *artist;
+    double time;
+};
+
+// music collection linked-list node
+struct ll_node {
+    struct album payload;
+    struct ll_node *next; // link to successor node
+};
+-->
+
+# Linked lists
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# `music_collection.c`
+
+\tiny
+
+<!---cppmd-file music_collection.c
+#include <stdio.h>
+#include "music_collection.h"
+
+void print_list(struct ll_node *cur) {
+    while(cur != NULL) {
+        printf("--\nName: %s\nArtist: %s\nRunning time: %0.02f\n",
+               cur->payload.name, cur->payload.artist, cur->payload.time);
+        cur = cur->next;
+    }
+}
+
+int main() {
+    struct album cd1 = {"The Next Day", "David Bowie", 40.5};
+    struct album cd2 = {"Hunky Dory", "David Bowie", 42.5};
+
+    struct ll_node node1 = {cd1, NULL};
+    struct ll_node node2 = {cd2, NULL};
+
+    struct ll_node *head = &node1;
+    node1.next = &node2;
+    node2.next = NULL;
+
+    print_list(head);
+    return 0;
+}
+-->
+
+# Linked lists
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Linked lists
+
+What would happen if I added `node1.next = NULL` right before the call to `print_list(head)`?
+
+# `music_collection.c`
+
+<!---cppmd-file no-echo music_collection_2.c
+#include <stdio.h>
+#include "music_collection.h"
+
+void print_list(struct ll_node *cur) {
+    while(cur != NULL) {
+        printf("--\nName: %s\nArtist: %s\nRunning time: %0.02f\n",
+               cur->payload.name, cur->payload.artist, cur->payload.time);
+        cur = cur->next;
+    }
+}
+
+int main() {
+    struct album cd1 = {"The Next Day", "David Bowie", 40.5};
+    struct album cd2 = {"Hunky Dory", "David Bowie", 42.5};
+
+    struct ll_node node1 = {cd1, NULL};
+    struct ll_node node2 = {cd2, NULL};
+
+    struct ll_node *head = &node1;
+    node1.next = &node2;
+    node2.next = NULL;
+
+    node1.next = NULL;
+    print_list(head);
+    return 0;
+}
+-->
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+By setting `node1.next = NULL` we *truncated* the list after the first entry.
+
+# Linked lists
+
+* Let's build our list with dynamically-allocated memory.
+* New `malloc` for each linked-list node
+
+# `music_collection_dyn.c` (1 of 2)
+
+\tiny
+
+<!---cppmd-file music_collection_dyn.c
+#include <stdio.h>
+#include <stdlib.h>
+#include "music_collection.h"
+
+void print_list(struct ll_node *cur)
+{
+    while(cur != NULL) {
+        printf("--\nName: %s\nArtist: %s\nRunning time: %0.02f\n",
+               cur->payload.name, cur->payload.artist, cur->payload.time);
+        cur = cur->next;
+    }
+}
+
+struct ll_node *new_node(const char *name, const char *artist, double time)
+{
+    struct ll_node *fresh = malloc(sizeof(struct ll_node));
+    if(fresh == NULL) {
+        puts("Failed to allocate a linked-list node!");
+        return NULL;
+    }
+    fresh->payload.name = name;
+    fresh->payload.artist = artist;
+    fresh->payload.time = time;
+    fresh->next = NULL; // set to NULL by default
+    return fresh;
+}
+
+
+
+
+
+
+
+
+int main() {
+    struct ll_node *node1 = new_node("The Next Day", "David Bowie", 40.5);
+    struct ll_node *node2 = new_node("Hunky Dory", "David Bowie", 42.5);
+    if(node1 == NULL || node2 == NULL) {
+        return 1;
+    }
+    struct ll_node *head = node1;
+    node1->next = node2;
+    node2->next = NULL;
+    print_list(head);
+    return 0; // but we leaked memory!
+}
+-->
+
+# `music_collection_dyn.c` (2 of 2)
+
+\scriptsize
+
+<!---cppmd-file skip music_collection_dyn_frag.c
+int main() {
+    struct ll_node *node1 = new_node("The Next Day", "David Bowie", 40.5);
+    struct ll_node *node2 = new_node("Hunky Dory", "David Bowie", 42.5);
+    if(node1 == NULL || node2 == NULL) {
+        return 1;
+    }
+    struct ll_node *head = node1;
+    node1->next = node2;
+    node2->next = NULL;
+    print_list(head);
+    return 0; // but we leaked memory!
+}
+-->
+
+# Linked lists
+
+\footnotesize
+
+<!---cppmd-shell
+gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
+gcc -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Linked lists
+
+First, a quiz.  What is `sizeof(struct ll_node)`?
+
+```c
+struct album {
+    const char *name;
+    const char *artist;
+    double time;
+};
+
+// music collection linked-list node
+struct ll_node {
+    struct album payload;
+    struct ll_node *next; // link to successor node
+};
+```
+
+# Linked lists
+
+32 bytes: 3 pointers (8 bytes each) + 1 double (8 bytes)
+
+# Linked lists
+
+\tiny
+
+```
+$ valgrind ./music_collection_dyn
+(skipping some output)
+--
+Name: Hunky Dory
+Artist: David Bowie
+Running time: 42.50
+==2625==
+==2625== HEAP SUMMARY:
+==2625==     in use at exit: 64 bytes in 2 blocks
+==2625==   total heap usage: 2 allocs, 0 frees, 64 bytes allocated
+==2625==
+==2625== LEAK SUMMARY:
+==2625==    definitely lost: 32 bytes in 1 blocks
+==2625==    indirectly lost: 32 bytes in 1 blocks
+==2625==      possibly lost: 0 bytes in 0 blocks
+==2625==    still reachable: 0 bytes in 0 blocks
+==2625==         suppressed: 0 bytes in 0 blocks
+==2625== Rerun with --leak-check=full to see details of leaked memory
+==2625==
+==2625== For counts of detected and suppressed errors, rerun with: -v
+==2625== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+# Linked lists
+
+Note the following:
+
+* `total heap usage: 2 allocs, 0 frees, 64 bytes allocated`
+* `definitely lost: 32 bytes in 1 blocks`
+* `indirectly lost: 32 bytes in 1 blocks`
+* (Head node counts as `definitely lost`, successor counts as `indirectly lost`)
+
+Let's re-run with `--leak-check=full` as suggested
+
+# `valgrind`
+
+In addition to what we got before, we also get:
+
+\tiny
+
+```
+==2635== 64 (32 direct, 32 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
+==2635==    at 0x4C2AB80: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2635==    by 0x400630: new_node (in /home/ubuntu/workspace/music_collection_dyn)
+==2635==    by 0x4006AB: main (in /home/ubuntu/workspace/music_collection_dyn)
+```
+
+\normalsize
+
+* Nice hint! - the memory we're failing to `free` is the memory we `malloc` in the `new_node` function
+
+# `valgrind`
+
+* The [Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html) suggests we include the `-g` option when compiling so we can see line numbers:
+
+\tiny
+
+```
+==2659== 64 (32 direct, 32 indirect) bytes in 1 blocks are definitely lost in loss record 2 of 2
+==2659==    at 0x4C2AB80: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2659==    by 0x400630: new_node (music_collection_dyn.c:16)
+==2659==    by 0x4006AB: main (music_collection_dyn.c:30)
+```
+
+# `valgrind`
+
+[Valgrind Quick Start Guide](http://valgrind.org/docs/manual/quick-start.html) -- read it!  Use for hw3!
+
+# Linked lists
+
+Proposed function for freeing the linked list:
+
+```c
+    void free_list(struct ll_node *cur) {
+        free(cur);
+    }
+```
+
+Proposal: Just after `print_list(head)`, we call `free_list(head)`
+
+Problem solved?
+
+# `valgrind`
+
+Nope!  `valgrind` says:
+
+\tiny
+
+```
+==2935== 32 bytes in 1 blocks are definitely lost in loss record 1 of 1
+==2935==    at 0x4C2AB80: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==2935==    by 0x400680: new_node (music_collection_dyn_2.c:16)
+==2935==    by 0x40073B: main (music_collection_dyn_2.c:36)
+```
+
+# Linked lists
+
+* We `free`d only the first node, leaking the second
+* Something based on this, perhaps?
+
+```c
+<type> do_something_with_list(struct ll_node *cur)
+{
+    while(cur != NULL) {
+        // do stuff
+        cur = cur->next;
+    }
+    // return something
+}
+```
+
+# Linked lists
+
+```c
+void free_list(struct ll_node *cur)
+{
+    while(cur != NULL) {
+        struct ll_node *prev = cur;
+        cur = cur->next;
+        free(prev);
+    }
+}
+```
+
+# Linked lists
+
+Would this work?  (Switched the `free(prev)` and the `cur = cur->next`)
+
+```c
+void free_list(struct ll_node *cur)
+{
+    while(cur != NULL) {
+        struct ll_node *prev = cur;
+        free(prev);
+        cur = cur->next;
+    }
+}
+```
+
+# Linked lists
+
+```c
+void free_list(struct ll_node *cur)
+{
+    while(cur != NULL) {
+        struct ll_node *prev = cur;
+        free(prev);
+
+        // dereferencing cur, which was freed!
+        cur = cur->next; // !!!
+        // bad!
+    }
+}
+```
+
+# Linked lists
+
+* We want to write a function that inserts a new album at the head of the list
+* A proposal
+
+\footnotesize
+
+```c
+// Initialize and insert a new node at the head of the list.
+int insert(struct ll_node *head,
+           const char *name,
+           const char *artist,
+           double time)
+{
+    struct ll_node *fresh = new_node(name, artist, time);
+    if(fresh == NULL) {
+        return -1; // error
+    }
+    // old head becomes second item in list; fresh is new head
+    fresh->next = head;
+    return 0; // success
+}
+```
+
+# Linked lists
+
+New `main`:
+
+\footnotesize
+
+```c
+int main() {
+    struct ll_node *node1 = new_node("The Next Day", "David Bowie", 40.5);
+    if(node1 == NULL) {
+        return 1;
+    }
+    struct ll_node *head = node1;
+    insert(head, "Hunky Dory", "David Bowie", 43.5);
+
+    print_list(head);f
+    free_list(head);
+    return 0;
+}
+```
+
+# Linked lists
+
+Did it work?
+
+```
+--
+Name: The Next Day
+Artist: David Bowie
+Running time: 40.50
+```
+
+No - failed to print the new head node that we `insert`ed.  Why?
+
+# Linked lists
+
+A: Because the main function's `head` pointer wasn't updated; still points to *old* head, which is now the second element
+
+# Linked lists
+
+\scriptsize
+
+```c
+// Initialize and insert a new node at the head of the list.
+// Return the new list head, or NULL if an allocation failed.
+struct ll_node *insert(struct ll_node *head,
+                       const char *name,
+                       const char *artist,
+                       double time)
+{
+    struct ll_node *fresh = new_node(name, artist, time);
+    if(fresh == NULL) {
+        return NULL; // error
+    }
+    // old head becomes second item in list; fresh is new head
+    fresh->next = head;
+    return fresh; // return new head
+}
+```
+
+# Linked lists
+
+\scriptsize
+
+```c
+int main() {
+    struct ll_node *node1 = new_node("The Next Day", "David Bowie", 40.5);
+    if(node1 == NULL) {
+        return 1;
+    }
+    struct ll_node *head = node1;
+    // Let the return from insert be the new list head
+    head = insert(head, "Hunky Dory", "David Bowie", 43.5);
+    if(head == NULL) {
+        return 1;
+    }
+    print_list(head);
+    free_list(head);
+    return 0;
+}
+```
+
+# Linked lists
+
+Exercise: Given an album name, write a function that deletes the first entry it finds with matching album name

@@ -1,32 +1,3 @@
----
-urlcolor: blue
-header-includes: |
-    \usepackage[T1]{fontenc}
-    \usepackage{inconsolata}
-    \usepackage{listings}
-    \lstset{backgroundcolor=\color{lstgrey}}
----
-
-# Pointers & arrays
-
-\centering
-
-\Large
-
-Ben Langmead
-
-ben.langmead@gmail.com
-
-www.langmead-lab.org
-
-\centerline{\includegraphics[width=2in]{../images/jhu_vertical_blue.png} \includegraphics[width=2in]{../images/wse_vertical_blue.png}}
-
-\centerline{\includegraphics[width=0.75in]{../images/cc_by.png}}
-
-\footnotesize
-
-Source markdown available at [github.com/BenLangmead/c-cpp-notes](https://github.com/BenLangmead/c-cpp-notes)
-
 # Pointers & arrays
 
 Pointers and arrays are closely related
