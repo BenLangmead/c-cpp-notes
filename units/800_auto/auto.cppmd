@@ -48,9 +48,9 @@ Made slightly trickier by type promotion:
 <!---cppmd-file auto1.cpp
 #include <iostream>
 
-using namespace std;
+using std::cout;  using std::endl;
 
-int main(void) {
+int main() {
     int a = 7;
     auto b = a;
     cout << "b=" << b << ", size=" << sizeof(b) << endl;
@@ -79,8 +79,7 @@ g++ -o %PREVBASE% %PREVBASE%.o
 We saw `auto` in the context of iterators:
 
 ```c
-int sum_every_other(const vector<int>& ls)
-{
+int sum_every_other(const vector<int>& ls) {
     int total = 0;
     for(vector<int>::const_iterator it = ls.cbegin();
         it != ls.cend(); it++)
@@ -95,8 +94,7 @@ int sum_every_other(const vector<int>& ls)
 # `auto`
 
 ```c
-int sum_every_other(const vector<int>& ls)
-{
+int sum_every_other(const vector<int>& ls) {
     int total = 0;
     // using auto instead
     for(auto it = ls.cbegin(); it != ls.cend(); it++) {
@@ -109,13 +107,11 @@ int sum_every_other(const vector<int>& ls)
 
 # `auto`
 
-On the one hand, we obscured information about the types in our program
+Con: types aren't as clear from the source code
 
-On the other, we made it
+Pro: Source is more concise and, arguably, easier to maintain
 
-* More concise (no need to write out long types)
-* Easier to maintain
-    * Changes to types on right-hand side propagate to left:
+* Changes to types on right-hand side propagate to left:
 
 ```c
     int c = 7;
@@ -129,8 +125,7 @@ On the other, we made it
 E.g., changing parameter type from `vector<int>` to `list<int>` automatically propagates to iterator type:
 
 ```c
-int sum_every_other(const list<int>& ls)
-{
+int sum_every_other(const list<int>& ls) {
     int total = 0;
     // it *was* vector<int>::const_iterator
     // *now* it's list<int>::const_iterator
@@ -144,7 +139,7 @@ int sum_every_other(const list<int>& ls)
 
 # `auto`
 
-Caution: sometimes the type inferred by the compiler is not what you expect:
+Caution: compiler-inferred type can be unexpected:
 
 ```c
     vector<int> vec = {1, 2, 3};
@@ -152,7 +147,7 @@ Caution: sometimes the type inferred by the compiler is not what you expect:
     auto vec2 = vec_ref;
 ```
 
-Is `vec2` a *copy* of `vec`?  Or another name for `vec`?
+Is `vec2` a *copy* of `vec`, or an alias?
 
 # `auto`
 
@@ -162,9 +157,10 @@ Is `vec2` a *copy* of `vec`?  Or another name for `vec`?
 #include <iostream>
 #include <vector>
 
-using namespace std;
+using std::cout;  using std::endl;
+using std::vector;
 
-int main(void) {
+int main() {
     vector<int> vec = {1, 2, 3};
     const vector<int>& vec_ref = vec;
     auto vec2 = vec_ref;
