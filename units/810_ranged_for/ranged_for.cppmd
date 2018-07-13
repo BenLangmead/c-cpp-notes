@@ -1,0 +1,111 @@
+# Ranged `for`
+
+C++11 gives us a concise loop syntax, similar to Java for-each loops:
+
+<!---cppmd-file ranged_for1.cpp
+#include <iostream>
+
+using std::cout; using std::endl;
+
+int main(void) {
+    for(int i : {2, 4, 6, 8}) {
+        cout << i << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+# Ranged `for`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Ranged `for`
+
+Works on our favorite STL containers:
+
+\footnotesize
+
+<!---cppmd-file ranged_for2.cpp
+#include <iostream>
+#include <vector>
+
+using std::cout; using std::endl;
+using std::vector;
+
+int main(void) {
+    vector<int> vec = {10, 8, 6, 4, 2, 0};
+    for(int i : vec) {
+        cout << i << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+# Ranged `for`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+# Ranged `for`
+
+Often combined with `auto`
+
+\scriptsize
+
+<!---cppmd-file ranged_for3.cpp
+#include <iostream>
+#include <string>
+#include <map>
+
+using std::cout; using std::endl;
+using std::map;  using std::string;
+
+int main(void) {
+    map<string, int> pres;
+    pres["Washington"] = 1789;
+    pres["Adams"] = 1797;
+    pres["Jefferson"] = 1801;
+
+    // compiler infers pair<string, int>
+    for(auto kv : pres) {
+        cout << kv.first << ':' << kv.second << endl;
+    }
+    return 0;
+}
+-->
+
+# Ranged `for`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Avoided writing either the iterator type or the type of the dereferenced iterator
+
+* Iterator type: `map<string, int>::iterator`
+* Dereferenced iterator type: `pair<string, int>`
+
+# Ranged `for`
+
+Works with pretty much any data structure with `begin()` & `end()` returning appropriate iterators
+
+Including all STL containers we've discussed in class
