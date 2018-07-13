@@ -4,6 +4,6 @@ set -e
 
 for i in */*.cppmd ; do
     pushd `dirname $i`
-    ../build.sh
+    make -f ../Makefile.slides clean
     popd
 done
