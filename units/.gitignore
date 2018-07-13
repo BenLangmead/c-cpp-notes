@@ -1,1 +1,8 @@
-*/.*.cppmd
+*.c
+*.cpp
+*.h
+*.md
+*.o
+*.pdf
+.*.cppmd
+a.out
