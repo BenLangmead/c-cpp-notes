@@ -1,0 +1,203 @@
+# `override`
+
+\scriptsize
+
+<!---cppmd-file override.cpp
+#include <iostream>
+#include <string>
+
+using std::cout; using std::endl;
+
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type()       { return "CheckingAccount"; }
+};
+
+int main() {
+    CheckingAccount checking;
+    Account& acct = checking;
+    cout << acct.type() << endl; // polymorphism FTW?
+    return 0;
+}
+-->
+
+# `override`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+Sometimes you *intend* to override a function in the base class...
+
+...but you fail
+
+# `override`
+
+In this case, it was just a matter of missing a `const`
+
+\footnotesize
+
+```c
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type()       { return "CheckingAccount"; }
+    //                         ^^^^^ oops
+};
+```
+
+<!---cppmd-file no-echo override_fix.cpp
+#include <iostream>
+#include <string>
+
+using std::cout; using std::endl;
+
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type() const { return "CheckingAccount"; }
+};
+
+int main() {
+    CheckingAccount checking;
+    Account& acct = checking;
+    cout << acct.type() << endl; // polymorphism FTW?
+    return 0;
+}
+-->
+
+# `override`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+That's better
+
+This is a typical mistake, often because we:
+
+* fail to match `const` status
+* fail to exactly match parameter & return types
+
+# `override`
+
+The `override` keyword helps
+
+When you *intend* to override a function, add the `override` modifier:
+
+\scriptsize
+
+```c
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type()       override { return "CheckingAccount"; }
+    //                         ^^^^^ oops
+};
+```
+
+<!---cppmd-file no-echo override_fix2.cpp
+#include <iostream>
+#include <string>
+
+using std::cout; using std::endl;
+
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type() override { return "CheckingAccount"; }
+};
+
+int main() {
+    CheckingAccount checking;
+    Account& acct = checking;
+    cout << acct.type() << endl; // polymorphism FTW?
+    return 0;
+}
+-->
+
+# `override`
+
+\footnotesize
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+-->
+
+# `override`
+
+Now we combine it with `const` to fix the problem:
+
+\scriptsize
+
+```c
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type() const override { return "CheckingAccount"; }
+};
+```
+
+<!---cppmd-file no-echo override_fix2.cpp
+#include <iostream>
+#include <string>
+
+using std::cout; using std::endl;
+
+class Account {
+  public:
+    virtual std::string type() const { return "Account"; }
+};
+class CheckingAccount : public Account {
+  public:
+    virtual std::string type() const override { return "CheckingAccount"; }
+};
+
+int main() {
+    CheckingAccount checking;
+    Account& acct = checking;
+    cout << acct.type() << endl; // polymorphism FTW?
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREVBASE%.o
+./%PREVBASE%
+-->
+
+\normalsize
+
+No warnings or errors because override was successful
