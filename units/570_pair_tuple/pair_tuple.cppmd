@@ -40,7 +40,7 @@ Another: define `struct` for `divmod`'s return type:
 <!---cppmd-file no-echo quo_rem_2.cpp
 #include <iostream>
 
-using namespace std;
+using std::cout;  using std::endl;
 
 struct quo_rem {
     int quotient;
