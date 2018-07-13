@@ -70,7 +70,7 @@ One `struct`/function, works for (almost) *any* type `T`
 \footnotesize
 
 ```c
-int main(void) {
+int main() {
     Node<float> f3 = {95.1f, NULL}; // float payload
     Node<float> f2 = {48.7f, &f3};  // float payload
     Node<float> f1 = {24.3f, &f2};  // float payload
@@ -106,7 +106,7 @@ void print_list(Node<T> *head) {
     cout << endl;
 }
 
-int main(void) {
+int main() {
     Node<float> f3 = {95.1f, NULL};
     Node<float> f2 = {48.7f, &f3};
     Node<float> f1 = {24.3f, &f2};

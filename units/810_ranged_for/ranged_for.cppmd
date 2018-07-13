@@ -7,7 +7,7 @@ C++11 gives us a concise loop syntax, similar to Java for-each loops:
 
 using std::cout; using std::endl;
 
-int main(void) {
+int main() {
     for(int i : {2, 4, 6, 8}) {
         cout << i << ' ';
     }
@@ -39,7 +39,7 @@ Works on our favorite STL containers:
 using std::cout; using std::endl;
 using std::vector;
 
-int main(void) {
+int main() {
     vector<int> vec = {10, 8, 6, 4, 2, 0};
     for(int i : vec) {
         cout << i << ' ';
@@ -73,7 +73,7 @@ Often combined with `auto`
 using std::cout; using std::endl;
 using std::map;  using std::string;
 
-int main(void) {
+int main() {
     map<string, int> pres;
     pres["Washington"] = 1789;
     pres["Adams"] = 1797;

@@ -109,7 +109,7 @@ We've used default constructors already:
 We cannot call a constructor directly.  Constructor is called automatically when a new object is declared, or created using `new`
 
 ```c
-int main(void) {
+int main() {
     // calls default constructor for gl
     GradeList gl;
 
