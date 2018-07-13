@@ -1,0 +1,679 @@
+# Containers
+
+We saw STL containers and learned what they have in common:
+
+* `container<...>::iterator` is the iterator type
+
+    * Also `::const_iterator`, `::reverse_iterator`, ...
+
+* `.begin()` return iterator ``pointing'' to beginning
+* `.end()` return iterator ``pointing'' just past end
+
+    * `.cbegin()` / `.cend()` for `const_iterator`
+    * `.rbegin()` / `.rend()` for `reverse_iterator`
+
+# Containers
+
+\tiny
+
+<!---cppmd-file iter_eg.cpp
+#include <iostream>
+#include <vector>
+
+using std::cout;   using std::endl;
+using std::vector;
+
+int main() {
+    vector<int> vec = {2, 4, 6, 8};
+    // Iterate forward
+    for(vector<int>::iterator it = vec.begin();
+        it != vec.end(); ++it)
+    {
+        cout << *it << ' ';
+    }
+    cout << endl;
+    // Iterate backward
+    for(vector<int>::reverse_iterator it = vec.rbegin();
+        it != vec.rend(); ++it)
+    {
+        cout << *it << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+# Containers
+
+<!---cppmd-shell
+g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
+g++ -o %PREVBASE% %PREV%
+./%PREVBASE%
+-->
+
+# Containers
+
+STL containers also have:
+
+* `container<...>::size_type`
+
+    * Integer type for indexing container items
+    * Almost always `size_t`
+
+* `container<...>::value_type`
+
+    * Type of items in the container
+    * `std::vector<T>::value_type` is `T`
+    * `std::map<K, V>::value_type` is `std::pair<K, V>`
+
+# Implementing an iterator
+
+How would we *implement* an iterator for a container?
+
+Begin with simple `vector`-like `class`:
+
+# Implementing an iterator
+
+\scriptsize
+
+```c
+template <typename T>
+class Vec {
+  public:
+    // TODO: iterator typedefs: ::iterator, ::const_iterator, ...
+
+    typedef size_t size_type;
+    typedef T value_type;
+
+    Vec() { ... }
+
+    void push_back(const T& item) { ... }
+    T pop() { ... }
+
+    // TODO: iterator accessors: begin(), end(), cbegin(), ...
+
+  private:
+    size_t size;     // # elts in vector
+    size_t reserved; // # elts allocated in data array
+    T *data;         // points to beginning of data array
+};
+```
+
+# Implementing an iterator
+
+Can we simply use pointers?  Let's try
+
+Iterator type is `T*`:
+
+\footnotesize
+
+```c
+  template <typename T>
+  class Vec {
+    public:
+      typedef T* iterator;
+      typedef const T* const_iterator;
+    ...
+  };
+```
+
+# Implementing an iterator
+
+`.begin()` and `.end()` return pointers to the appropriate locations
+
+\scriptsize
+
+```c
+  template <typename T>
+  class Vec {
+    public:
+    ...
+
+      T* begin() { return data; }
+      T* end() { return data + size; }
+
+      const T* cbegin() const { return data; }
+      const T* cend() const { return data + size; }
+
+    private:
+      size_t size;     // # elts in vector
+      size_t reserved; // # elts allocated in data array
+      T *data;         // points to beginning of data array
+  };
+```
+
+# Implementing an iterator
+
+\scriptsize
+
+<!---cppmd-file no-echo vec_iter.cpp
+#include <iostream>
+#include <cassert>
+
+using std::cout;
+using std::endl;
+
+template <typename T>
+class Vec {
+  public:
+    // TODO: iterator typedefs: ::iterator, ::const_iterator, ...
+    typedef T* iterator;             // ***
+    typedef const T* const_iterator; // ***
+
+    typedef size_t size_type;
+    typedef T value_type;
+
+    Vec() : size(0), reserved(1), data(new T[reserved]) { }
+
+    ~Vec() { delete[] data; }
+
+    void push(const T& item) {
+        assert(reserved > 0);
+        if(reserved == size) {
+            reserved *= 2;
+            T* _temp_data = new T[reserved];
+            for(size_t i = 0; i < size ; i++) {
+                _temp_data[i] = data[i];
+            }
+            delete[] data;
+            data = _temp_data;
+        }
+        data[size++] = item;
+    }
+
+    T pop() {
+        assert(size > 0);
+        size--;
+        return data[size];
+    }
+
+    // TODO: iterator accessors: begin(), end(), cbegin(), ...
+    T* begin() { return data; }
+    T* end() { return data + size; }
+
+    const T* cbegin() const { return data; }
+    const T* cend() const { return data + size; }
+
+  private:
+    size_t size;     // # elts in vector
+    size_t reserved; // # elts allocated in data array
+    T *data;         // points to beginning of data array
+};
+-->
+
+<!---cppmd-file append vec_iter.cpp
+int main() {
+    Vec<int> vec;
+    vec.push(2); vec.push(4); vec.push(6); vec.push(8);
+    // Iterate forward
+    for(Vec<int>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        cout << *it << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell
+g++ -o %PREVBASE% %PREV% -std=c++11 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+# Implementing an iterator
+
+Simply returning a pointer works as long as elements are laid out consecutively in memory
+
+* Fine for `Vec` or `std::vector`
+* Not fine for `std::map`, `std::list`, ...
+
+Pointers also don't work for `reverse_iterator`
+
+* `++ptr` goes forward, but `++` for `reverse_iterator` should go backward
+
+# Implementing an iterator
+
+Alternative is to define a new `class` that handles iterating for `Vec`
+
+Good example of where *nested `class`es* are useful:
+
+\scriptsize
+
+```c
+    template <typename T>
+    class Vec {
+      public:
+
+        class iterator {
+            // ...
+        };
+        class const_iterator {
+            // ...
+        };
+        class reverse_iterator {
+            // ...
+        };
+      ...
+    };
+```
+
+# Implementing an iterator
+
+Nested `class` has access to members of the enclosing class, including `private` members
+
+We don't really need that here; each `iterator` `class` simply wraps a layer of operator overloads around a pointer
+
+# Implementing an iterator
+
+\footnotesize
+
+```c
+    template <typename T>
+    class Vec {
+      public:
+
+        class iterator {
+            T* it;
+
+          public:
+            iterator(T* initial) : it(initial) { }
+
+            // *** Overloads ***
+
+            ...
+        };
+       ...
+     };
+```
+
+# Implementing an iterator
+
+What do we need to overload?  At least:
+
+* `operator++` for `++it`
+* `operator*` for `*it`
+* `operator!=` for `while(it != container.end())`
+
+That's all we need for today, but a real-world iterator might additionally handle:
+
+* `operator==`
+* `operator->`
+
+# Implementing an iterator
+
+\scriptsize
+
+```c
+    template <typename T>
+    class Vec {
+      public:
+
+        class iterator {
+            T* it;
+
+          public:
+            iterator(T* initial) : it(initial) { }
+
+            iterator& operator++() { ??? }
+
+            bool operator!=(const iterator& o) const { ??? }
+
+            T& operator*() { ??? }
+        };
+      ...
+    };
+```
+
+# Implementing an iterator
+
+\tiny
+
+```c
+    template <typename T>
+    class Vec {
+      public:
+
+        class iterator {
+            T* it;
+
+          public:
+            iterator(T* initial) : it(initial) { }
+
+            iterator& operator++() {
+                ++it;              // advance pointer 1 slot
+                return *this;
+            }
+
+            bool operator!=(const iterator& o) const {
+                return it != o.it; // if pointers are different, iterators
+                                   // are pointing to different slots
+            }
+
+            T& operator*() {
+                return *it;        // dereferencing iterator is
+                                   // dereferencing pointer
+            }
+        };
+      ...
+    };
+```
+
+# Implementing an iterator
+
+Study questions:
+
+* How would `const_iterator` implementation differ?
+
+    * Hint: `operator*` needs to change
+
+* How would `reverse_iterator` implementation differ?
+
+    * Hint: `operator++` needs to change
+
+<!---cppmd-file no-echo vec_iter2.cpp
+#include <iostream>
+#include <utility>
+#include <cassert>
+
+using std::cout;
+using std::endl;
+using std::pair;
+using std::make_pair;
+
+template <typename T>
+class Vec {
+  public:
+
+    // TODO: check if -> works
+
+    class iterator {
+        T* it;
+
+      public:
+        iterator(T* initial) : it(initial) { }
+
+        iterator& operator++() { ++it; return *this; }
+
+        bool operator==(const iterator& o) const { return it == o.it; }
+        bool operator!=(const iterator& o) const { return !(*this == o); }
+
+        T& operator*() { return *it; }
+        T* operator->() { return it; }
+    };
+
+    class const_iterator {
+        T* it;
+
+      public:
+        const_iterator(T* initial) : it(initial) { }
+
+        const_iterator& operator++() { ++it; return *this; }
+
+        bool operator==(const const_iterator& o) const { return it == o.it; }
+        bool operator!=(const const_iterator& o) const { return !(*this == o); }
+
+        const T& operator*() const { return *it; }
+        const T* operator->() const { return it; }
+    };
+
+    class reverse_iterator {
+        T* it;
+
+      public:
+        reverse_iterator(T* initial) : it(initial) { }
+
+        reverse_iterator& operator++() { --it; return *this; }
+
+        bool operator==(const reverse_iterator& o) const { return it == o.it; }
+        bool operator!=(const reverse_iterator& o) const { return !(*this == o); }
+
+        T& operator*() { return *it; }
+        T* operator->() { return it; }
+    };
+
+    typedef size_t size_type;
+    typedef T value_type;
+
+    Vec() : size(0), reserved(1), data(new T[reserved]) { }
+
+    ~Vec() { delete[] data; }
+
+    void push(const T& item) {
+        assert(reserved > 0);
+        if(reserved == size) {
+            reserved *= 2;
+            T* _temp_data = new T[reserved];
+            for(size_t i = 0; i < size ; i++) {
+                _temp_data[i] = data[i];
+            }
+            delete[] data;
+            data = _temp_data;
+        }
+        data[size++] = item;
+    }
+
+    T pop() {
+        assert(size > 0);
+        size--;
+        return data[size];
+    }
+
+    iterator begin() { return iterator(data); }
+    iterator end() { return iterator(data + size); }
+
+    const_iterator cbegin() const { return const_iterator(data); }
+    const_iterator cend() const { return const_iterator(data + size); }
+
+    reverse_iterator rbegin() { return reverse_iterator(data + size - 1); }
+    reverse_iterator rend() { return reverse_iterator(data - 1); }
+
+  private:
+    size_t size;     // # elts in vector
+    size_t reserved; // # elts allocated in data array
+    T *data;         // points to beginning of data array
+};
+
+int main() {
+    Vec<int> vec;
+    vec.push(2);
+    vec.push(4);
+    vec.push(6);
+    vec.push(8);
+    // Iterate forward
+    for(Vec<int>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        cout << *it << ' ';
+        (*it)++;
+    }
+    cout << endl;
+    // Iterate forward const
+    for(Vec<int>::const_iterator it = vec.cbegin(); it != vec.cend(); ++it) {
+        cout << *it << ' ';
+        // TODO: check it can't be modified
+    }
+    cout << endl;
+    // Iterate reverse
+    for(Vec<int>::reverse_iterator it = vec.rbegin(); it != vec.rend(); ++it) {
+        cout << *it << ' ';
+        (*it)++;
+    }
+    cout << endl;
+    // Iterate reverse
+    for(Vec<int>::reverse_iterator it = vec.rbegin(); it != vec.rend(); ++it) {
+        cout << *it << ' ';
+    }
+    cout << endl;
+
+    Vec<pair<int, int> > vec2;
+    vec2.push(make_pair(1, 2));
+    vec2.push(make_pair(3, 4));
+    vec2.push(make_pair(5, 6));
+    // Iterate forward
+    for(Vec<pair<int, int> >::iterator it = vec2.begin(); it != vec2.end(); ++it) {
+        cout << it->first << ',' << it->second << ' ';
+        it->first++;
+        it->second++;
+    }
+    cout << endl;
+    // Iterate forward const
+    for(Vec<pair<int, int> >::const_iterator it = vec2.cbegin(); it != vec2.cend(); ++it) {
+        cout << it->first << ',' << it->second << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
+
+<!---cppmd-shell no-echo
+g++ -o %PREVBASE% %PREV% -std=c++11 -pedantic -Wall -Wextra
+./%PREVBASE%
+-->
+
+<!---cppmd-file no-echo vec_iter3.cpp
+#include <iostream>
+#include <utility>
+#include <cassert>
+
+using std::cout;
+using std::endl;
+using std::pair;
+using std::make_pair;
+
+template <typename T>
+class Vec {
+  public:
+
+    class iterator {
+        T* it;
+
+      public:
+        iterator(T* pos) : it(pos) { }
+
+        iterator& operator++() { ++it; return *this; }
+
+        bool operator==(const iterator& o) const { return it == o.it; }
+        bool operator!=(const iterator& o) const { return !(*this == o); }
+
+        T& operator*() { return *it; }
+        T* operator->() { return it; }
+    };
+
+    class const_iterator {
+        T* it;
+
+      public:
+        const_iterator(T* pos) : it(pos) { }
+
+        const_iterator& operator++() { ++it; return *this; }
+
+        bool operator==(const const_iterator& o) const { return it == o.it; }
+        bool operator!=(const const_iterator& o) const { return !(*this == o); }
+
+        const T& operator*() const { return *it; }
+        const T* operator->() const { return it; }
+    };
+
+    class reverse_iterator {
+        T* it;
+
+      public:
+        reverse_iterator(T* pos) : it(pos) { }
+
+        reverse_iterator& operator++() { --it; return *this; }
+
+        bool operator==(const reverse_iterator& o) const { return it == o.it; }
+        bool operator!=(const reverse_iterator& o) const { return !(*this == o); }
+
+        T& operator*() { return *it; }
+        T* operator->() { return it; }
+    };
+
+    typedef size_t size_type;
+    typedef T value_type;
+
+    Vec() : size(0), reserved(1), data(new T[reserved]) { }
+
+    ~Vec() { delete[] data; }
+
+    void push(const T& item) {
+        assert(reserved > 0);
+        if(reserved == size) {
+            reserved *= 2;
+            T* _temp_data = new T[reserved];
+            for(size_t i = 0; i < size ; i++) {
+                _temp_data[i] = data[i];
+            }
+            delete[] data;
+            data = _temp_data;
+        }
+        data[size++] = item;
+    }
+
+    T pop() {
+        assert(size > 0);
+        size--;
+        return data[size];
+    }
+
+    iterator begin() { return iterator(data); }
+    iterator end() { return iterator(data + size); }
+
+    const_iterator cbegin() const { return const_iterator(data); }
+    const_iterator cend() const { return const_iterator(data + size); }
+
+    reverse_iterator rbegin() { return reverse_iterator(data + size - 1); }
+    reverse_iterator rend() { return reverse_iterator(data - 1); }
+
+  private:
+    size_t size;     // # elts in vector
+    size_t reserved; // # elts allocated in data array
+    T *data;         // points to beginning of data array
+};
+
+int main() {
+    Vec<int> vec;
+    vec.push(2);
+    vec.push(4);
+    vec.push(6);
+    vec.push(8);
+    // Iterate forward
+    for(Vec<int>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        cout << *it << ' ';
+        (*it)++;
+    }
+    cout << endl;
+    // Iterate forward const
+    for(Vec<int>::const_iterator it = vec.cbegin(); it != vec.cend(); ++it) {
+        cout << *it << ' ';
+        // TODO: check it can't be modified
+    }
+    cout << endl;
+    // Iterate reverse
+    for(Vec<int>::reverse_iterator it = vec.rbegin(); it != vec.rend(); ++it) {
+        cout << *it << ' ';
+        (*it)++;
+    }
+    cout << endl;
+    // Iterate reverse
+    for(Vec<int>::reverse_iterator it = vec.rbegin(); it != vec.rend(); ++it) {
+        cout << *it << ' ';
+    }
+    cout << endl;
+
+    Vec<pair<int, int> > vec2;
+    vec2.push(make_pair(1, 2));
+    vec2.push(make_pair(3, 4));
+    vec2.push(make_pair(5, 6));
+    // Iterate forward
+    for(Vec<pair<int, int> >::iterator it = vec2.begin(); it != vec2.end(); ++it) {
+        cout << it->first << ',' << it->second << ' ';
+        it->first++;
+        it->second++;
+    }
+    cout << endl;
+    // Iterate forward const
+    for(Vec<pair<int, int> >::const_iterator it = vec2.cbegin(); it != vec2.cend(); ++it) {
+        cout << it->first << ',' << it->second << ' ';
+    }
+    cout << endl;
+    return 0;
+}
+-->
