@@ -293,9 +293,9 @@ It's a normal member function, not a constructor, so we can't use initializer li
 
 If you don't specify copy constructor or `operator=`, compiler adds *implicit* version that *shallow copies*
 
-* Simply the contents of the fields
-* `class` fields will have their corresponding copy constructors or `operator=` functions called
-* Pointers to heap memory will simply be copied, without the heap memory itself being copied
+* Simply copies each field
+* `class` field will have its copy constructors or `operator=` function called
+* Pointer to heap memory will simply be copied, without the heap memory itself being copied
 
 Another way of stating the Rule of 3: if your class has a non-trivial destructor, you probably *don't* want shallow copying
 
