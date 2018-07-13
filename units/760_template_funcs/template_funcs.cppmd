@@ -226,7 +226,8 @@ If we pass `vector<int>`, compiler *instantiates* an appropriate function overlo
 #include <vector>
 #include <list>
 
-using namespace std;
+using std::cout;    using std::endl;
+using std::vector;  using std::list;
 
 template<typename T>
 int sum_every_other(const T& ls) {
@@ -293,7 +294,8 @@ Without `typename` before `T::const_iterator` we get an error:
 #include <vector>
 #include <list>
 
-using namespace std;
+using std::cout;    using std::endl;
+using std::vector;  using std::list;
 
 template<typename T>
 int sum_every_other(const T& ls) {
