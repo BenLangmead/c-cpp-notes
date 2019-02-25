@@ -408,3 +408,4 @@ New responsibilities:
 * Don't dereference an address (pointer) that doesn't point to your own properly-allocated memory
 * Any new memory allocated by `malloc` or `realloc` is uninitialized; assign to it before using it
 * Don't forget that that `free` and `realloc` deallocate their arguments
+

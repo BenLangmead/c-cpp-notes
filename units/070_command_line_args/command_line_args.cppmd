@@ -70,3 +70,4 @@ int main(int argc, char* argv[]) {
 gcc %PREV% -std=c99 -pedantic -Wall -Wextra
 ./a.out 1.1 2.2 3.3
 -->
+

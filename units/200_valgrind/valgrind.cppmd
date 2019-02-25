@@ -307,3 +307,4 @@ After fixes, we have a clean `valgrind` report:
 gcc -o %PREVBASE% %PREV% -std=c99 -pedantic -Wall -Wextra -g
 valgrind --leak-check=full ./%PREVBASE%
 -->
+

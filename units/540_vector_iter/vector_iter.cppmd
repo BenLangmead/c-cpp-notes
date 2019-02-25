@@ -295,3 +295,4 @@ Don't miss:
 * [`cbegin`/`cend` -- `const_iterator`s for beginning/end](http://www.cplusplus.com/reference/vector/vector/cbegin/)
 * [`rbegin`/`rend` -- `reverse_iterator`s for beginning/end](http://www.cplusplus.com/reference/vector/vector/rbegin/)
 * `erase`, `insert`, `clear`, `at`, `empty` -- just like `string`
+

@@ -17,3 +17,4 @@ What `gcc` does can be divided into three phases:
 1. *Preprocessing*: bring all the relevant code together
 2. *Compiling*: turn the human-readable source code into machine-readable object files
 3. *Linking*: bring all relevant object files together into a binary executable
+

@@ -147,3 +147,4 @@ g++ -c circle.cpp -std=c++11 -pedantic -Wall -Wextra
 g++ -o %PREVBASE% %PREVBASE%.o circle.o
 ./%PREVBASE%
 -->
+

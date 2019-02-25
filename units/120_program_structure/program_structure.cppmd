@@ -147,3 +147,4 @@ Or they can all happen at once
   # Steps 1, 2 & 3
   gcc -o main main.c interest.c -c -std=c99 -pedantic -Wall -Wextra -lm
 ```
+

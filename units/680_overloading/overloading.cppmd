@@ -571,3 +571,4 @@ To allow `Date` to work with `std::sort`, we only have to add `operator<`:
         ...
     };
 ```
+

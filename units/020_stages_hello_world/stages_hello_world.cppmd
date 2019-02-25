@@ -178,3 +178,4 @@ Compiler prints a *compiler error* and does not generate `a.out`
 <!---cppmd-shell
 gcc hello_world_err.c -std=c99 -pedantic -Wall -Wextra
 -->
+

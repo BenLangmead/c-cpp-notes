@@ -49,3 +49,4 @@ echo 3.0 4.0 | ./a.out
 <!---cppmd-shell
 echo 3.0 3.0 | ./a.out
 -->
+

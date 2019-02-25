@@ -229,3 +229,4 @@ class Knight : public Piece {
 	...
 };
 ```
+

@@ -116,3 +116,4 @@ Derived-class destructor always implicitly calls base-class destructor at the en
 # Virtual destructors
 
 To avoid this in general: *Any `class` with virtual member functions* should also have a `virtual` destructor, even if the destructor does nothing
+

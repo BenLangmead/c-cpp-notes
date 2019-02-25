@@ -96,3 +96,4 @@ Heap: Lifetime is under our control
     * E.g. with `malloc` and `free`, discussed later
 
 * Operating System is places variables in memory in a non-overlapping way
+

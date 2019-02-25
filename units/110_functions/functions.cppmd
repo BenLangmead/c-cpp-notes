@@ -382,3 +382,4 @@ int add3(int a, int b, int c) {
 ```
 
 C++ *lambda functions* accomplish something like this; but not discussed here
+

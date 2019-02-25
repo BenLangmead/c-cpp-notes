@@ -435,3 +435,4 @@ gcc -c %PREV% -std=c99 -pedantic -Wall -Wextra
 `int * const p` - the *pointer* can't be modified
 
 `const int * const p` - *neither* can be modified
+

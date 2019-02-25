@@ -132,3 +132,4 @@ Commonly used member functions (click for links):
 * [`insert` -- insert one string in middle of another](http://www.cplusplus.com/reference/string/string/insert/)
 * [`erase` -- remove stretch of characters from string](http://www.cplusplus.com/reference/string/string/erase/)
 * [`replace` -- replace a substring with a given string](http://www.cplusplus.com/reference/string/string/replace/)
+

@@ -468,3 +468,4 @@ Type promotions are happening both because of the addition and because of the ca
 * `ci_3`: `r` converted to `double`, then added to `1.0` (already a `double`)
 
 `(float)1` and `(double)1` are not the same.  `ci_1` and `ci_2` use `(float)1`, `ci_3` uses `(double)1`.
+

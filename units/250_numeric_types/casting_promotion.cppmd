@@ -110,3 +110,4 @@ Integer and floating-point representations differ:
 `float a = 1` or `int i = 3.0`, it's not as simple as copying bits
 
 When going from integer types to to `float` (or `double`), we are getting an approximation, not the exact integer
+

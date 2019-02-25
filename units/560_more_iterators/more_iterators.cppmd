@@ -144,3 +144,4 @@ g++ -c %PREV% -std=c++11 -pedantic -Wall -Wextra
 \normalsize
 
 Reminder: When using a variant of `.begin()`/`.end()`, always initialize the the iterator with `.begin()` and stop as soon as it `== .end()`.  Don't switch the two, even if you're *trying* to go backwards.  Use the `reverse_` version instead.
+
