@@ -65,8 +65,8 @@ Some ways to initialize a new string variable:
 ```c
    string s1 = "world";  // initializes to "world"
    string s2("hello");   // just like s2 = "hello"
-   string s3(3, 'a');    // s2 is "aaa"
-   string s4;            // empty string ""
+   string s3(3, 'a');    // s3 gets "aaa"
+   string s4;            // s4 gets "" (empty)
    string s5(s2);        // copies s2 into s5
 ```
 
