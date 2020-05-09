@@ -76,7 +76,6 @@ Since the problem would seem to be in the `string_reverse` function, I am going 
 Breakpoint 1 at 0x4005ad: file str_rev.c, line 13.
 (gdb) run
 Starting program: /app/str_rev
-Missing separate debuginfos, use: dnf debuginfo-install glibc-2.26-15.fc27.x86_64
 
 Breakpoint 1, main () at str_rev.c:13
 13	  char reverse_me[] = "AAABBB";
