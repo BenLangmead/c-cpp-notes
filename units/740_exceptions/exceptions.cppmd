@@ -77,7 +77,12 @@ Looking in documentation for `new`/`new T[n]`, you can see the exception thrown 
 
 \vspace{4mm}
 
-\centerline{\includegraphics[height=2.5in]{../images/new_docs.png}}
+\centerline{\includegraphics[height=2.2in]{../images/new_docs.png}}
+
+\scriptsize
+\centering
+
+[www.cplusplus.com/reference/new/operator%20new/](http://www.cplusplus.com/reference/new/operator%20new/)
 
 # Exceptions
 
