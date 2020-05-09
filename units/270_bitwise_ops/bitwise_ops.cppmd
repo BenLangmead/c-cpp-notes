@@ -27,7 +27,17 @@ Saw that integer types consist of bits
 
 \vspace{4mm}
 
-\centerline{\includegraphics[width=3in]{../images/binary_to_dec.png}}
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrrrrrr}
+Binary: & 0 & 0 & 1 & 1 & 0 & 1 & 0 & 1 \\
+Place value:  & $2^7$ & $2^6$ & $2^5$ & $2^4$ & $2^3$ & $2^2$ & $2^1$ & $2^0$ \\
+\end{tabular}
+\end{table}
+
+\centering
+
+$2^5$ + $2^4$ + $2^2$ + $2^0$  =  32 + 16 + 4 + 1  =  53
 
 # Bitwise operators
 
@@ -53,7 +63,7 @@ Bit Operation of 12 and 25
 int main() {
     int a = 12;
     int b = 25;
-    printf("%d & %d = %d", a, b, a & b);
+    printf("%d & %d = %d\n", a, b, a & b);
     return 0;
 }
 -->
@@ -96,7 +106,7 @@ Bitwise OR Operation of 12 and 25
 int main() {
     int a = 12;
     int b = 25;
-    printf("%d | %d = %d", a, b, a | b);
+    printf("%d | %d = %d\n", a, b, a | b);
     return 0;
 }
 -->
@@ -133,7 +143,7 @@ __________
 int main() {
     int a = 25;
     int b = 5;
-    printf("%d << %d = %d", a, b, a << b);
+    printf("%d << %d = %d\n", a, b, a << b);
     return 0;
 }
 -->
@@ -166,7 +176,7 @@ Bitwise right-shift of 25 by 4 positions (25 >> 4)
 int main() {
     int a = 25;
     int b = 4;
-    printf("%d >> %d = %d", a, b, a >> b);
+    printf("%d >> %d = %d\n", a, b, a >> b);
     return 0;
 }
 -->
