@@ -1,19 +1,19 @@
 # Course goals
 
-*Create complex, correct programs in C and C++*
+*Write complex, correct programs in C and C++*
 
-Learn modern programming ecosystem
+Leverage programming ecosystem
 
 * Linux
 * Compiler (`gcc`, `g++`)
 * Debugger (`gdb`)
 * Build system (`make`)
 
-Learn basic principles of software design and engineering, in preparation for future coursework
+Learn basic principles of software design and engineering
 
 # Prerequisites
 
-Course is primarily designed for people with experience with Java or a similar language
+Experience with Java, Python or similar
 
 C/C++ experience *not* a prerequisite
 
@@ -50,11 +50,11 @@ Why C/C++?
 
 # Ubiquitous
 
-Huge fraction of the world's crucial code is in C
+Much of the world's crucial software is in C
 
 * Used Java?  JVM is written in C++, as are many libraries
 * Used Python?  CPython interpreter written in C
-* Used the Internet?  Networks stacks, code for the embedded systems your traffic traverses, web servers, ...
+* Used the Internet?  Network stacks, routers, web servers, ...
 * Like science?
     * https://github.com/collections/software-in-science
     * My lab members & I program in C/C++ a lot
@@ -80,7 +80,7 @@ Higher-level languages like Java & Python present a trade-off:
 
 * High-level languages "take care of things" for you
 
-    * Programs can be more concise, abstract
+    * Source code is more concise, abstract
     * Harder to make mistakes
 
 * ...but also hide things from you
@@ -88,8 +88,6 @@ Higher-level languages like Java & Python present a trade-off:
     * How variables are laid out in memory
     * When memory is allocated and de-allocated
     * Hardware features, especially non-portable features
-
-Because of what high-level languages hide, efficiency can be hard to achieve
 
 # Mature
 
@@ -106,9 +104,7 @@ Software jobs often require it; "we need someone who...
 
 # Why C/C++?
 
-There are other good languages also worth learning
-
-Many aim for a similar level of efficiency as C/C++; often these are called ``systems languages''
+Newer ``systems languages'' aim for a similar level of efficiency as C/C++
 
 * But with simpler language
 * Less "burdened" by long history & by need to stay backward-compatible
@@ -137,4 +133,3 @@ But they do not approach C/C++ in maturity/ubiquity
 \scriptsize
 
 [www.tiobe.com/tiobe-index/](https://www.tiobe.com/tiobe-index/)
-
