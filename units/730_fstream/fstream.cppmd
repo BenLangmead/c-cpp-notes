@@ -190,10 +190,5 @@ if(os) {                       // check that open was successful
 
 \vspace{4mm}
 
-\centerline{\includegraphics[height=2.5in]{../images/ioclasses.jpg}}
-
-\centering
-\scriptsize
-
-[www.icce.rug.nl/documents/cplusplus/cplusplus06.html](http://www.icce.rug.nl/documents/cplusplus/cplusplus06.html)
+\centerline{\includegraphics[height=2.5in]{../images/ioclasses.pdf}}
 
